@@ -1,0 +1,9 @@
+services:
+  web:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      - PORT=3000
+      - ORIGIN=${ORIGIN:-http://localhost:3000}
+    restart: unless-stopped

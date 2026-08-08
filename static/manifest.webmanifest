@@ -1,0 +1,9 @@
+{
+	"name": "Alicia Sykes",
+	"short_name": "Alicia Sykes",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#0e0e1f",
+	"theme_color": "#f04c8a",
+	"icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
