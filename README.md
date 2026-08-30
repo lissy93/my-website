@@ -271,20 +271,13 @@ To get started, fork the repo, make your changes, add, commit and push the code,
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/vlad-tim">
-            <img src="https://avatars.githubusercontent.com/u/11474041?u=eee43705b54d2ec9f51fc4fcce5ad18dd17c87e4&v=4" width="80;" alt="vlad-tim"/>
-            <br />
-            <sub><b>Vlad</b></sub>
-        </a>
-    </td></tr>
-<tr>
-    <td align="center">
         <a href="https://github.com/helixzz">
             <img src="https://avatars.githubusercontent.com/u/12218889?u=d06d0c103dfbdb99450623064f7da3c5a3675fb6&v=4" width="80;" alt="helixzz"/>
             <br />
             <sub><b>HeliXZz</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/Daechler">
             <img src="https://avatars.githubusercontent.com/u/50748803?u=de67f2510378245669e134c508b676ea82e7688f&v=4" width="80;" alt="Daechler"/>
@@ -319,15 +312,15 @@ To get started, fork the repo, make your changes, add, commit and push the code,
             <br />
             <sub><b>John BigoudOps</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/MorganKryze">
             <img src="https://avatars.githubusercontent.com/u/103436411?u=229e2d87d90cbf57ba1b5ab8af0b9392021949bc&v=4" width="80;" alt="MorganKryze"/>
             <br />
             <sub><b>Yann M. Vidamment</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/terminaltrove">
             <img src="https://avatars.githubusercontent.com/u/121595180?v=4" width="80;" alt="terminaltrove"/>
@@ -362,15 +355,15 @@ To get started, fork the repo, make your changes, add, commit and push the code,
             <br />
             <sub><b>Really Him</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/gl0bal01">
             <img src="https://avatars.githubusercontent.com/u/173822055?u=e418964bb478d5780a4044f95207bca19adf709f&v=4" width="80;" alt="gl0bal01"/>
             <br />
             <sub><b>Gl0bal01 💖 龴ↀ◡ↀ龴</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/Envisage-Cloud-Solutions">
             <img src="https://avatars.githubusercontent.com/u/219464178?v=4" width="80;" alt="Envisage-Cloud-Solutions"/>
