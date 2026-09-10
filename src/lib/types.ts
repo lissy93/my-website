@@ -20,7 +20,7 @@ export type ContactResult = {
 	values?: Record<ContactFields, string>;
 };
 
-/* A leading slash routes internally; anything else is treated as off-site. */
+/* leading slash routes internally, anything else is off-site */
 export type FooterLink = { label: string; href: string };
 
 export type Post = {

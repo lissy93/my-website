@@ -14,7 +14,7 @@ export const heroLinks: { href: Pathname; label: string }[] = [
 	{ href: '/contact', label: 'Contact' }
 ];
 
-/* Labels key into socialIcons and socialColors; rel="me" on the links is what Mastodon verifies. */
+/* labels must match the keys in socialIcons and socialColors */
 export const socials = [
 	{ label: 'GitHub', href: 'https://github.com/Lissy93' },
 	{ label: 'Mastodon', href: 'https://mastodon.social/@Lissy93' },
@@ -22,7 +22,7 @@ export const socials = [
 	{ label: 'Dev.to', href: 'https://dev.to/lissy93' }
 ];
 
-/* Everything I write lands in one of these; where a post shows up twice, the first one listed wins. */
+/* order matters, if a post is in two feeds the first one wins */
 export const feeds = [
 	{ source: 'Notes', url: 'https://notes.aliciasykes.com/feed' },
 	{ source: 'Dev.to', url: 'https://dev.to/feed/lissy93' }

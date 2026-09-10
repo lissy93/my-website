@@ -8,7 +8,7 @@
 
 	let { project }: { project: Project } = $props();
 
-	/* Anything touched this year is still going; a year that stands alone doesn't need repeating. */
+	/* updated this year counts as ongoing */
 	let to = $derived(project.to && project.to < thisYear ? project.to : 'present');
 	let years = $derived(project.from === to ? `${project.from}` : `${project.from}–${to}`);
 </script>
@@ -50,7 +50,6 @@
 			fill: currentcolor;
 		}
 
-		/* Supporting marks hold their space but fade out wherever a parent sets --fact-icons. */
 		span svg {
 			opacity: var(--fact-icons, 1);
 			transition: opacity var(--duration-base) var(--ease-out);
@@ -61,7 +60,7 @@
 		}
 	}
 
-	/* Keep each brand's hue, but pull its lightness into a band this theme can actually read. */
+	/* keep the brand hue, clamp lightness so it stays readable */
 	:global(a:hover) .lang {
 		color: oklch(from var(--brand) clamp(var(--brand-l-min), l, var(--brand-l-max)) c h);
 	}

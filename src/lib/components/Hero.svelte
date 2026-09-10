@@ -5,7 +5,7 @@
 	let mx = $state(0);
 	let my = $state(0);
 
-	/* Pointer offset from the centre of the viewport, -1 to 1. */
+	/* pointer offset from the viewport centre, -1 to 1 */
 	const track = ({ clientX, clientY }: PointerEvent) => {
 		mx = (clientX / innerWidth) * 2 - 1;
 		my = (clientY / innerHeight) * 2 - 1;
@@ -37,7 +37,7 @@
 		text-align: center;
 	}
 
-	/* Full-bleed accent wash; the box overshoots so the gradient fades out before it clips. */
+	/* oversized so the glow fades out before its edges */
 	.hero::before {
 		content: '';
 		position: absolute;
@@ -98,7 +98,7 @@
 		scale: 1 1;
 	}
 
-	/* Drift the whole layer, never the gradient's own position, so it composites instead of repainting. */
+	/* move the layer, not the gradient, so it composites instead of repainting */
 	@media (prefers-reduced-motion: no-preference) and (pointer: fine) {
 		.hero::before {
 			translate: calc(var(--mx, 0) * 4rem) calc(var(--my, 0) * 2rem);

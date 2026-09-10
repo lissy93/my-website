@@ -53,7 +53,6 @@
 	footer {
 		margin-block-start: auto;
 		border-block-start: var(--border-thin) solid var(--color-border);
-		/* Warm the rule where it meets the page edge, echoing the hero's accent wash. */
 		border-image: linear-gradient(90deg, var(--color-accent), var(--color-border) 30%) 1;
 		padding-block: var(--space-2xl) var(--space-xl);
 		font-size: var(--text-sm);

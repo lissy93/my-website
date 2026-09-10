@@ -27,7 +27,7 @@ const flatten = (part: string) =>
 		.replace(/\s+/g, ' ')
 		.trim();
 
-/* Feeds hand over whole articles, so the standfirst is the first real paragraph, trimmed to fit. */
+/* feeds send whole articles, so use the first real paragraph */
 function summarise(html: string, max = 150) {
 	const blocks = html
 		.replace(/<(?:style|script)[\s\S]*?<\/(?:style|script)>|<h[1-6][\s\S]*?<\/h[1-6]>/gi, '')
@@ -38,7 +38,7 @@ function summarise(html: string, max = 150) {
 	const text = blocks.find((block) => block.length > 60) ?? blocks.join(' ').trim();
 	if (text.length <= max) return text;
 
-	/* A whole sentence beats a stump, but only once there's enough of one to be worth reading. */
+	/* end on a full sentence if it's long enough, otherwise on a word */
 	const opening = text.slice(0, max + 1);
 	const sentence = [...opening.matchAll(/[.!?](?=\s)/g)].at(-1)?.index ?? -1;
 	if (sentence > max * 0.4) return opening.slice(0, sentence + 1);
@@ -61,12 +61,12 @@ const overlap = (a: Set<string>, b: Set<string>) => {
 	return shared / (a.size + b.size - shared) || 0;
 };
 
-/* Cross-posts get retitled, so two posts from the same week count as one if the titles mostly agree. */
+/* cross-posts get retitled, so a similar title in the same week is a match */
 const isSame = (a: Post, b: Post) =>
 	overlap(words(a.title), words(b.title)) >=
 	(Math.abs(Date.parse(a.date) - Date.parse(b.date)) < week ? 0.3 : 1);
 
-/* A feed that's slow, moved or malformed comes back empty rather than taking the build down. */
+/* a broken feed shouldn't fail the build */
 async function readFeed({ source, url }: (typeof feeds)[number]): Promise<Post[]> {
 	try {
 		const res = await fetch(url, {
@@ -96,7 +96,6 @@ async function readFeed({ source, url }: (typeof feeds)[number]): Promise<Post[]
 	}
 }
 
-/* Newest first, and where a post appears twice the earlier feed in the config wins. */
 async function merge(): Promise<Post[]> {
 	const found = (await Promise.all(feeds.map(readFeed))).flat();
 

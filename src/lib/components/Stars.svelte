@@ -6,7 +6,6 @@
 	let { count }: { count: number } = $props();
 </script>
 
-<!-- Nothing to boast about at zero, so we just leave it off. -->
 {#if count > 0}
 	<span class="count">
 		<svg viewBox="0 0 24 24" aria-hidden="true">

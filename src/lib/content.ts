@@ -2,16 +2,14 @@ import type { Project } from './types';
 
 export const photo = 'https://pixelflare.cc/alicia/profile-pictures/alicia_sykes-077.jpg';
 
-/* First line carries the section; the rest fill it in. */
 export const bio = [
 	'I build privacy-respecting apps, then give them away for free. Mostly security, privacy, self-hosting and Linux stuff - but sometimes just a handy little tool to make life a bit easier.',
 	'It’s all open source, because the software you rely on should be something you can actually read. By day I’m a software engineer in London, 12 years of it now, across web, mobile, infra and data. By night, mostly more of the same, which probably tells you everything you need to know.'
 ];
 
-/* Every project lives on GitHub, so the link is just the repo path. */
 export const repoUrl = (repo: string) => `https://github.com/${repo}`;
 
-/* Stars, end dates and licenses get refreshed from GitHub at build time - these are the fallbacks. */
+/* fallbacks; stars, end dates and licenses refresh from GitHub at build time */
 export const projects: Project[] = [
 	{
 		name: 'Web Check',
@@ -80,7 +78,6 @@ export const projects: Project[] = [
 	}
 ];
 
-/* Smaller apps, tools and experiments. Same shape, shown as a grid of tiles. */
 export const miniProjects: Project[] = [
 	{
 		name: 'AdGuardian Term',

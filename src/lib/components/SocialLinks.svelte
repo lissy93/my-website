@@ -36,7 +36,7 @@
 		transition: scale var(--duration-base) var(--ease-out);
 	}
 
-	/* Keep each brand's hue, but pull its lightness into a band this theme can actually read. */
+	/* keep the brand hue, clamp lightness so it stays readable */
 	a:hover {
 		color: oklch(from var(--brand) clamp(var(--brand-l-min), l, var(--brand-l-max)) c h);
 	}
