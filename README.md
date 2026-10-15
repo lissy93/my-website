@@ -1,79 +1,97 @@
-# my-website
+<h1 align="center">✨ My Website</h1>
+<p align="center">
+  <i>My personal site, with projects, posts and a contact form</i><br>
+  🌐 <b><a href="https://aliciasykes.com">aliciasykes.com</a></b>
+</p>
+<p align="center">
+  <a href="https://aliciasykes.com"><img width="64" src="static/favicon.svg" /></a>
+</p>
 
-Personal site, built with SvelteKit 2 + Svelte 5.
+This is my personal website. It's configurable, so feel free to use it, or any parts of it for yourself :)
 
-## Develop
+---
 
-```bash
+### Developing
+
+#### Prerequisites
+
+You'll need Node.js 22+ and Git installed, and optionally Docker.<br>
+The site is built with SvelteKit + Svelte 5, in TypeScript.
+
+#### Setup Commands
+
+```
+git clone git@github.com:Lissy93/my-website.git
+cd my-website
 npm install
 npm run dev
 ```
 
-| Script            | Does                         |
-| ----------------- | ---------------------------- |
-| `npm run dev`     | Dev server                   |
-| `npm run build`   | Production build             |
-| `npm run preview` | Preview the production build |
-| `npm start`       | Serve the Node build         |
-| `npm run check`   | Type-check                   |
-| `npm run lint`    | Prettier + ESLint            |
-| `npm run format`  | Write Prettier fixes         |
+<details>
+  <summary><h4>Project Commands</h4></summary>
 
-## Deploy
+- `npm run dev` - Starts the dev server, with hot reload
+- `npm run build` - Builds the site for production
+- `npm run preview` - Previews the production build locally
+- `npm start` - Starts the Node server (build required first)
+- `npm run check` - Type checks with svelte-check
+- `npm run lint` - Checks formatting and linting with Prettier and ESLint
+- `npm run format` - Fixes formatting with Prettier
 
-The adapter is picked from the environment in `svelte.config.js`:
+</details>
 
-- **Vercel** — `VERCEL` is set, uses `adapter-vercel`. Zero config.
-- **Netlify** — `NETLIFY` is set, uses `adapter-netlify`. See `netlify.toml`.
-- **Anywhere else** — `adapter-node`, output in `build/`, run with `node build`.
+---
 
-### Docker
+### Configuring
 
-```bash
-docker build -t my-website .
-docker run -p 3000:3000 -e ORIGIN=http://localhost:3000 my-website
-```
+Site info, socials, RSS feeds and contact options are in [`src/lib/config.ts`](src/lib/config.ts).<br>
+Bio and projects are in [`src/lib/content.ts`](src/lib/content.ts).<br>
+Secrets (GitHub token, mail API key) go in `.env`. Copy [`.env.example`](.env.example) to get started, each one is explained in there.
 
-Or `docker compose up --build`.
+---
 
-`ORIGIN` must match the URL the site is served from, or `adapter-node` rejects
-the contact form's POST as cross-site. Everything else the server reads is
-listed in `.env.example`; without it the site still builds and renders, it just
-falls back to `content.ts` for project stats and can't send mail.
+### Deploying
 
-## Structure
+#### Option 1 - Cloud
 
-```
-src/
-  lib/
-    components/   shared components
-    fonts/        self-hosted woff2
-    server/       GitHub, RSS, mail and spam checks — server-only
-    styles/       tokens.css, reset.css, base.css
-    config.ts     site metadata, nav, footer, contact reasons, feeds
-    content.ts    bio, projects, miniProjects
-    types.ts      shared types
-  routes/         pages, plus robots.txt and sitemap.xml
-static/           served as-is
-```
+Fork the repo, and import it into Vercel or Netlify. The right adapter gets picked automatically.
 
-Homepage sections read from `content.ts` via `routes/+page.server.ts`, so
-swapping in a real content source (markdown, CMS, API) only means changing that
-`load`. Posts aren't stored here at all — they're merged from the RSS feeds in
-`config.ts` at build time.
+#### Option 2 - Docker
 
-`sitemap.xml` is generated from the route tree, so a new page lists itself.
+Run `docker compose up --build`<br>
+Or build the image with `docker build -t my-website .`, then start it with `docker run -p 3000:3000 -e ORIGIN=http://localhost:3000 my-website`
 
-Design tokens live in `src/lib/styles/tokens.css` — colours, type scale, spacing,
-radii, shadows, motion and z-index. Dark is the default; light is opt-in via a
-`data-theme="light"` attribute on `<html>`.
+#### Option 3 - Node
 
-## Fonts
+Follow the dev steps above, then run `npm run build`.<br>
+You can then start the server with `node build`.
 
-Self-hosted, no third-party requests. Archivo and Hanken Grotesk come from
-`@fontsource-variable`.
+When self-hosting, set `ORIGIN` to the URL the site is served from
 
-The wordmark uses **Chopic 3D Free Version** by Alit Design, subset to basic
-Latin (`--font-wordmark`). Its licence is **freeware, non-commercial** — it is a
-demo of a paid family and is not permitted for commercial use. Full version:
-<https://alitdesign.net/product/chopic-comic-typeface/>
+---
+
+### License
+
+Licensed under [MIT](LICENSE).<br>
+
+<!-- License + Copyright -->
+<p  align="center">
+  <i>© <a href="https://aliciasykes.com">Alicia Sykes</a> 2012 - 2026</i><br>
+  <i>Licensed under <a href="https://gist.github.com/Lissy93/143d2ee01ccc5c052a17">MIT</a></i><br>
+  <a href="https://github.com/lissy93"><img src="https://cdn.as93.net/84m3gc?w=56" /></a><br>
+  <sup>Thanks for visiting :)</sup>
+</p>
+
+<!-- Dinosaur -->
+<!--
+                        . - ~ ~ ~ - .
+      ..     _      .-~               ~-.
+     //|     \ `..~                      `.
+    || |      }  }              /       \  \
+(\   \\ \~^..'                 |         }  \
+ \`.-~  o      /       }       |        /    \
+ (__          |       /        |       /      `.
+  `- - ~ ~ -._|      /_ - ~ ~ ^|      /- _      `.
+              |     /          |     /     ~-.     ~- _
+              |_____|          |_____|         ~ - . _ _~_-_
+-->
