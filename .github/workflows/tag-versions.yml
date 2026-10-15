@@ -28,7 +28,6 @@ jobs:
         with:
           token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
           tag: ${{ needs.tag-pre-release.outputs.tag }}
-          bodyFile: '.github/CHANGELOG.md'
   mark-issue-fixed:
     runs-on: ubuntu-latest
     steps:

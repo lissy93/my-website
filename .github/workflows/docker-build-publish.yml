@@ -8,7 +8,7 @@ on:
     tags: ['v[0-9].[0-9]+.[0-9]+']
     paths:
       - 'src/**'
-      - 'statis/**'
+      - 'static/**'
 
 env:
   DH_IMAGE: ${{ secrets.DOCKER_REPO }}
@@ -28,12 +28,6 @@ jobs:
         uses: tyankatsu0105/read-package-version-actions@v1
         id: package-version
 
-      # - name: ✨ Validate Dockerfile
-      #   uses: ghe-actions/dockerfile-validator@v1
-      #   with:
-      #     dockerfile: 'Dockerfile'
-      #     lint: 'hadolint'
-
       - name: 🗂️ Make Docker Meta
         id: meta
         uses: docker/metadata-action@v3
@@ -46,8 +40,8 @@ jobs:
             type=semver,pattern={{raw}},value=${{ steps.package-version.outputs.version }}
           labels: |
             maintainer=Lissy93
-            org.opencontainers.image.title=Devolio
-            org.opencontainers.image.description=A developer portfolio website
+            org.opencontainers.image.title=My Website
+            org.opencontainers.image.description=Personal site of Alicia Sykes
             org.opencontainers.image.documentation=https://github.com/lissy93/my-website
             org.opencontainers.image.authors=Alicia Sykes
             org.opencontainers.image.licenses=MIT
@@ -79,16 +73,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           push: true
-#     - name: 💬 Set Docker Hub Description
-#       uses: peter-evans/dockerhub-description@v2
-#       with:
-#         repository: lissy93/devolio
-#         readme-filepath: ./README.md
-#         short-description: Devolio - A developer portfolio site for the rest of us
-#         username: ${{ secrets.DOCKER_USERNAME }}
-#         password: ${{ secrets.DOCKER_USER_PASS }}
-
