@@ -1,0 +1,10 @@
+node_modules
+build
+.svelte-kit
+.netlify
+.vercel
+.git
+.github
+alicia-notes
+Dockerfile
+compose.yaml

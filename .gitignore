@@ -1,11 +1,32 @@
-.DS_Store
+# Dependencies
 node_modules
+
+# Build output
 /build
 /.svelte-kit
-/package
+/.netlify
+/.vercel
+
+# Secrets
 .env
 .env.*
 !.env.example
+
+# Logs and caches
+*.log
+npm-debug.log*
+.npm
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
-.vercel/
+
+# Editors and OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Local tooling and scratch notes
+.claude/
+.impeccable/
+alicia-notes/

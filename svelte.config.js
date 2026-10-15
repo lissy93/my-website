@@ -1,38 +1,14 @@
-import autoAdapter from '@sveltejs/adapter-auto';
-import staticAdapter from '@sveltejs/adapter-static';
-import netlifyAdapter from '@sveltejs/adapter-netlify';
-import vercelAdapter from '@sveltejs/adapter-vercel';
-import nodeAdapter from '@sveltejs/adapter-node';
+import netlify from '@sveltejs/adapter-netlify';
+import node from '@sveltejs/adapter-node';
+import vercel from '@sveltejs/adapter-vercel';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
-import { vitePreprocess } from '@sveltejs/kit/vite';
+const adapter = process.env.VERCEL ? vercel() : process.env.NETLIFY ? netlify() : node();
 
-let selectedAdapter;
-
-if (process.env.DEPLOY_TARGET === 'NETLIFY') {
-  selectedAdapter = netlifyAdapter();
-} else if (process.env.DEPLOY_TARGET === 'VERCEL') {
-  selectedAdapter = vercelAdapter();
-} else if (process.env.DEPLOY_TARGET === 'NODE') {
-  selectedAdapter = nodeAdapter();
-} else if (process.env.DEPLOY_TARGET === 'STATIC') {
-  selectedAdapter = staticAdapter();
-} else {
-  selectedAdapter = autoAdapter();
-}
-
-/** @type {import('@sveltejs/kit').Config} */
-const config = {
-  preprocess: vitePreprocess(),
-  kit: {
-    adapter: selectedAdapter,
-    alias: {
-      '$src/*': 'src/*',
-    },
-    prerender: {
-      handleMissingId: 'ignore',
-      crawl: true,
-    }
-  }
+export default {
+	preprocess: vitePreprocess(),
+	kit: {
+		adapter,
+		alias: { $components: 'src/lib/components', $styles: 'src/lib/styles' }
+	}
 };
-
-export default config;

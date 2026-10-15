@@ -1,0 +1,13 @@
+@import '@fontsource-variable/archivo/wght.css';
+@import '@fontsource-variable/hanken-grotesk/wght.css';
+@import './lib/styles/tokens.css';
+@import './lib/styles/reset.css';
+@import './lib/styles/base.css';
+
+@font-face {
+	font-family: 'Chopic 3D';
+	src: url('./lib/fonts/chopic-3d.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
