@@ -1,130 +1,39 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
-	import { resolve } from '$app/paths';
-	import { heroLinks, site } from '$lib/config';
+	import ProfilePhoto from '$components/ProfilePhoto.svelte';
+	import { site } from '$lib/config';
 
-	let { title = site.name, children }: { title?: string; children?: Snippet } = $props();
-
-	let mx = $state(0);
-	let my = $state(0);
-
-	/* pointer offset from the viewport centre, -1 to 1 */
-	const track = ({ clientX, clientY }: PointerEvent) => {
-		mx = (clientX / innerWidth) * 2 - 1;
-		my = (clientY / innerHeight) * 2 - 1;
-	};
+	const [first, ...rest] = site.name.split(' ');
+	const last = rest.join(' ');
 </script>
 
-<svelte:window onpointermove={track} />
-
-<section class="hero" style="--mx: {mx}; --my: {my}">
-	<h1>{title}</h1>
-	{@render children?.()}
-
-	<nav aria-label="Sections">
-		{#each heroLinks as { href, label } (href)}
-			<a href={resolve(href)}>{label}</a>
-		{/each}
-	</nav>
-</section>
+<div class="band">
+	<div class="wrap">
+		<div class="intro">
+			<h1>{first}<br />{last}</h1>
+			<p>{site.tagline}</p>
+		</div>
+		<ProfilePhoto --photo-size="clamp(6.5rem, 20vw, 16rem)" />
+	</div>
+</div>
 
 <style>
-	.hero {
-		position: relative;
-		isolation: isolate;
+	.wrap {
 		display: grid;
-		place-content: center;
-		justify-items: center;
-		gap: var(--space-lg);
-		min-block-size: max(13rem, 30svh);
-		margin-block-end: clamp(2rem, 6vw, 4.5rem);
-		text-align: center;
-	}
-
-	/* oversized so the glow fades out before its edges */
-	.hero::before {
-		content: '';
-		position: absolute;
-		inset-block: -8rem -14rem;
-		inset-inline: calc(50% - 50vw - 9rem);
-		z-index: -1;
-		pointer-events: none;
-		background: radial-gradient(
-			50rem 28rem at 50% 32%,
-			oklch(from var(--accent-500) l c h / 0.2),
-			transparent 70%
-		);
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+		gap: var(--space-md);
+		padding-block: clamp(1.5rem, 5vw, 3.5rem) clamp(2rem, 5vw, 4rem);
 	}
 
 	h1 {
-		font-family: var(--font-wordmark);
-		font-weight: var(--weight-normal);
-		font-size: var(--hero-size, clamp(2.25rem, 9vw, 5rem));
-		line-height: 1.05;
-		letter-spacing: 0.01em;
-		text-wrap: balance;
+		font-size: var(--text-hero);
 	}
 
-	nav {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: var(--space-sm) var(--space-2xl);
-	}
-
-	nav a {
-		position: relative;
-		padding-block: var(--space-2xs);
-		color: var(--color-text-muted);
-		font-size: var(--text-sm);
+	p {
+		max-inline-size: 24ch;
+		margin-block-start: var(--space-lg);
+		font-size: var(--text-lede);
 		font-weight: var(--weight-medium);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		text-decoration: none;
-	}
-
-	nav a::after {
-		content: '';
-		position: absolute;
-		inset-inline: 0;
-		bottom: 0;
-		height: var(--border-thick);
-		background: var(--color-accent);
-		scale: 0 1;
-		transition: scale var(--duration-base) var(--ease-out);
-	}
-
-	nav a:hover {
-		color: var(--color-text);
-	}
-
-	nav a:hover::after {
-		scale: 1 1;
-	}
-
-	/* move the layer, not the gradient, so it composites instead of repainting */
-	@media (prefers-reduced-motion: no-preference) and (pointer: fine) {
-		.hero::before {
-			translate: calc(var(--mx, 0) * 4rem) calc(var(--my, 0) * 2rem);
-			transition: translate var(--duration-slow) var(--ease-out);
-			will-change: translate;
-		}
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		.hero > :global(*) {
-			animation: rise var(--duration-slower) var(--ease-out) backwards;
-		}
-
-		.hero > nav {
-			animation-delay: var(--duration-base);
-		}
-	}
-
-	@keyframes rise {
-		from {
-			opacity: 0;
-			translate: 0 0.75rem;
-		}
+		line-height: var(--leading-snug);
 	}
 </style>

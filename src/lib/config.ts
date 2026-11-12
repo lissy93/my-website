@@ -1,10 +1,11 @@
 import type { Pathname } from '$app/types';
-import type { FooterLink } from './types';
+import type { Link } from './types';
 
 export const site = {
 	name: 'Alicia Sykes',
 	description:
 		'Alicia Sykes, software engineer in London. I build free, open source apps for privacy, security and self-hosting, like Web Check and Dashy.',
+	tagline: 'Free, open source apps for privacy, security and self-hosting.',
 	url: 'https://aliciasykes.com',
 	image: {
 		src: '/og.jpg',
@@ -19,18 +20,14 @@ export const analytics: { domain: string; script: string } | undefined = {
 	script: 'https://no-track.as93.net/js/script.js'
 };
 
-export const heroLinks: { href: Pathname; label: string }[] = [
-	{ href: '/projects', label: 'Projects' },
-	{ href: '/blog', label: 'Blog' },
-	{ href: '/contact', label: 'Contact' }
-];
-
-/* labels must match the keys in socialIcons and socialColors */
+/* labels must match a key in socialIcons, color is the brand colour shown on hover */
 export const socials = [
-	{ label: 'GitHub', href: 'https://github.com/Lissy93' },
-	{ label: 'Mastodon', href: 'https://mastodon.social/@Lissy93' },
-	{ label: 'LinkedIn', href: 'https://linkedin.com/in/AliciaSykes' },
-	{ label: 'Dev.to', href: 'https://dev.to/lissy93' }
+	{ label: 'GitHub', href: 'https://github.com/Lissy93', color: '#181717' },
+	{ label: 'Codeberg', href: 'https://codeberg.org/alicia', color: '#2185D0' },
+	{ label: 'Mastodon', href: 'https://mastodon.social/@Lissy93', color: '#6364FF' },
+	{ label: 'X', href: 'https://x.com/Lissy_Sykes', color: '#000000' },
+	{ label: 'LinkedIn', href: 'https://linkedin.com/in/AliciaSykes', color: '#0A66C2' },
+	{ label: 'Dev.to', href: 'https://dev.to/lissy93', color: '#0A0A0A' }
 ];
 
 /* order matters, if a post is in two feeds the first one wins */
@@ -117,44 +114,25 @@ export const nav: { href: Pathname; label: string }[] = [
 ];
 
 export const footer: {
-	tagline: string;
 	since: number;
 	legal: { sourceLink: string; licenseLink: string };
-	groups: { title: string; links: FooterLink[] }[];
+	groups: { title: string; links: Link[] }[];
 } = {
-	tagline: 'Open source apps for privacy, security and self-hosting.',
 	since: 2012,
 	legal: {
 		sourceLink: 'https://github.com/Lissy93/my-website',
 		licenseLink: 'https://github.com/Lissy93/my-website/blob/HEAD/LICENSE'
 	},
 	groups: [
-		{
-			title: 'Site',
-			links: [
-				{ label: 'About', href: '/about' },
-				{ label: 'Projects', href: '/projects' },
-				{ label: 'Blog', href: '/blog' },
-				{ label: 'Contact', href: '/contact' }
-			]
-		},
-		{
-			title: 'Elsewhere',
-			links: [
-				{ label: 'GitHub', href: 'https://github.com/Lissy93' },
-				{ label: 'Codeberg', href: 'https://codeberg.org/alicia' },
-				{ label: 'Mastodon', href: 'https://mastodon.social/@Lissy93' },
-				{ label: 'LinkedIn', href: 'https://linkedin.com/in/AliciaSykes' },
-				{ label: 'Dev.to', href: 'https://dev.to/lissy93' }
-			]
-		},
+		{ title: 'Site', links: nav },
+		{ title: 'Elsewhere', links: socials },
 		{
 			title: 'More',
 			links: [
 				{ label: 'All my apps', href: 'https://as93.net' },
 				{ label: 'CV', href: 'https://cv.aliciasykes.com' },
 				{ label: 'Sponsor me', href: 'https://github.com/sponsors/Lissy93' },
-				{ label: 'RSS feed', href: 'https://notes.aliciasykes.com/feed' },
+				{ label: 'RSS feed', href: feeds[0].url },
 				{ label: 'PGP key', href: '/pgp.txt' }
 			]
 		}

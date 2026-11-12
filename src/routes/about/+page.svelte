@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Bio from '$components/Bio.svelte';
+	import PageHeader from '$components/PageHeader.svelte';
 	import Seo from '$components/Seo.svelte';
 </script>
 
@@ -7,6 +9,8 @@
 	description="Who I am, what I work on, and why everything I build is free and open source."
 />
 
-<div class="prose">
-	<h1>About</h1>
+<PageHeader title="About" />
+
+<div class="wrap page">
+	<Bio />
 </div>

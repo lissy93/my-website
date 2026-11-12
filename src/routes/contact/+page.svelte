@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ContactDetails from '$components/ContactDetails.svelte';
 	import ContactForm from '$components/ContactForm.svelte';
+	import PageHeader from '$components/PageHeader.svelte';
 	import PgpKey from '$components/PgpKey.svelte';
 	import Section from '$components/Section.svelte';
 	import Seo from '$components/Seo.svelte';
@@ -23,45 +24,36 @@
 	{schema}
 />
 
-<div class="contact">
-	<header class="prose">
-		<h1>Contact</h1>
-		<p>
-			Got a question, an idea, or found a bug in something I've built? Send it over and I'll get
-			back to you. If it's sensitive, encrypt it with the key at the bottom.
-		</p>
-	</header>
+<PageHeader
+	title="Contact"
+	lede="Got a question, an idea, or found a bug in something I’ve built? Send it over and I’ll get back to you."
+/>
 
-	<div class="cols">
-		<Section title="Send a message">
-			<ContactForm result={form} stamp={data.stamp} />
-		</Section>
+<div class="wrap page">
+	<Section title="Send a message">
+		<ContactForm result={form} stamp={data.stamp} />
+	</Section>
 
-		<Section title="Other ways">
-			<ContactDetails />
-		</Section>
-	</div>
+	<Section title="Other ways">
+		<ContactDetails />
+	</Section>
 
-	<Section title="Keys">
+	<Section title="Keys" wide>
+		<p class="note">If it’s sensitive, encrypt it with this key.</p>
 		<PgpKey />
 	</Section>
 </div>
 
 <style>
-	.contact {
-		display: grid;
-		gap: var(--space-xl);
-	}
-
-	.cols {
-		display: grid;
-		gap: var(--space-xl);
+	.note {
+		margin-block-end: var(--space-md);
+		color: var(--color-text-muted);
 	}
 
 	@media (width >= 52rem) {
-		.cols {
-			grid-template-columns: minmax(0, 1fr) minmax(0, 17rem);
-			gap: var(--space-2xl);
+		.page {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+			align-items: start;
 		}
 	}
 </style>

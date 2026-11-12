@@ -3,6 +3,7 @@
 	import { enhance } from '$app/forms';
 	import { resolve } from '$app/paths';
 	import Field from '$components/Field.svelte';
+	import SmartLink from '$components/SmartLink.svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import type { ContactResult } from '$lib/types';
 	import { reasons } from '$lib/config';
@@ -52,18 +53,7 @@
 
 			<p class="hint" id="reason-hint" role="status">
 				{chosen.hint}
-				{#if chosen.link}
-					{@const offsite = chosen.link.href.startsWith('http')}
-					<a
-						href={chosen.link.href}
-						target={offsite ? '_blank' : undefined}
-						rel="external noopener"
-					>
-						{chosen.link.label}{#if offsite}<span class="visually-hidden">
-								, opens in a new tab</span
-							>{/if}
-					</a>
-				{/if}
+				{#if chosen.link}<SmartLink {...chosen.link} />{/if}
 			</p>
 
 			<div class="pair">
@@ -113,10 +103,10 @@
 	}
 
 	.message-is-sent {
-		background: var(--color-bg-alt);
+		background: var(--color-surface-sunken);
 		padding: var(--space-md) var(--space-lg);
 		border-radius: var(--radius-sm);
-		box-shadow: var(--shadow-sm);
+		box-shadow: var(--shadow-1);
 	}
 
 	form {
@@ -133,7 +123,7 @@
 		margin-block-start: calc(var(--space-xs) * -1);
 		border-radius: var(--radius-sm);
 		padding: var(--space-sm) var(--space-md);
-		background: var(--color-bg-alt);
+		background: var(--color-surface-sunken);
 		color: var(--color-text-muted);
 		font-size: var(--text-sm);
 		line-height: var(--leading-snug);
@@ -154,18 +144,18 @@
 		justify-self: start;
 		border-radius: var(--radius-md);
 		padding: var(--space-xs) var(--space-lg);
-		background: var(--color-accent);
-		color: var(--color-on-accent);
+		background: var(--color-action);
+		color: var(--color-on-action);
 		font-family: var(--font-display);
 		font-size: var(--text-sm);
 		font-weight: var(--weight-semibold);
 		letter-spacing: var(--tracking-tight);
 		transition: background var(--duration-fast) var(--ease-out);
 		&:hover {
-			background: var(--color-accent-hover);
+			background: var(--color-primary-text);
 		}
 		&:disabled {
-			background: var(--color-surface-alt);
+			background: var(--color-surface-sunken);
 			color: var(--color-text-muted);
 			cursor: progress;
 		}

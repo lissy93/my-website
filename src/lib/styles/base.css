@@ -18,56 +18,60 @@ body {
 }
 
 :focus-visible {
-	outline: var(--border-thick) solid var(--color-focus);
+	outline: var(--focus-ring) solid var(--color-focus);
 	outline-offset: 2px;
-	border-radius: var(--radius-xs);
+	border-radius: var(--radius-sm);
 }
 
 h1,
 h2,
-h3,
-h4 {
+h3 {
 	font-family: var(--font-display);
-	font-weight: var(--weight-semibold);
-	letter-spacing: var(--tracking-tight);
 	line-height: var(--leading-tight);
 }
 
 h1 {
-	font-size: var(--text-4xl);
+	font-weight: var(--weight-black);
+	font-stretch: var(--stretch-display);
+	letter-spacing: var(--tracking-display);
+	line-height: var(--leading-display);
 }
+
+h2,
+h3 {
+	font-weight: var(--weight-heavy);
+	font-stretch: var(--stretch-heading);
+	letter-spacing: var(--tracking-tight);
+}
+
 h2 {
 	font-size: var(--text-2xl);
 }
+
 h3 {
 	font-size: var(--text-xl);
 }
-h4 {
-	font-size: var(--text-lg);
-}
 
 a {
-	color: var(--color-accent);
+	color: var(--color-primary-text);
 	text-decoration-thickness: 1px;
 	text-underline-offset: 0.2em;
-	transition: color var(--duration-fast) var(--ease-out);
-}
-
-a:hover {
-	color: var(--color-accent-hover);
 }
 
 code,
-kbd,
-pre,
-samp {
+pre {
 	font-family: var(--font-mono);
 	font-size: 0.9em;
 }
 
-hr {
-	border: none;
-	border-top: var(--border-thin) solid var(--color-border);
+/* the pink band behind the header and each page's title */
+.band {
+	background: var(--color-primary);
+	color: var(--color-on-primary);
+
+	:focus-visible {
+		outline-color: var(--color-on-primary);
+	}
 }
 
 .wrap {
@@ -77,11 +81,39 @@ hr {
 	padding-inline: var(--gutter);
 }
 
-.prose {
-	max-width: var(--width-content);
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-md);
+/* the content column under each page's band */
+.page {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--space-section);
+	padding-block: clamp(2rem, 5vw, 3.5rem) var(--space-3xl);
+}
+
+/* small tonal button, used for nav and "view all" links */
+.chip {
+	flex: none;
+	border-radius: var(--radius-sm);
+	padding: 0.4rem 0.85rem;
+	background: var(--color-surface);
+	color: var(--color-on-primary-container);
+	font-size: var(--text-sm);
+	font-weight: var(--weight-semibold);
+	line-height: var(--leading-snug);
+	text-decoration: none;
+	white-space: nowrap;
+	transition:
+		background var(--duration-fast) var(--ease-out),
+		box-shadow var(--duration-fast) var(--ease-out);
+
+	&:hover {
+		background: color-mix(in oklch, var(--color-surface), var(--color-primary) 10%);
+		box-shadow: var(--shadow-1);
+	}
+
+	&[aria-current='page'] {
+		background: var(--color-on-primary-container);
+		color: var(--color-primary-container);
+	}
 }
 
 .visually-hidden {

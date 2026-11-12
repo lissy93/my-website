@@ -41,7 +41,7 @@
 		cursor: pointer;
 
 		&:hover {
-			color: var(--color-accent);
+			color: var(--color-primary-text);
 		}
 	}
 
@@ -53,7 +53,7 @@
 		border-radius: var(--radius-md);
 		padding: var(--space-md);
 		overflow-x: auto;
-		background: var(--color-bg-alt);
+		background: var(--color-surface-sunken);
 		color: var(--color-text-muted);
 		font-size: var(--text-2xs);
 		line-height: var(--leading-snug);

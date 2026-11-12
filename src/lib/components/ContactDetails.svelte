@@ -1,5 +1,6 @@
 <script lang="ts">
 	import EmailAddress from '$components/EmailAddress.svelte';
+	import SmartLink from '$components/SmartLink.svelte';
 	import SocialLinks from '$components/SocialLinks.svelte';
 	import { contact } from '$lib/config';
 </script>
@@ -12,10 +13,7 @@
 			<dt>{label}</dt>
 			<dd>
 				{#if href}
-					{@const offsite = href.startsWith('http')}
-					<a {href} target={offsite ? '_blank' : undefined} rel="external noopener">
-						{handle}{#if offsite}<span class="visually-hidden">, opens in a new tab</span>{/if}
-					</a>
+					<SmartLink label={handle} {href} />
 				{:else}
 					{handle}
 				{/if}

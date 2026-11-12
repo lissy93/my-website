@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MiniProjectGrid from '$components/MiniProjectGrid.svelte';
+	import PageHeader from '$components/PageHeader.svelte';
 	import ProjectList from '$components/ProjectList.svelte';
 	import Section from '$components/Section.svelte';
 	import Seo from '$components/Seo.svelte';
@@ -7,6 +7,8 @@
 	import { repoUrl } from '$lib/content';
 
 	let { data } = $props();
+
+	const homes = forges.map(({ name, url }) => ({ label: name, href: url }));
 
 	let schema = $derived({
 		'@context': 'https://schema.org',
@@ -32,47 +34,20 @@
 	{schema}
 />
 
-<div class="projects">
-	<header class="prose">
-		<h1>Projects</h1>
-		<p>
-			Pretty much everything I've built and open sourced. The featured ones are what I actually
-			maintain, the rest is a mix of small tools, old experiments and things I made just to learn
-			something.
-		</p>
-		<p class="forges">
-			<span>It all lives on:</span>
-			{#each forges as { name, url } (name)}
-				<a href={url} target="_blank" rel="external noopener">
-					{name}<span class="visually-hidden">, opens in a new tab</span>
-				</a>
-			{/each}
-		</p>
-	</header>
+<PageHeader
+	title="Projects"
+	lede="Pretty much everything I’ve built and open sourced. The featured ones are what I actually maintain, the rest is small tools, old experiments and things I made to learn something."
+	links={homes}
+/>
 
-	<Section title="Featured">
+<div class="wrap page">
+	<Section title="Featured" flush>
 		<ProjectList projects={data.featured} />
 	</Section>
 
 	{#if data.rest.length}
-		<Section title="Everything else">
-			<MiniProjectGrid projects={data.rest} blurb />
+		<Section title="Everything else" flush>
+			<ProjectList projects={data.rest} compact meta />
 		</Section>
 	{/if}
 </div>
-
-<style>
-	.projects {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr);
-		gap: var(--space-xl);
-	}
-
-	.forges {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-sm);
-		color: var(--color-text-muted);
-		font-size: var(--text-sm);
-	}
-</style>

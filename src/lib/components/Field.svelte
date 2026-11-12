@@ -85,12 +85,12 @@
 		border: var(--border-thin) solid var(--color-border-field);
 		border-radius: var(--radius-md);
 		padding: var(--space-xs) var(--space-sm);
-		background: var(--color-bg-alt);
+		background: var(--color-surface-sunken);
 		font-size: var(--text-sm);
 		transition: border-color var(--duration-fast) var(--ease-out);
 
 		&:hover {
-			border-color: var(--color-accent);
+			border-color: var(--color-primary-text);
 		}
 	}
 

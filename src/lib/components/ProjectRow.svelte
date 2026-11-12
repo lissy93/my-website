@@ -1,137 +1,106 @@
 <script lang="ts">
-	import Meta from '$components/Meta.svelte';
+	import ProjectMeta from '$components/ProjectMeta.svelte';
 	import Stars from '$components/Stars.svelte';
 	import { repoUrl } from '$lib/content';
 	import type { Project } from '$lib/types';
 
-	let { project }: { project: Project } = $props();
+	let {
+		project,
+		compact = false,
+		meta = true
+	}: { project: Project; compact?: boolean; meta?: boolean } = $props();
+
+	let size = $derived(compact ? 32 : 40);
 </script>
 
 <li>
-	<a href={repoUrl(project.repo)} target="_blank" rel="external noopener">
+	<a class:compact href={repoUrl(project.repo)} target="_blank" rel="external noopener">
 		{#if project.logo}
-			<img class="mark" src={project.logo} alt="" width="40" height="40" loading="lazy" />
+			<img class="mark" src={project.logo} alt="" width={size} height={size} loading="lazy" />
 		{:else}
-			<span class="mark" aria-hidden="true">{project.name.slice(0, 1)}</span>
+			<span class="mark letter" aria-hidden="true">{project.name.slice(0, 1)}</span>
 		{/if}
 		<span class="name">{project.name}</span>
-		<span class="rule"></span>
-		<span class="stars"><Stars count={project.stars} /></span>
-		<span class="desc">{project.blurb}</span>
-		<span class="meta"><Meta {project} /></span>
-		<span class="visually-hidden">opens in a new tab</span>
+		<Stars count={project.stars} />
+		{#if project.blurb}<span class="blurb">{project.blurb}</span>{/if}
+		{#if meta}<ProjectMeta {project} />{/if}
+		<span class="visually-hidden">, opens in a new tab</span>
 	</a>
 </li>
 
 <style>
 	a {
+		--mark: 2.5rem;
+
 		display: grid;
-		grid-template-columns: auto minmax(0, 1fr);
-		column-gap: var(--space-sm);
-		row-gap: var(--space-2xs);
-		margin-inline: calc(var(--space-sm) * -1);
-		border-radius: var(--radius-md);
-		padding: var(--space-md) var(--space-sm);
+		grid-template-columns: var(--mark) minmax(0, 1fr) auto;
+		align-items: center;
+		column-gap: var(--space-md);
+		row-gap: var(--space-3xs);
+		block-size: 100%;
+		padding: var(--space-sm) var(--card-padding);
 		color: inherit;
 		text-decoration: none;
 		transition: background var(--duration-fast) var(--ease-out);
 
-		.mark {
-			grid-area: 1 / 1 / 4 / 2;
-			align-self: start;
-			inline-size: 2.5rem;
-			block-size: 2.5rem;
-			border-radius: var(--radius-md);
+		&:hover {
+			background: var(--state-hover);
 		}
 
-		img.mark {
-			object-fit: contain;
+		&:active {
+			background: var(--state-press);
 		}
 
-		span.mark {
-			display: grid;
-			place-items: center;
-			background: var(--color-surface-alt);
-			color: var(--color-text-muted);
-			font-family: var(--font-display);
-			font-weight: var(--weight-semibold);
-			transition: color var(--duration-base) var(--ease-out);
+		&:focus-visible {
+			outline-offset: calc(var(--focus-ring) * -1);
 		}
 
-		.name {
-			grid-area: 1 / 2;
-			align-self: center;
-			font-family: var(--font-display);
-			font-size: var(--text-lg);
-			font-weight: var(--weight-medium);
-			letter-spacing: var(--tracking-tight);
-			transition: color var(--duration-base) var(--ease-out);
+		.blurb,
+		> :global(.meta) {
+			grid-column: 2 / -1;
 		}
+	}
 
-		.rule {
-			display: none;
-		}
+	.compact {
+		--mark: 2rem;
 
-		.desc {
-			grid-area: 2 / 2;
-			color: var(--color-text-muted);
+		.blurb {
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 2;
+			line-clamp: 2;
+			overflow: hidden;
 			font-size: var(--text-sm);
 		}
+	}
 
-		.stars,
-		.meta {
-			grid-row: 3;
-			grid-column: 2;
-		}
+	.mark {
+		grid-row: 1 / span 3;
+		align-self: start;
+		inline-size: var(--mark);
+		block-size: var(--mark);
+		object-fit: contain;
+	}
 
-		.stars {
-			justify-self: end;
-			font-size: var(--text-xs);
-			letter-spacing: var(--tracking-wide);
-			transition: color var(--duration-base) var(--ease-out);
-		}
+	.letter {
+		display: grid;
+		place-items: center;
+		border-radius: var(--radius-md);
+		background: var(--color-primary-container);
+		color: var(--color-on-primary-container);
+		font-family: var(--font-display);
+		font-weight: var(--weight-heavy);
+	}
 
-		.meta {
-			justify-self: start;
-		}
+	.name {
+		font-weight: var(--weight-semibold);
+		font-size: var(--text-lg);
+		line-height: var(--leading-snug);
+	}
 
-		&:hover {
-			background: var(--color-bg-alt);
-
-			.name,
-			.stars,
-			span.mark {
-				color: var(--color-accent-hover);
-			}
-
-			.rule {
-				border-color: var(--color-border-strong);
-			}
-		}
-
-		@media (width >= 40rem) {
-			grid-template-columns: auto auto minmax(var(--space-lg), 1fr) auto;
-			align-items: center;
-			column-gap: var(--space-md);
-
-			.rule {
-				display: block;
-				grid-area: 1 / 3;
-				border-top: var(--border-thin) solid var(--color-border);
-				transition: border-color var(--duration-base) var(--ease-out);
-			}
-
-			.stars {
-				grid-area: 1 / 4;
-			}
-
-			.desc {
-				grid-area: 2 / 2 / 3 / 5;
-			}
-
-			.meta {
-				grid-column: 2 / 5;
-			}
-		}
+	.blurb {
+		color: var(--color-text-muted);
+		font-size: var(--text-md);
+		line-height: var(--leading-snug);
 	}
 </style>

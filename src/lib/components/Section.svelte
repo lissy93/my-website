@@ -7,64 +7,64 @@
 		title,
 		href,
 		action = 'View all',
+		flush = false,
+		wide = false,
 		children
-	}: { title: string; href?: Pathname; action?: string; children: Snippet } = $props();
+	}: {
+		title: string;
+		href?: Pathname;
+		action?: string;
+		/* lists run edge to edge, everything else gets padding */
+		flush?: boolean;
+		/* spans every column of the page grid */
+		wide?: boolean;
+		children: Snippet;
+	} = $props();
 
 	let id = $derived(title.toLowerCase().replace(/\W+/g, '-'));
 </script>
 
-<section aria-labelledby={id}>
-	<div class="head">
+<section class="card" class:flush class:wide aria-labelledby={id}>
+	<header>
 		<h2 {id}>{title}</h2>
-		{#if href}
-			<a href={resolve(href)}>{action}</a>
-		{/if}
+		{#if href}<a class="chip" href={resolve(href)}>{action}</a>{/if}
+	</header>
+	<div class="body">
+		{@render children()}
 	</div>
-	{@render children()}
 </section>
 
 <style>
-	.head {
+	.card {
+		display: flex;
+		flex-direction: column;
+		border-radius: var(--radius-lg);
+		overflow: clip;
+		background: var(--color-surface);
+		box-shadow: var(--shadow-1);
+	}
+
+	.wide {
+		grid-column: 1 / -1;
+	}
+
+	header {
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
 		gap: var(--space-md);
-		margin-block-end: var(--space-lg);
+		min-block-size: 3.5rem;
+		padding: var(--space-sm) var(--space-sm) var(--space-sm) var(--card-padding);
+		background: var(--color-primary-container);
+		color: var(--color-on-primary-container);
 	}
 
-	h2 {
-		display: flex;
-		flex: 1;
-		align-items: center;
-		gap: var(--space-sm);
-		font-size: var(--text-sm);
-		font-weight: var(--weight-semibold);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
+	.body {
+		padding: var(--card-padding);
 	}
 
-	h2::before {
-		content: '';
-		flex: none;
-		inline-size: var(--space-xs);
-		block-size: var(--space-xs);
-		background: var(--color-accent);
-		rotate: 45deg;
-	}
-
-	h2::after {
-		content: '';
-		flex: 1;
-		border-top: var(--border-thin) solid var(--color-border);
-	}
-
-	.head a {
-		flex: none;
-		color: var(--color-text-muted);
-		font-size: var(--text-sm);
-		text-decoration: none;
-	}
-
-	.head a:hover {
-		color: var(--color-accent);
+	.flush .body {
+		padding-inline: 0;
+		padding-block: var(--space-xs);
 	}
 </style>

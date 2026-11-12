@@ -1,34 +1,43 @@
 <script lang="ts">
 	import '../app.css';
-	import wordmark from '$lib/fonts/chopic-3d.woff2?url';
-	import { page } from '$app/state';
+	import archivo from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
+	import figtree from '@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2?url';
 	import Footer from '$components/Footer.svelte';
-	import Nav from '$components/Nav.svelte';
+	import Header from '$components/Header.svelte';
 	import { analytics } from '$lib/config';
 
 	let { children } = $props();
-	let isHome = $derived(page.route.id === '/');
 </script>
 
 <svelte:head>
-	<link rel="preload" href={wordmark} as="font" type="font/woff2" crossorigin="anonymous" />
+	{#each [archivo, figtree] as font (font)}
+		<link rel="preload" href={font} as="font" type="font/woff2" crossorigin="anonymous" />
+	{/each}
 	{#if analytics}
 		<script defer data-domain={analytics.domain} src={analytics.script}></script>
 	{/if}
 </svelte:head>
 
-<a class="visually-hidden" href="#main">Skip to content</a>
-{#if !isHome}
-	<Nav />
-{/if}
-<main id="main" class="wrap">
+<a class="skip chip" href="#main">Skip to content</a>
+<Header />
+<main id="main">
 	{@render children()}
 </main>
 <Footer />
 
 <style>
+	.skip {
+		position: absolute;
+		inset: var(--space-md) auto auto var(--space-md);
+		z-index: 1;
+		translate: 0 -200%;
+
+		&:focus {
+			translate: 0;
+		}
+	}
+
 	main {
 		flex: 1;
-		padding-block: var(--space-2xl) var(--space-3xl);
 	}
 </style>

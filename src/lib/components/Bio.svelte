@@ -1,70 +1,52 @@
 <script lang="ts">
 	import SocialLinks from '$components/SocialLinks.svelte';
-	import { site } from '$lib/config';
-	import { bio, photo } from '$lib/content';
+	import { bio } from '$lib/content';
+
+	const [lead, ...rest] = bio;
 </script>
 
 <div class="bio">
-	<div class="prose">
-		{#each bio as line (line)}
+	<p class="lead">{lead}</p>
+	<div class="rest">
+		{#each rest as line (line)}
 			<p>{line}</p>
 		{/each}
-	</div>
-
-	<div class="me">
-		<img src={photo} alt={site.name} width="720" height="1080" decoding="async" />
 		<SocialLinks />
 	</div>
 </div>
 
 <style>
 	.bio {
+		grid-column: 1 / -1;
 		display: grid;
-		gap: var(--space-xl);
+		gap: var(--space-lg);
+		padding-block-end: clamp(0.5rem, 2vw, 1.5rem);
 	}
 
 	p {
+		max-inline-size: 62ch;
 		color: var(--color-text-muted);
 		text-wrap: pretty;
 	}
 
-	p:first-child {
+	.lead {
+		max-inline-size: 38ch;
 		color: var(--color-text);
-		font-size: var(--text-xl);
+		font-size: var(--text-intro);
+		font-weight: var(--weight-medium);
 		line-height: var(--leading-snug);
 	}
 
-	.me {
-		display: flex;
-		align-items: center;
-		gap: var(--space-md);
+	.rest {
+		display: grid;
+		align-content: start;
+		gap: var(--space-lg);
 	}
 
-	img {
-		inline-size: 4.5rem;
-		aspect-ratio: 4 / 5;
-		border: var(--border-thin) solid var(--color-border);
-		border-radius: var(--radius-md);
-		object-fit: cover;
-		object-position: 50% 20%;
-	}
-
-	@media (width >= 48rem) {
+	@media (width >= 56rem) {
 		.bio {
-			grid-template-columns: minmax(0, 1fr) auto;
-			align-items: start;
-			gap: var(--space-2xl);
-		}
-
-		.me {
-			flex-direction: column;
-			align-items: start;
-			gap: var(--space-sm);
-		}
-
-		img {
-			inline-size: 9.5rem;
-			border-radius: var(--radius-lg);
+			grid-template-columns: 7fr 5fr;
+			gap: clamp(1.5rem, 4vw, 4rem);
 		}
 	}
 </style>
