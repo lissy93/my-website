@@ -4,6 +4,7 @@
 	import { page } from '$app/state';
 	import Footer from '$components/Footer.svelte';
 	import Nav from '$components/Nav.svelte';
+	import { analytics } from '$lib/config';
 
 	let { children } = $props();
 	let isHome = $derived(page.route.id === '/');
@@ -11,6 +12,9 @@
 
 <svelte:head>
 	<link rel="preload" href={wordmark} as="font" type="font/woff2" crossorigin="anonymous" />
+	{#if analytics}
+		<script defer data-domain={analytics.domain} src={analytics.script}></script>
+	{/if}
 </svelte:head>
 
 <a class="visually-hidden" href="#main">Skip to content</a>

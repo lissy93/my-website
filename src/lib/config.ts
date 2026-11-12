@@ -3,9 +3,20 @@ import type { FooterLink } from './types';
 
 export const site = {
 	name: 'Alicia Sykes',
-	description: 'Personal site of Alicia Sykes.',
+	description:
+		'Alicia Sykes, software engineer in London. I build free, open source apps for privacy, security and self-hosting, like Web Check and Dashy.',
 	url: 'https://aliciasykes.com',
+	image: {
+		src: '/og.jpg',
+		alt: 'Alicia Sykes, open source apps for privacy, security and self-hosting'
+	},
 	locale: 'en'
+};
+
+/* set to undefined to turn off, its host is also allowed in the CSP in svelte.config.js */
+export const analytics: { domain: string; script: string } | undefined = {
+	domain: 'aliciasykes.com',
+	script: 'https://no-track.as93.net/js/script.js'
 };
 
 export const heroLinks: { href: Pathname; label: string }[] = [

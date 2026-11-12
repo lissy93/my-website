@@ -1,6 +1,9 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { heroLinks, site } from '$lib/config';
+
+	let { title = site.name, children }: { title?: string; children?: Snippet } = $props();
 
 	let mx = $state(0);
 	let my = $state(0);
@@ -15,7 +18,8 @@
 <svelte:window onpointermove={track} />
 
 <section class="hero" style="--mx: {mx}; --my: {my}">
-	<h1>{site.name}</h1>
+	<h1>{title}</h1>
+	{@render children?.()}
 
 	<nav aria-label="Sections">
 		{#each heroLinks as { href, label } (href)}
@@ -55,7 +59,7 @@
 	h1 {
 		font-family: var(--font-wordmark);
 		font-weight: var(--weight-normal);
-		font-size: clamp(2.25rem, 9vw, 5rem);
+		font-size: var(--hero-size, clamp(2.25rem, 9vw, 5rem));
 		line-height: 1.05;
 		letter-spacing: 0.01em;
 		text-wrap: balance;
@@ -108,12 +112,12 @@
 	}
 
 	@media (prefers-reduced-motion: no-preference) {
-		h1 {
+		.hero > :global(*) {
 			animation: rise var(--duration-slower) var(--ease-out) backwards;
 		}
 
-		nav {
-			animation: rise var(--duration-slower) var(--ease-out) var(--duration-base) backwards;
+		.hero > nav {
+			animation-delay: var(--duration-base);
 		}
 	}
 

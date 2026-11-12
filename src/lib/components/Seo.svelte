@@ -10,6 +10,7 @@
 
 	let heading = $derived(title ? `${title} · ${site.name}` : site.name);
 	let url = $derived(new URL(page.url.pathname, site.url).href);
+	const image = new URL(site.image.src, site.url).href;
 
 	/* escape < so data can't break out, split the end tag so svelte doesn't see it */
 	let ld = $derived(
@@ -25,6 +26,10 @@
 	<meta property="og:description" content={description} />
 	<meta property="og:url" content={url} />
 	<meta property="og:type" content="website" />
+	<meta property="og:image" content={image} />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:alt" content={site.image.alt} />
 	<meta name="twitter:card" content="summary_large_image" />
 	{#if schema}
 		{@html ld}
