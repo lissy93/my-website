@@ -1,37 +1,41 @@
-/* change --hue to re-theme the whole site, 357.6 is #e03284 */
+/* --hue is the pink (344.1 is #fe30bf), --hue-grey tints every grey */
 :root {
-	--hue: 357.6;
+	--hue: 344.1;
+	--hue-grey: 265;
 
-	--primary-100: oklch(92% 0.047 var(--hue));
-	--primary-300: oklch(78% 0.145 var(--hue));
-	--primary-500: oklch(61.1% 0.217 var(--hue));
-	--primary-600: oklch(52% 0.195 var(--hue));
-	--primary-800: oklch(33% 0.114 var(--hue));
-	--primary-900: oklch(24.7% 0.086 var(--hue));
+	--primary-100: oklch(92% 0.05 var(--hue));
+	--primary-300: oklch(81.1% 0.135 var(--hue));
+	--primary-500: oklch(68.1% 0.265 var(--hue));
+	--primary-600: oklch(59.1% 0.23 var(--hue));
+	--primary-800: oklch(33% 0.13 var(--hue));
+	--primary-900: oklch(24.7% 0.1 var(--hue));
+
+	/* navy ink, since the pink band is too bright to carry white text */
+	--ink: oklch(22.6% 0.08 276.9);
 
 	--neutral-0: oklch(100% 0 0);
-	--neutral-50: oklch(96.6% 0.007 var(--hue));
-	--neutral-100: oklch(93.3% 0.012 var(--hue));
-	--neutral-500: oklch(60.4% 0.019 var(--hue));
-	--neutral-600: oklch(45.4% 0.016 var(--hue));
-	--neutral-900: oklch(22.8% 0.013 var(--hue));
+	--neutral-50: oklch(96.6% 0.011 var(--hue-grey));
+	--neutral-100: oklch(93.3% 0.019 var(--hue-grey));
+	--neutral-500: oklch(60.4% 0.03 var(--hue-grey));
+	--neutral-600: oklch(45.4% 0.026 var(--hue-grey));
+	--neutral-900: oklch(22.8% 0.021 var(--hue-grey));
 
-	--neutral-dark-100: oklch(94% 0.01 var(--hue));
-	--neutral-dark-300: oklch(77% 0.02 var(--hue));
-	--neutral-dark-500: oklch(52% 0.022 var(--hue));
-	--neutral-dark-700: oklch(31% 0.022 var(--hue));
-	--neutral-dark-800: oklch(22% 0.017 var(--hue));
-	--neutral-dark-850: oklch(19% 0.014 var(--hue));
-	--neutral-dark-900: oklch(16.5% 0.012 var(--hue));
+	--neutral-dark-100: oklch(94% 0.016 var(--hue-grey));
+	--neutral-dark-300: oklch(77% 0.032 var(--hue-grey));
+	--neutral-dark-500: oklch(52% 0.035 var(--hue-grey));
+	--neutral-dark-700: oklch(31% 0.035 var(--hue-grey));
+	--neutral-dark-800: oklch(22% 0.027 var(--hue-grey));
+	--neutral-dark-850: oklch(19% 0.022 var(--hue-grey));
+	--neutral-dark-900: oklch(16.5% 0.019 var(--hue-grey));
 
-	/* each colour is light-dark(light theme, dark theme), the system setting picks one */
+	/* light-dark(light value, dark value) follows the system setting */
 	color-scheme: light dark;
 
 	--color-primary: light-dark(var(--primary-500), var(--primary-600));
-	--color-on-primary: var(--neutral-0);
+	--color-on-primary: light-dark(var(--ink), var(--neutral-0));
 	--color-primary-text: light-dark(var(--primary-600), var(--primary-300));
 	--color-primary-container: light-dark(var(--primary-100), var(--primary-800));
-	--color-on-primary-container: light-dark(var(--primary-900), var(--primary-100));
+	--color-on-primary-container: light-dark(var(--ink), var(--primary-100));
 	--color-action: light-dark(var(--primary-600), var(--primary-300));
 	--color-on-action: light-dark(var(--neutral-0), var(--primary-900));
 
@@ -49,8 +53,8 @@
 	--state-hover: oklch(from var(--primary-500) l c h / 0.07);
 	--state-press: oklch(from var(--primary-500) l c h / 0.13);
 
-	--shadow-key: light-dark(oklch(from var(--primary-900) l c h / 0.12), oklch(0% 0 0 / 0.5));
-	--shadow-ambient: light-dark(oklch(from var(--primary-900) l c h / 0.07), oklch(0% 0 0 / 0.3));
+	--shadow-key: light-dark(oklch(from var(--ink) l c h / 0.12), oklch(0% 0 0 / 0.5));
+	--shadow-ambient: light-dark(oklch(from var(--ink) l c h / 0.07), oklch(0% 0 0 / 0.3));
 	--shadow-1: 0 1px 2px var(--shadow-key), 0 1px 3px 1px var(--shadow-ambient);
 	--shadow-2: 0 1px 2px var(--shadow-key), 0 4px 10px 3px var(--shadow-ambient);
 

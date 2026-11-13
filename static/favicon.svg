@@ -11,13 +11,13 @@
 		<circle cx="9" cy="9.5" r="1.3" />
 		<circle cx="13" cy="13" r="1" />
 	</g>
-	<g fill="#a3134f">
+	<g fill="#bb188c">
 		<rect x="16" y="47" width="6.5" height="11" rx="3.25" />
 		<rect x="33" y="47" width="6.5" height="11" rx="3.25" />
 	</g>
-	<g fill="#e03284">
-		<path stroke="#e03284" stroke-width="2" stroke-linejoin="round" d="M11 41c-5.4 1-8.2 4.2-9 9.6 3.8-1 7.4-2.7 10.4-4.8Z" />
-		<path fill="none" stroke="#e03284" stroke-width="8.5" stroke-linecap="round" d="M34 41c5.5-5 7-13.5 10.5-21.5" />
+	<g fill="#fe30bf">
+		<path stroke="#fe30bf" stroke-width="2" stroke-linejoin="round" d="M11 41c-5.4 1-8.2 4.2-9 9.6 3.8-1 7.4-2.7 10.4-4.8Z" />
+		<path fill="none" stroke="#fe30bf" stroke-width="8.5" stroke-linecap="round" d="M34 41c5.5-5 7-13.5 10.5-21.5" />
 		<ellipse cx="25" cy="44" rx="16" ry="10.5" />
 		<rect x="11.5" y="47" width="6.5" height="12" rx="3.25" />
 		<rect x="28.5" y="47" width="6.5" height="12" rx="3.25" />
@@ -25,8 +25,8 @@
 	</g>
 	<ellipse cx="48.6" cy="14.2" rx="2.4" ry="2.7" fill="#fff" />
 	<circle cx="49.5" cy="13.3" r="1.3" fill="#1c1216" />
-	<path fill="none" stroke="#5c0a2e" stroke-width="1.3" stroke-linecap="round" d="M48.8 18.4q2.2.6 3.8-1.2" />
-	<g fill="#a3134f">
+	<path fill="none" stroke="#731756" stroke-width="1.3" stroke-linecap="round" d="M48.8 18.4q2.2.6 3.8-1.2" />
+	<g fill="#bb188c">
 		<circle cx="19" cy="38" r="1.8" />
 		<circle cx="26" cy="36" r="1.5" />
 		<circle cx="32" cy="38.5" r="1.2" />
