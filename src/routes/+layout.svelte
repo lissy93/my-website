@@ -1,12 +1,17 @@
 <script lang="ts">
 	import '../app.css';
+	import { onNavigate } from '$app/navigation';
 	import archivo from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
 	import figtree from '@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2?url';
 	import Footer from '$components/Footer.svelte';
 	import Header from '$components/Header.svelte';
 	import { analytics } from '$lib/config';
+	import { pageTransition, watchSwipes } from '$lib/page-transition';
 
 	let { children } = $props();
+
+	$effect(watchSwipes);
+	onNavigate(pageTransition);
 </script>
 
 <svelte:head>
@@ -29,7 +34,7 @@
 	.skip {
 		position: absolute;
 		inset: var(--space-md) auto auto var(--space-md);
-		z-index: 1;
+		z-index: var(--layer-skip);
 		translate: 0 -200%;
 
 		&:focus {

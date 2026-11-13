@@ -20,7 +20,7 @@
 				<h2 {id}>{title}</h2>
 				<ul role="list">
 					{#each links as item (item.href)}
-						<li><SmartLink {...item} /></li>
+						<li><SmartLink {...item} arrow /></li>
 					{/each}
 				</ul>
 			</nav>
@@ -74,8 +74,10 @@
 		letter-spacing: var(--tracking-tight);
 		text-decoration: none;
 
-		&:hover {
-			color: var(--color-primary-text);
+		@media (hover: hover) {
+			&:hover {
+				color: var(--color-primary-text);
+			}
 		}
 	}
 
@@ -97,11 +99,13 @@
 	.legal {
 		:global(a) {
 			color: var(--color-text-muted);
-			text-decoration: none;
+			text-decoration-color: transparent;
 
-			&:hover {
-				color: var(--color-primary-text);
-				text-decoration: underline;
+			@media (hover: hover) {
+				&:hover {
+					color: var(--color-primary-text);
+					text-decoration-color: currentcolor;
+				}
 			}
 		}
 	}

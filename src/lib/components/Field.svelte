@@ -65,7 +65,7 @@
 			aria-describedby={describedBy}
 		/>
 	{/if}
-	{#if error}<span class="error" id={errorId}>{error}</span>{/if}
+	{#if error}<span class="error arrive" id={errorId}>{error}</span>{/if}
 </p>
 
 <style>
@@ -89,8 +89,10 @@
 		font-size: var(--text-sm);
 		transition: border-color var(--duration-fast) var(--ease-out);
 
-		&:hover {
-			border-color: var(--color-primary-text);
+		@media (hover: hover) {
+			&:hover {
+				border-color: var(--color-primary-text);
+			}
 		}
 	}
 

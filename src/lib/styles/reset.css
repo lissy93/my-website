@@ -67,18 +67,3 @@ ol[role='list'] {
 	list-style: none;
 	padding: 0;
 }
-
-:target {
-	scroll-margin-block: var(--space-2xl);
-}
-
-@media (prefers-reduced-motion: reduce) {
-	*,
-	*::before,
-	*::after {
-		animation-duration: 0.01ms !important;
-		animation-iteration-count: 1 !important;
-		transition-duration: 0.01ms !important;
-		scroll-behavior: auto !important;
-	}
-}

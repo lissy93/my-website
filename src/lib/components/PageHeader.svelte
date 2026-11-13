@@ -5,7 +5,7 @@
 	let { title, lede, links = [] }: { title: string; lede?: string; links?: Link[] } = $props();
 </script>
 
-<div class="band">
+<div class="band masthead">
 	<div class="wrap">
 		<h1>{title}</h1>
 		{#if lede}<p>{lede}</p>{/if}
@@ -24,7 +24,6 @@
 		display: grid;
 		justify-items: start;
 		gap: var(--space-lg);
-		padding-block: clamp(1.5rem, 5vw, 3rem) clamp(2rem, 5vw, 3.5rem);
 	}
 
 	h1 {

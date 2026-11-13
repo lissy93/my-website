@@ -30,7 +30,7 @@
 
 <div bind:this={panel} tabindex="-1">
 	{#if result?.sent}
-		<div class="message-is-sent">
+		<div class="message-is-sent arrive">
 			<p class="sent">Got it, thanks. I’ll get back to you as soon as I can.</p>
 			<p><a href={resolve('/contact')}>Send another</a></p>
 		</div>
@@ -52,8 +52,12 @@
 			/>
 
 			<p class="hint" id="reason-hint" role="status">
-				{chosen.hint}
-				{#if chosen.link}<SmartLink {...chosen.link} />{/if}
+				{#key chosen}
+					<span class="arrive">
+						{chosen.hint}
+						{#if chosen.link}<SmartLink {...chosen.link} />{/if}
+					</span>
+				{/key}
 			</p>
 
 			<div class="pair">
@@ -89,10 +93,14 @@
 			/>
 
 			{#if result?.failed}
-				<p class="failed">That didn’t send, sorry. Give it another go, or email me directly.</p>
+				<p class="failed arrive">
+					That didn’t send, sorry. Give it another go, or email me directly.
+				</p>
 			{/if}
 
-			<button type="submit" disabled={sending}>{sending ? 'Sending…' : 'Send'}</button>
+			<button class="press" type="submit" disabled={sending}>
+				{sending ? 'Sending…' : 'Send'}
+			</button>
 		</form>
 	{/if}
 </div>
@@ -150,10 +158,16 @@
 		font-size: var(--text-sm);
 		font-weight: var(--weight-semibold);
 		letter-spacing: var(--tracking-tight);
-		transition: background var(--duration-fast) var(--ease-out);
-		&:hover {
-			background: var(--color-primary-text);
+		transition:
+			background-color var(--duration-fast) var(--ease-out),
+			var(--spring-back);
+
+		@media (hover: hover) {
+			&:hover {
+				background: color-mix(in oklch, var(--color-action), var(--color-on-action) 14%);
+			}
 		}
+
 		&:disabled {
 			background: var(--color-surface-sunken);
 			color: var(--color-text-muted);

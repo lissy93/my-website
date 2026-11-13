@@ -6,7 +6,7 @@
 <ul role="list">
 	{#each socials as { label, href, color } (label)}
 		<li>
-			<a {href} style:--brand={color} target="_blank" rel="me external noopener">
+			<a class="press" {href} style:--brand={color} target="_blank" rel="me external noopener">
 				<svg viewBox="0 0 24 24" aria-hidden="true"><path d={socialIcons[label]} /></svg>
 				<span class="visually-hidden">{label}, opens in a new tab</span>
 			</a>
@@ -21,7 +21,7 @@
 		gap: var(--space-xs);
 	}
 
-	/* fills with the network's own colour on hover */
+	/* lifts and fills with the network's own colour on hover */
 	a {
 		display: grid;
 		place-items: center;
@@ -32,14 +32,23 @@
 		color: var(--color-on-primary-container);
 		box-shadow: var(--shadow-1);
 		transition:
-			background var(--duration-base) var(--ease-out),
-			color var(--duration-base) var(--ease-out),
-			box-shadow var(--duration-base) var(--ease-out);
+			background-color var(--duration-fast) var(--ease-out),
+			color var(--duration-fast) var(--ease-out),
+			box-shadow var(--duration-fast) var(--ease-out),
+			translate var(--duration-fast) var(--ease-out),
+			var(--spring-back);
 
-		&:hover {
-			background: var(--brand);
-			color: var(--neutral-0);
-			box-shadow: var(--shadow-2);
+		@media (hover: hover) {
+			&:hover {
+				background: var(--brand);
+				color: var(--neutral-0);
+				box-shadow: var(--shadow-2);
+				translate: 0 calc(var(--lift) * -1);
+			}
+		}
+
+		&:active {
+			translate: 0;
 		}
 	}
 

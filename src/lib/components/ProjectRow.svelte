@@ -1,4 +1,5 @@
 <script lang="ts">
+	import NewTab from '$components/NewTab.svelte';
 	import ProjectMeta from '$components/ProjectMeta.svelte';
 	import Stars from '$components/Stars.svelte';
 	import { repoUrl } from '$lib/content';
@@ -20,11 +21,10 @@
 		{:else}
 			<span class="mark letter" aria-hidden="true">{project.name.slice(0, 1)}</span>
 		{/if}
-		<span class="name">{project.name}</span>
+		<span class="name">{project.name}<NewTab /></span>
 		<Stars count={project.stars} />
 		{#if project.blurb}<span class="blurb">{project.blurb}</span>{/if}
 		{#if meta}<ProjectMeta {project} />{/if}
-		<span class="visually-hidden">, opens in a new tab</span>
 	</a>
 </li>
 
@@ -35,16 +35,23 @@
 		display: grid;
 		grid-template-columns: var(--mark) minmax(0, 1fr) auto;
 		align-items: center;
+		align-content: start;
 		column-gap: var(--space-md);
 		row-gap: var(--space-3xs);
 		block-size: 100%;
 		padding: var(--space-sm) var(--card-padding);
 		color: inherit;
 		text-decoration: none;
-		transition: background var(--duration-fast) var(--ease-out);
+		transition: background-color var(--duration-fast) var(--ease-out);
 
-		&:hover {
-			background: var(--state-hover);
+		@media (hover: hover) {
+			&:hover {
+				background: var(--state-hover);
+
+				.mark {
+					scale: var(--grow-scale);
+				}
+			}
 		}
 
 		&:active {
@@ -80,6 +87,7 @@
 		inline-size: var(--mark);
 		block-size: var(--mark);
 		object-fit: contain;
+		transition: scale var(--duration-fast) var(--ease-out);
 	}
 
 	.letter {

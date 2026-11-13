@@ -1,0 +1,87 @@
+/* page changes: the band resizes, the old page fades, the new one rises */
+::view-transition-group(*) {
+	animation-duration: var(--duration-page);
+	animation-timing-function: var(--ease-in-out);
+}
+
+/* only named mid-change, or the hero couldn't fly over the bar */
+:root:active-view-transition .masthead {
+	view-transition-name: band;
+}
+
+/* fills in pink while the old title leaves and the new one lands */
+::view-transition-group(band) {
+	background: var(--color-primary);
+}
+
+::view-transition-image-pair(band) {
+	overflow: clip;
+}
+
+::view-transition-old(band) {
+	animation-duration: var(--duration-fast);
+}
+
+/* keeps the pill the same height as it slides between chips */
+::view-transition-group(nav-pill) {
+	border-radius: var(--radius-sm);
+	overflow: clip;
+}
+
+::view-transition-old(nav-pill),
+::view-transition-new(nav-pill) {
+	block-size: 100%;
+}
+
+/* keeps the nav labels above the pill as it slides in */
+::view-transition-group(.nav-label) {
+	z-index: 1;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+	mix-blend-mode: normal;
+}
+
+/* the page content slides with the band's bottom edge */
+::view-transition-old(root) {
+	animation:
+		fade-out var(--duration-fast) var(--ease-out) both,
+		follow-out var(--duration-page) var(--ease-in-out) both;
+}
+
+::view-transition-new(root) {
+	animation:
+		fade-in var(--duration-page) var(--ease-out) both,
+		follow-in var(--duration-page) var(--ease-in-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-group(*) {
+		animation: none;
+	}
+}
+
+@keyframes fade-out {
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+}
+
+@keyframes follow-in {
+	from {
+		translate: 0 calc(var(--band-shift, 0px) + var(--rise));
+	}
+}
+
+@keyframes follow-out {
+	to {
+		translate: 0 calc(var(--band-shift, 0px) * -1);
+	}
+}

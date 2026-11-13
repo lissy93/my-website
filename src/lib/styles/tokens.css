@@ -107,8 +107,36 @@
 	--width-page: 80rem;
 	--gutter: clamp(1rem, 4vw, 2.75rem);
 	--card-padding: 1.25rem;
+	--bar-height: 3.75rem;
 
+	/* ease-out for feedback, ease-in-out for moving across the screen */
 	--ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+	--ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+	--ease-spring: linear(0, 0.21, 0.54, 0.79, 0.93, 0.99, 1.013, 1.014, 1.01, 1.005, 1);
+	--duration-press: 100ms;
 	--duration-fast: 150ms;
 	--duration-base: 220ms;
+	--duration-release: 380ms;
+	--duration-page: 280ms;
+	--spring-back: scale var(--duration-release) var(--ease-spring);
+
+	--layer-fade: 1;
+	--layer-bar: 2;
+	--layer-hero: 3;
+	--layer-skip: 4;
+
+	/* how far things move, all zeroed for reduced motion */
+	--press-scale: 0.97;
+	--grow-scale: 1.05;
+	--lift: 2px;
+	--rise: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:root {
+		--press-scale: 1;
+		--grow-scale: 1;
+		--lift: 0;
+		--rise: 0;
+	}
 }

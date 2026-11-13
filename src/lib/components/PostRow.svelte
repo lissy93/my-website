@@ -8,6 +8,7 @@
 </script>
 
 <script lang="ts">
+	import NewTab from '$components/NewTab.svelte';
 	import type { Post } from '$lib/types';
 
 	let { post }: { post: Post } = $props();
@@ -15,12 +16,11 @@
 
 <li>
 	<a href={post.url} target="_blank" rel="external noopener">
-		<span class="title">{post.title}</span>
+		<span class="title">{post.title}<NewTab /></span>
 		<span class="when">
 			<time datetime={post.date}>{formatter.format(new Date(post.date))}</time> on {post.source}
 		</span>
 		{#if post.blurb}<span class="blurb">{post.blurb}</span>{/if}
-		<span class="visually-hidden">, opens in a new tab</span>
 	</a>
 </li>
 
@@ -32,10 +32,12 @@
 		color: inherit;
 		overflow-wrap: anywhere;
 		text-decoration: none;
-		transition: background var(--duration-fast) var(--ease-out);
+		transition: background-color var(--duration-fast) var(--ease-out);
 
-		&:hover {
-			background: var(--state-hover);
+		@media (hover: hover) {
+			&:hover {
+				background: var(--state-hover);
+			}
 		}
 
 		&:active {
