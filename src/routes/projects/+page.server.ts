@@ -1,10 +1,20 @@
-import { projects } from '$lib/content';
-import { allProjects, withLiveStats } from '$lib/server/github';
+import { allProjects, featured, groups } from '$lib/projects';
+import { totalStars, withLiveStats } from '$lib/server/github';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => {
-	const [featured, everything] = await Promise.all([withLiveStats(projects), allProjects()]);
-	const shown = new Set(featured.map((project) => project.repo.toLowerCase()));
+/* the page's lists are keyed on these, and a repeat breaks it in the browser, so stop the build */
+const keys = [
+	...allProjects().map(({ repo }) => repo.toLowerCase()),
+	...featured.flatMap(({ screens }) => screens.flatMap(({ id }) => id ?? [])),
+	...groups.map(({ title }) => title)
+];
+const twice = keys.find((key, index) => keys.indexOf(key) !== index);
+if (twice) throw new Error(`"${twice}" is in src/lib/projects.ts twice`);
 
-	return { featured, rest: everything.filter((p) => !shown.has(p.repo.toLowerCase())) };
-};
+export const load: PageServerLoad = async () => ({
+	stars: await totalStars(),
+	featured: await withLiveStats(featured),
+	groups: await Promise.all(
+		groups.map(async (group) => ({ ...group, projects: await withLiveStats(group.projects) }))
+	)
+});

@@ -1,14 +1,20 @@
 <script lang="ts">
 	import SmartLink from '$components/SmartLink.svelte';
 	import type { Link } from '$lib/types';
+	import type { Snippet } from 'svelte';
 
-	let { title, lede, links = [] }: { title: string; lede?: string; links?: Link[] } = $props();
+	/* children is the lede under the title, links become chips below it */
+	let {
+		title,
+		links = [],
+		children
+	}: { title: string; links?: Link[]; children?: Snippet } = $props();
 </script>
 
 <div class="band masthead">
 	<div class="wrap">
 		<h1>{title}</h1>
-		{#if lede}<p>{lede}</p>{/if}
+		{#if children}<p>{@render children()}</p>{/if}
 		{#if links.length}
 			<ul role="list">
 				{#each links as link (link.href)}
@@ -37,6 +43,11 @@
 		font-weight: var(--weight-medium);
 		line-height: var(--leading-snug);
 		text-wrap: pretty;
+
+		/* pink links would vanish on the pink band */
+		:global(a) {
+			color: inherit;
+		}
 	}
 
 	ul {

@@ -45,7 +45,10 @@ npm run dev
 ### Configuring
 
 Site info, socials, RSS feeds and contact options are in [`src/lib/config.ts`](src/lib/config.ts).<br>
-Bio and projects are in [`src/lib/content.ts`](src/lib/content.ts).<br>
+Bio and photo are in [`src/lib/content.ts`](src/lib/content.ts).<br>
+Projects are in [`src/lib/projects.ts`](src/lib/projects.ts), in the order they're shown. Only what's listed there appears, and GitHub fills in stars, years and licences at build time.<br>
+Screenshots are ids from the `project-screens` album on Pixelflare. A screenshot with no id is a placeholder, and stays hidden until you add one.<br>
+Logos are a path in [`static/logos`](static/logos), or `logoUrl('id')` for one in the `logo` album on Pixelflare.<br>
 Secrets (GitHub token, mail API key) go in `.env`. Copy [`.env.example`](.env.example) to get started, each one is explained in there.
 
 ---

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { Pathname } from '$app/types';
+	import { slug } from '$lib/slug';
 	import type { Snippet } from 'svelte';
 
 	let {
@@ -21,7 +22,7 @@
 		children: Snippet;
 	} = $props();
 
-	let id = $derived(title.toLowerCase().replace(/\W+/g, '-'));
+	let id = $derived(slug(title));
 </script>
 
 <section class="card" class:flush class:wide aria-labelledby={id}>

@@ -10,7 +10,9 @@
 
 	/* updated this year counts as ongoing */
 	let to = $derived(project.to && project.to < thisYear ? project.to : 'now');
-	let years = $derived(project.from === to ? `${project.from}` : `${project.from}–${to}`);
+	let years = $derived(
+		project.from && (project.from === to ? `${project.from}` : `${project.from}–${to}`)
+	);
 </script>
 
 {#snippet fact(label: string, icon?: string, color?: string)}
@@ -24,7 +26,7 @@
 	{#if project.lang}
 		{@render fact(project.lang, langIcons[project.lang], langColors[project.lang])}
 	{/if}
-	{@render fact(years, calendarIcon)}
+	{#if years}{@render fact(years, calendarIcon)}{/if}
 	{#if project.license}{@render fact(project.license, licenseIcon)}{/if}
 </span>
 
@@ -33,7 +35,6 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--space-3xs) var(--space-md);
-		margin-block-start: var(--space-2xs);
 		color: var(--color-text-muted);
 		font-size: var(--text-xs);
 		font-variant-numeric: tabular-nums;
@@ -45,9 +46,9 @@
 		}
 	}
 
-	/* brand colour, nudged towards the text colour so it reads on both themes */
+	/* brand colour eased towards the text so it reads on both themes, oklab keeps the hue */
 	svg {
 		inline-size: 1.1em;
-		fill: color-mix(in oklch, var(--icon-color, currentcolor) 70%, var(--color-text));
+		fill: color-mix(in oklab, var(--icon-color, currentcolor) 70%, var(--color-text));
 	}
 </style>

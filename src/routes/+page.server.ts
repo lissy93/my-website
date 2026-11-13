@@ -1,4 +1,4 @@
-import { miniProjects, projects } from '$lib/content';
+import { onHome } from '$lib/projects';
 import { allPosts } from '$lib/server/feeds';
 import { withLiveStats } from '$lib/server/github';
 import type { PageServerLoad } from './$types';
@@ -6,8 +6,8 @@ import type { PageServerLoad } from './$types';
 /* prerendered, so GitHub and the feeds are only hit at build time */
 export const load: PageServerLoad = async () => {
 	const [main, mini, posts] = await Promise.all([
-		withLiveStats(projects),
-		withLiveStats(miniProjects),
+		withLiveStats(onHome('projects')),
+		withLiveStats(onHome('mini')),
 		allPosts()
 	]);
 

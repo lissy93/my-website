@@ -7,9 +7,10 @@
 	let message = $derived(
 		page.status === 404 ? 'This page doesn’t exist, or it’s moved.' : page.error?.message
 	);
+	const home = [{ label: 'Go to the homepage', href: '/' }];
 </script>
 
 <Seo title={status} />
 <svelte:head><meta name="robots" content="noindex" /></svelte:head>
 
-<PageHeader title={status} lede={message} links={[{ label: 'Go to the homepage', href: '/' }]} />
+<PageHeader title={status} links={home}>{message}</PageHeader>

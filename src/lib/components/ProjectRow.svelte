@@ -2,7 +2,7 @@
 	import NewTab from '$components/NewTab.svelte';
 	import ProjectMeta from '$components/ProjectMeta.svelte';
 	import Stars from '$components/Stars.svelte';
-	import { repoUrl } from '$lib/content';
+	import { sourceUrl } from '$lib/projects';
 	import type { Project } from '$lib/types';
 
 	let {
@@ -15,7 +15,7 @@
 </script>
 
 <li>
-	<a class:compact href={repoUrl(project.repo)} target="_blank" rel="external noopener">
+	<a class:compact href={sourceUrl(project)} target="_blank" rel="external noopener">
 		{#if project.logo}
 			<img class="mark" src={project.logo} alt="" width={size} height={size} loading="lazy" />
 		{:else}
@@ -62,9 +62,13 @@
 			outline-offset: calc(var(--focus-ring) * -1);
 		}
 
-		.blurb,
+		.blurb {
+			grid-column: 2 / -1;
+		}
+
 		> :global(.meta) {
 			grid-column: 2 / -1;
+			margin-block-start: var(--space-2xs);
 		}
 	}
 

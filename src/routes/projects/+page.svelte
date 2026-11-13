@@ -1,14 +1,47 @@
 <script lang="ts">
+	import FeaturedProject from '$components/FeaturedProject.svelte';
 	import PageHeader from '$components/PageHeader.svelte';
 	import ProjectList from '$components/ProjectList.svelte';
 	import Section from '$components/Section.svelte';
 	import Seo from '$components/Seo.svelte';
+	import SmartLink from '$components/SmartLink.svelte';
 	import { forges, site } from '$lib/config';
-	import { repoUrl } from '$lib/content';
+	import { screenUrl, sourceUrl } from '$lib/projects';
+	import type { Featured, Project } from '$lib/types';
 
 	let { data } = $props();
 
-	const homes = forges.map(({ name, url }) => ({ label: name, href: url }));
+	const [github, codeberg] = forges.map(({ name, url }) => ({ label: name, href: url }));
+
+	/* stars rounded down, so it never claims more than there are */
+	const compact = new Intl.NumberFormat('en', { notation: 'compact', roundingMode: 'floor' });
+	const about =
+		'Open source apps, tools and experiments by Alicia Sykes, ' +
+		'covering security, privacy, self-hosting and web development';
+	let description = $derived(
+		data.stars ? `${about}, with ${compact.format(data.stars)} stars on GitHub.` : `${about}.`
+	);
+
+	const cover = (project: Featured) => {
+		const id = project.screens.find((shot) => shot.id)?.id;
+		return id && screenUrl(id);
+	};
+
+	const entry = (project: Project, image?: string) => ({
+		'@type': 'SoftwareSourceCode',
+		name: project.name,
+		description: project.blurb,
+		url: project.website ?? sourceUrl(project),
+		codeRepository: sourceUrl(project),
+		programmingLanguage: project.lang,
+		license: project.license && `https://spdx.org/licenses/${project.license}`,
+		image
+	});
+
+	let entries = $derived([
+		...data.featured.map((project) => entry(project, cover(project))),
+		...data.groups.flatMap((group) => group.projects.map((project) => entry(project)))
+	]);
 
 	let schema = $derived({
 		'@context': 'https://schema.org',
@@ -17,37 +50,43 @@
 		url: `${site.url}/projects`,
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: data.featured.length + data.rest.length,
-			itemListElement: [...data.featured, ...data.rest].map((project, position) => ({
+			numberOfItems: entries.length,
+			itemListElement: entries.map((item, position) => ({
 				'@type': 'ListItem',
 				position: position + 1,
-				url: repoUrl(project.repo),
-				name: project.name
+				item
 			}))
 		}
 	});
 </script>
 
-<Seo
-	title="Projects"
-	description="Open source apps, tools and experiments by Alicia Sykes, covering security, privacy, self-hosting and web development."
-	{schema}
-/>
+<Seo title="Projects" {description} {schema} />
 
-<PageHeader
-	title="Projects"
-	lede="Pretty much everything I’ve built and open sourced. The featured ones are what I actually maintain, the rest is small tools, old experiments and things I made to learn something."
-	links={homes}
-/>
+<PageHeader title="Projects">
+	I build privacy, security and self-hosting tools. Everything is free and open source on
+	<SmartLink {...github} />, and mirrored to <SmartLink {...codeberg} />.
+</PageHeader>
 
 <div class="wrap page">
-	<Section title="Featured" flush>
-		<ProjectList projects={data.featured} />
-	</Section>
+	<section aria-labelledby="featured">
+		<h2 id="featured" class="visually-hidden">Featured</h2>
+		<ul class="tiles" role="list">
+			{#each data.featured as project, index (project.repo)}
+				<li><FeaturedProject {project} flip={index % 2 === 1} eager={index === 0} /></li>
+			{/each}
+		</ul>
+	</section>
 
-	{#if data.rest.length}
-		<Section title="Everything else" flush>
-			<ProjectList projects={data.rest} compact meta />
+	{#each data.groups as group (group.title)}
+		<Section title={group.title} flush>
+			<ProjectList projects={group.projects} compact meta />
 		</Section>
-	{/if}
+	{/each}
 </div>
+
+<style>
+	.tiles {
+		display: grid;
+		gap: var(--space-section);
+	}
+</style>

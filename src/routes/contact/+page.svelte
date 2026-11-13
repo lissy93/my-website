@@ -24,10 +24,10 @@
 	{schema}
 />
 
-<PageHeader
-	title="Contact"
-	lede="Got a question, an idea, or found a bug in something I’ve built? Send it over and I’ll get back to you."
-/>
+<PageHeader title="Contact">
+	Got a question, an idea, or found a bug in something I’ve built? Send it over and I’ll get back to
+	you.
+</PageHeader>
 
 <div class="wrap page">
 	<Section title="Send a message">

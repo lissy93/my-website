@@ -35,11 +35,10 @@
 	{schema}
 />
 
-<PageHeader
-	title="Blog"
-	lede="Notes, guides and the odd rant. Some of it lands on my blog, some on Dev.to, and this page pulls the lot together."
-	links={subscribe}
-/>
+<PageHeader title="Blog" links={subscribe}>
+	Notes, guides and the odd rant. Some of it lands on my blog, some on Dev.to, and this page pulls
+	the lot together.
+</PageHeader>
 
 <div class="wrap page">
 	{#each data.years as [year, posts] (year)}

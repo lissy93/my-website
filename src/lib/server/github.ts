@@ -1,18 +1,15 @@
 import { env } from '$env/dynamic/private';
-import { miniProjects, projects } from '$lib/content';
+import { allProjects } from '$lib/projects';
 import type { Project } from '$lib/types';
 
 type Repo = {
-	name: string;
 	full_name: string;
-	description: string | null;
+	fork: boolean;
 	homepage: string | null;
 	language: string | null;
 	stargazers_count: number;
 	created_at: string;
 	pushed_at: string;
-	fork: boolean;
-	archived: boolean;
 	license: { spdx_id?: string } | null;
 };
 
@@ -24,27 +21,15 @@ const headers = {
 	...(env.GITHUB_TOKEN ? { authorization: `Bearer ${env.GITHUB_TOKEN}` } : {})
 };
 
+/* the parts of an entry GitHub can fill in */
+type Stats = Pick<Project, 'website' | 'stars' | 'from' | 'to' | 'lang' | 'license'>;
+
 const key = (repo: string) => repo.toLowerCase();
 
-const title = (name: string) =>
-	name.includes('.')
-		? name
-		: name.replace(/[-_]/g, ' ').replace(/\b\p{Ll}/gu, (letter) => letter.toUpperCase());
-
-const tidy = (text: string | null) =>
-	(text ?? '')
-		.replace(/:[\w+-]+:/g, '')
-		.replace(/^[^\p{L}\p{N}("']+/u, '')
-		.replace(/\s+/g, ' ')
-		.trim();
-
-function toProject(repo: Repo): Project {
+function toStats(repo: Repo): Stats {
 	const spdx = repo.license?.spdx_id;
 
 	return {
-		name: title(repo.name),
-		blurb: tidy(repo.description),
-		repo: repo.full_name,
 		website: repo.homepage || undefined,
 		stars: repo.stargazers_count,
 		from: +repo.created_at.slice(0, 4),
@@ -55,54 +40,54 @@ function toProject(repo: Repo): Project {
 }
 
 async function fetchPage(page: number): Promise<Repo[]> {
-	try {
-		const res = await fetch(`${api}&page=${page}`, { headers, signal: AbortSignal.timeout(8000) });
-		const body = res.ok ? await res.json() : [];
+	const res = await fetch(`${api}&page=${page}`, { headers, signal: AbortSignal.timeout(8000) });
+	if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
 
-		return Array.isArray(body) ? body : [];
-	} catch {
-		return [];
-	}
+	return res.json();
 }
 
-const worthShowing = (repo: Repo) =>
-	!repo.fork && repo.description && (!repo.archived || repo.stargazers_count >= 100);
-
+/* all or nothing, so a page that fails can't leave the star count short */
 async function fetchRepos() {
-	const found = new Map<string, Project>();
+	const found = new Map<string, Stats>();
+	let stars = 0;
 
-	for (let page = 1; page <= 5; page++) {
-		const batch = await fetchPage(page);
-		for (const repo of batch)
-			if (worthShowing(repo)) found.set(key(repo.full_name), toProject(repo));
-		if (batch.length < 100) break;
+	try {
+		for (let page = 1; page <= 5; page++) {
+			const batch = await fetchPage(page);
+			for (const repo of batch) {
+				found.set(key(repo.full_name), toStats(repo));
+				if (!repo.fork) stars += repo.stargazers_count;
+			}
+			if (batch.length < 100) break;
+		}
+	} catch (error) {
+		console.warn(`GitHub stats unavailable, building without them (${error})`);
+		return { found: new Map<string, Stats>(), stars: 0 };
 	}
 
-	return found;
+	/* a typo or a private repo just goes without stats, so flag it rather than fail */
+	const missing = allProjects().filter(({ repo, source }) => !source && !found.has(key(repo)));
+	if (missing.length)
+		console.warn(`Not found on GitHub: ${missing.map(({ repo }) => repo).join(', ')}`);
+
+	return { found, stars };
 }
 
-let buildCache: Promise<Map<string, Project>> | undefined;
+let buildCache: ReturnType<typeof fetchRepos> | undefined;
 
 const allRepos = () => (buildCache ??= fetchRepos());
 
-const overlay = (project: Project, repo?: Project): Project =>
-	repo
-		? { ...repo, ...project, stars: repo.stars, license: repo.license ?? project.license }
+/* fills the gaps in a hand-written entry, but stars and licences always come from GitHub */
+const overlay = <T extends Project>(project: T, stats?: Stats): T =>
+	stats
+		? { ...stats, ...project, stars: stats.stars, license: stats.license ?? project.license }
 		: project;
 
-export async function withLiveStats(list: Project[]): Promise<Project[]> {
-	const repos = await allRepos();
+export async function withLiveStats<T extends Project>(list: T[]): Promise<T[]> {
+	const { found } = await allRepos();
 
-	return list.map((project) => overlay(project, repos.get(key(project.repo))));
+	return list.map((project) => overlay(project, found.get(key(project.repo))));
 }
 
-export async function allProjects(): Promise<Project[]> {
-	const repos = await allRepos();
-	const known = [...projects, ...miniProjects];
-	const seen = new Set(known.map((project) => key(project.repo)));
-
-	return [
-		...known.map((project) => overlay(project, repos.get(key(project.repo)))),
-		...[...repos].filter(([id]) => !seen.has(id)).map(([, repo]) => repo)
-	].sort((a, b) => b.stars - a.stars);
-}
+/* stars across all my own repos, leaving out forks */
+export const totalStars = async () => (await allRepos()).stars;
