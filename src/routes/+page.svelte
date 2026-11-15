@@ -5,18 +5,14 @@
 	import ProjectList from '$components/ProjectList.svelte';
 	import Section from '$components/Section.svelte';
 	import Seo from '$components/Seo.svelte';
-	import { site, socials } from '$lib/config';
+	import { socials } from '$lib/config';
 	import { photo } from '$lib/content';
 
 	let { data } = $props();
 
 	const schema = {
-		'@context': 'https://schema.org',
 		'@type': 'Person',
-		name: site.name,
-		url: site.url,
 		image: photo,
-		description: site.description,
 		jobTitle: 'Software engineer',
 		sameAs: socials.map((social) => social.href)
 	};

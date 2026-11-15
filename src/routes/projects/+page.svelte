@@ -5,9 +5,10 @@
 	import Section from '$components/Section.svelte';
 	import Seo from '$components/Seo.svelte';
 	import SmartLink from '$components/SmartLink.svelte';
-	import { forges, site } from '$lib/config';
-	import { screenUrl, sourceUrl } from '$lib/projects';
-	import type { Featured, Project } from '$lib/types';
+	import { forges } from '$lib/config';
+	import { screenUrl } from '$lib/projects';
+	import { collection, sourceCode } from '$lib/schema';
+	import type { Featured } from '$lib/types';
 
 	let { data } = $props();
 
@@ -27,37 +28,12 @@
 		return id && screenUrl(id);
 	};
 
-	const entry = (project: Project, image?: string) => ({
-		'@type': 'SoftwareSourceCode',
-		name: project.name,
-		description: project.blurb,
-		url: project.website ?? sourceUrl(project),
-		codeRepository: sourceUrl(project),
-		programmingLanguage: project.lang,
-		license: project.license && `https://spdx.org/licenses/${project.license}`,
-		image
-	});
-
-	let entries = $derived([
-		...data.featured.map((project) => entry(project, cover(project))),
-		...data.groups.flatMap((group) => group.projects.map((project) => entry(project)))
-	]);
-
-	let schema = $derived({
-		'@context': 'https://schema.org',
-		'@type': 'CollectionPage',
-		name: `Projects · ${site.name}`,
-		url: `${site.url}/projects`,
-		mainEntity: {
-			'@type': 'ItemList',
-			numberOfItems: entries.length,
-			itemListElement: entries.map((item, position) => ({
-				'@type': 'ListItem',
-				position: position + 1,
-				item
-			}))
-		}
-	});
+	let schema = $derived(
+		collection([
+			...data.featured.map((project) => sourceCode(project, cover(project))),
+			...data.groups.flatMap((group) => group.projects.map((project) => sourceCode(project)))
+		])
+	);
 </script>
 
 <Seo title="Projects" {description} {schema} />

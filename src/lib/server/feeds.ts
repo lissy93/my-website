@@ -23,7 +23,7 @@ const tag = (item: string, name: string) =>
 
 const flatten = (part: string) =>
 	decode(part.replace(/<[^>]+>/g, ' '))
-		.replace(/\s+([,.;:!?])/g, '$1')
+		.replace(/\s+([,.;:!?)])/g, '$1')
 		.replace(/\s+/g, ' ')
 		.trim();
 

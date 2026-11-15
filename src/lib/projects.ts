@@ -123,7 +123,7 @@ export const featured: Featured[] = [
 		license: 'CC0-1.0',
 		logo: '/logos/awesome-privacy.png',
 		from: 2019,
-		color: '#fc60a8',
+		color: '#5f53f4',
 		home: 'projects',
 		links: [{ label: 'Codeberg', href: 'https://codeberg.org/alicia/awesome-privacy' }],
 		screens: [
@@ -356,8 +356,7 @@ export const groups: ProjectGroup[] = [
 				repo: 'Lissy93/repo-mirror-action',
 				lang: 'GitHub Actions',
 				license: 'MIT',
-				from: 2026,
-				home: 'mini'
+				from: 2026
 			},
 			{
 				name: 'Permissionator',
@@ -366,8 +365,7 @@ export const groups: ProjectGroup[] = [
 				website: 'https://permissionator.as93.net',
 				lang: 'Marko',
 				logo: '/logos/permissionator.png',
-				from: 2025,
-				home: 'mini'
+				from: 2025
 			},
 			{
 				name: 'Chief Snack Officer',
@@ -377,8 +375,7 @@ export const groups: ProjectGroup[] = [
 				license: 'MIT',
 				logo: '/logos/cso.png',
 				from: 2023,
-				to: 2023,
-				home: 'mini'
+				to: 2023
 			},
 			{
 				name: 'Stack Match',
@@ -402,7 +399,8 @@ export const groups: ProjectGroup[] = [
 				repo: 'Lissy93/github-dashboards',
 				website: 'https://github-dashboards.as93.net',
 				logo: logoUrl('goard'),
-				from: 2026
+				from: 2026,
+				home: 'mini'
 			},
 			{
 				name: 'Web Crypt',
@@ -410,7 +408,8 @@ export const groups: ProjectGroup[] = [
 				repo: 'Lissy93/web-crypt',
 				website: 'https://web-crypt.as93.net',
 				logo: logoUrl('web-crypt'),
-				from: 2022
+				from: 2022,
+				home: 'mini'
 			},
 			{
 				name: 'APOD API',
@@ -525,7 +524,8 @@ export const groups: ProjectGroup[] = [
 				blurb: 'My personal dotfiles, with the scripts and configs I set up every machine with',
 				repo: 'Lissy93/dotfiles',
 				logo: logoUrl('dotfiles'),
-				from: 2021
+				from: 2021,
+				home: 'mini'
 			},
 			{
 				name: 'Brewfile',

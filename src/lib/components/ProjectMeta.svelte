@@ -1,18 +1,23 @@
 <script lang="ts" module>
+	import type { Project } from '$lib/types';
+
 	const thisYear = new Date().getFullYear();
+
+	/* updated this year counts as ongoing */
+	function yearRange({ from, to }: Project) {
+		if (!from) return;
+		const single = from === to || from >= thisYear;
+		const end = to && to < thisYear ? to : 'now';
+		return single ? `${from}` : `${from}–${end}`;
+	}
 </script>
 
 <script lang="ts">
 	import { calendarIcon, langColors, langIcons, licenseIcon } from '$lib/icons';
-	import type { Project } from '$lib/types';
 
 	let { project }: { project: Project } = $props();
 
-	/* updated this year counts as ongoing */
-	let to = $derived(project.to && project.to < thisYear ? project.to : 'now');
-	let years = $derived(
-		project.from && (project.from === to ? `${project.from}` : `${project.from}–${to}`)
-	);
+	let years = $derived(yearRange(project));
 </script>
 
 {#snippet fact(label: string, icon?: string, color?: string)}
@@ -46,7 +51,7 @@
 		}
 	}
 
-	/* brand colour eased towards the text so it reads on both themes, oklab keeps the hue */
+	/* eased towards the text so brand colours read on both themes */
 	svg {
 		inline-size: 1.1em;
 		fill: color-mix(in oklab, var(--icon-color, currentcolor) 70%, var(--color-text));

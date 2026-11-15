@@ -9,20 +9,17 @@
 
 	let { data, form } = $props();
 
+	const description =
+		'Get in touch with Alicia Sykes. Send a message, or reach me over email, ' +
+		'Matrix, XMPP or Signal. PGP key included.';
+
 	const schema = {
-		'@context': 'https://schema.org',
 		'@type': 'ContactPage',
-		name: `Contact · ${site.name}`,
-		url: `${site.url}/contact`,
 		mainEntity: { '@type': 'Person', name: site.name, url: site.url }
 	};
 </script>
 
-<Seo
-	title="Contact"
-	description="Get in touch with Alicia Sykes. Send a message, or reach me over email, Matrix, XMPP or Signal. PGP key included."
-	{schema}
-/>
+<Seo title="Contact" {description} {schema} />
 
 <PageHeader title="Contact">
 	Got a question, an idea, or found a bug in something I’ve built? Send it over and I’ll get back to

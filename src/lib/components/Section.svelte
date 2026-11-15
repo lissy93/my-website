@@ -36,13 +36,9 @@
 </section>
 
 <style>
-	.card {
+	section {
 		display: flex;
 		flex-direction: column;
-		border-radius: var(--radius-lg);
-		overflow: clip;
-		background: var(--color-surface);
-		box-shadow: var(--shadow-1);
 	}
 
 	.wide {

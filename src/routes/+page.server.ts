@@ -11,5 +11,5 @@ export const load: PageServerLoad = async () => {
 		allPosts()
 	]);
 
-	return { projects: main, miniProjects: mini, posts: posts.slice(0, 4) };
+	return { projects: main, miniProjects: mini, posts: posts.slice(0, 5) };
 };

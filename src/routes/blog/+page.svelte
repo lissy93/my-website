@@ -3,37 +3,21 @@
 	import PostList from '$components/PostList.svelte';
 	import Section from '$components/Section.svelte';
 	import Seo from '$components/Seo.svelte';
-	import { feeds, site } from '$lib/config';
+	import { feeds } from '$lib/config';
+	import { blogPost, collection } from '$lib/schema';
 
 	let { data } = $props();
 
 	const subscribe = feeds.map(({ source, url }) => ({ label: `${source} RSS`, href: url }));
 
-	let schema = $derived({
-		'@context': 'https://schema.org',
-		'@type': 'CollectionPage',
-		name: `Blog · ${site.name}`,
-		url: `${site.url}/blog`,
-		mainEntity: {
-			'@type': 'ItemList',
-			numberOfItems: data.total,
-			itemListElement: data.years
-				.flatMap(([, posts]) => posts)
-				.map((post, position) => ({
-					'@type': 'ListItem',
-					position: position + 1,
-					url: post.url,
-					name: post.title
-				}))
-		}
-	});
+	const description =
+		'Notes, guides and write-ups on security, privacy, self-hosting, Linux ' +
+		'and web development, by Alicia Sykes.';
+
+	let schema = $derived(collection(data.years.flatMap(([, posts]) => posts.map(blogPost))));
 </script>
 
-<Seo
-	title="Blog"
-	description="Notes, guides and write-ups on security, privacy, self-hosting, Linux and web development, by Alicia Sykes."
-	{schema}
-/>
+<Seo title="Blog" {description} {schema} />
 
 <PageHeader title="Blog" links={subscribe}>
 	Notes, guides and the odd rant. Some of it lands on my blog, some on Dev.to, and this page pulls

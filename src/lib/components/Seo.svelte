@@ -12,10 +12,17 @@
 	let url = $derived(new URL(page.url.pathname, site.url).href);
 	const image = new URL(site.image.src, site.url).href;
 
+	let data = $derived({
+		'@context': 'https://schema.org',
+		name: heading,
+		description,
+		url,
+		...schema
+	});
+
 	/* escape < so data can't break out, split the end tag so svelte doesn't see it */
-	let ld = $derived(
-		`<script type="application/ld+json">${JSON.stringify(schema).replaceAll('<', '\\u003c')}</${'script'}>`
-	);
+	let json = $derived(JSON.stringify(data).replaceAll('<', '\\u003c'));
+	let ld = $derived(`<script type="application/ld+json">${json}</${'script'}>`);
 </script>
 
 <svelte:head>

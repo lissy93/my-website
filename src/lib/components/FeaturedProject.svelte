@@ -18,7 +18,7 @@
 	let source = $derived(sourceLink(project));
 </script>
 
-<article class:flip style:--brand={project.color} aria-labelledby={id}>
+<article class="card" class:flip style:--brand={project.color} aria-labelledby={id}>
 	<div class="about">
 		<header>
 			{#if project.logo}
@@ -66,10 +66,6 @@
 <style>
 	article {
 		display: grid;
-		border-radius: var(--radius-lg);
-		overflow: clip;
-		background: var(--color-surface);
-		box-shadow: var(--shadow-1);
 
 		/* the text keeps enough room that long names don't break mid-word */
 		@media (width >= 56rem) {

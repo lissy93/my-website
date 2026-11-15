@@ -141,6 +141,48 @@ pre {
 	padding-block: clamp(2rem, 5vw, 3.5rem) var(--space-3xl);
 }
 
+/* the raised panel behind sections and featured projects */
+.card {
+	border-radius: var(--radius-lg);
+	overflow: clip;
+	background: var(--color-surface);
+	box-shadow: var(--shadow-1);
+}
+
+/* a whole-row link in the post and project lists */
+.row {
+	padding: var(--space-sm) var(--card-padding);
+	color: inherit;
+	text-decoration: none;
+	transition: background-color var(--duration-fast) var(--ease-out);
+
+	@media (hover: hover) {
+		&:hover {
+			background: var(--state-hover);
+		}
+	}
+
+	&:active {
+		background: var(--state-press);
+	}
+
+	&:focus-visible {
+		outline-offset: calc(var(--focus-ring) * -1);
+	}
+
+	.title {
+		font-size: var(--text-lg);
+		font-weight: var(--weight-semibold);
+		line-height: var(--leading-snug);
+	}
+
+	.blurb {
+		color: var(--color-text-muted);
+		font-size: var(--text-md);
+		line-height: var(--leading-snug);
+	}
+}
+
 /* small tonal button, used for nav and "view all" links */
 .chip {
 	display: inline-block;
