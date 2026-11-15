@@ -280,7 +280,7 @@ To get started, fork the repo, make your changes, add, commit and push the code,
 <tr>
     <td align="center">
         <a href="https://github.com/Raptorz90">
-            <img src="https://avatars.githubusercontent.com/u/56280602?v=4" width="80;" alt="Raptorz90"/>
+            <img src="https://avatars.githubusercontent.com/u/56280602?u=d7bfa7131dccdf7c5def3f19ed17e4e7c8caa84b&v=4" width="80;" alt="Raptorz90"/>
             <br />
             <sub><b>Raptorz90</b></sub>
         </a>
@@ -294,7 +294,7 @@ To get started, fork the repo, make your changes, add, commit and push the code,
     </td>
     <td align="center">
         <a href="https://github.com/wtostajr">
-            <img src="https://avatars.githubusercontent.com/u/71575921?v=4" width="80;" alt="wtostajr"/>
+            <img src="https://avatars.githubusercontent.com/u/71575921?u=ff4b68448c70f0f53aed4bf7a28a150a399736ea&v=4" width="80;" alt="wtostajr"/>
             <br />
             <sub><b>Walter Tosta</b></sub>
         </a>
@@ -321,13 +321,6 @@ To get started, fork the repo, make your changes, add, commit and push the code,
         </a>
     </td></tr>
 <tr>
-    <td align="center">
-        <a href="https://github.com/francisco-vilaca">
-            <img src="https://avatars.githubusercontent.com/u/144910601?u=7de4217d1e126b5e04bf9b659952dac90cb26102&v=4" width="80;" alt="francisco-vilaca"/>
-            <br />
-            <sub><b>Francisco Vilaca</b></sub>
-        </a>
-    </td>
     <td align="center">
         <a href="https://github.com/hudsonrock-partnerships">
             <img src="https://avatars.githubusercontent.com/u/163282900?u=5f2667f7fe5d284ac7a2da6b0800ea8970b0fcbf&v=4" width="80;" alt="hudsonrock-partnerships"/>
@@ -362,8 +355,7 @@ To get started, fork the repo, make your changes, add, commit and push the code,
             <br />
             <sub><b>Axel Hoga</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/Envisage-Cloud-Solutions">
             <img src="https://avatars.githubusercontent.com/u/219464178?v=4" width="80;" alt="Envisage-Cloud-Solutions"/>
