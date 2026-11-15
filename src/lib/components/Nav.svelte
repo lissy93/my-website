@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import Glyph from '$components/Glyph.svelte';
 	import { nav } from '$lib/config';
+	import { navIcons } from '$lib/icons';
 </script>
 
 <nav aria-label="Main">
@@ -10,7 +12,7 @@
 		<a class="chip" href={resolve(href)} aria-current={current ? 'page' : undefined}>
 			{#if current}<span class="pill"></span>{/if}
 			<span class="label" style:view-transition-name="nav-{label.toLowerCase()}">
-				{label}
+				<Glyph path={navIcons[label]} />{label}
 			</span>
 		</a>
 	{/each}
@@ -20,6 +22,13 @@
 	nav {
 		display: flex;
 		gap: var(--space-xs);
+	}
+
+	/* icons only once the bar has room for them */
+	@container (width < 40rem) {
+		.label :global(.glyph) {
+			display: none;
+		}
 	}
 
 	/* tighter chips on narrow bars, so everything fits on one row */

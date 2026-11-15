@@ -116,9 +116,10 @@
 	--card-padding: 1.25rem;
 	--bar-height: 3.75rem;
 
-	/* ease-out for feedback, ease-in-out for moving across the screen */
+	/* ease-out for feedback, ease-in-out for crossing the screen, settle for scrolling into place */
 	--ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 	--ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+	--ease-settle: cubic-bezier(0.61, 1, 0.88, 1);
 	--ease-spring: linear(0, 0.21, 0.54, 0.79, 0.93, 0.99, 1.013, 1.014, 1.01, 1.005, 1);
 	--duration-press: 100ms;
 	--duration-fast: 150ms;

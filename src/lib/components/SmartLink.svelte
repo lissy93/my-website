@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { Pathname } from '$app/types';
+	import Glyph from '$components/Glyph.svelte';
 	import NewTab from '$components/NewTab.svelte';
 	import type { Link } from '$lib/types';
 	import type { HTMLAnchorAttributes } from 'svelte/elements';
@@ -19,7 +20,7 @@
 </script>
 
 {#snippet glyph()}
-	{#if icon}<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d={icon} /></svg>{/if}
+	{#if icon}<Glyph path={icon} />{/if}
 {/snippet}
 
 {#if internal}
@@ -29,15 +30,3 @@
 		{@render glyph()}{label}{#if offsite}<NewTab {arrow} />{/if}
 	</a>
 {/if}
-
-<style>
-	/* sits on the text like a letter, in the link's colour */
-	.icon {
-		display: inline-block;
-		inline-size: 1.15em;
-		block-size: 1.15em;
-		margin-inline-end: 0.4em;
-		vertical-align: -0.2em;
-		fill: currentcolor;
-	}
-</style>

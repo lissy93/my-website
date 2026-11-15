@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Bio from '$components/Bio.svelte';
-	import Hero from '$components/Hero.svelte';
+	import Landing from '$components/Landing.svelte';
 	import PostList from '$components/PostList.svelte';
 	import ProjectList from '$components/ProjectList.svelte';
 	import Section from '$components/Section.svelte';
@@ -20,7 +20,7 @@
 
 <Seo {schema} />
 
-<Hero />
+<Landing />
 
 <div class="wrap page">
 	<Bio />

@@ -20,7 +20,7 @@ body {
 	font-family: var(--font-sans);
 	font-size: var(--text-md);
 	line-height: var(--leading-normal);
-	timeline-scope: --band;
+	timeline-scope: --band, --landing;
 }
 
 ::selection {
@@ -112,13 +112,13 @@ pre {
 	padding-inline: var(--gutter);
 }
 
-/* each page's top band, which the bar and hero watch as you scroll */
+/* each page's top band, which the bar and homepage watch as you scroll */
 .masthead {
 	padding-block-end: clamp(2rem, 5vw, 4rem);
 	view-timeline: --band;
 	view-timeline-inset: var(--bar-height) 0;
 
-	/* sticks under the bar, so text blurs away into it as you scroll */
+	/* sticks under the bar, so text fades away into it as you scroll */
 	&::before {
 		content: '';
 		position: sticky;
@@ -127,9 +127,49 @@ pre {
 		display: block;
 		block-size: clamp(1.5rem, 5vw, 3.5rem);
 		background: linear-gradient(var(--color-primary), transparent);
-		backdrop-filter: blur(4px);
-		mask-image: linear-gradient(#000 50%, transparent);
 		pointer-events: none;
+	}
+}
+
+/* as wide as its content, since it's scaled to its twin's width */
+.dock {
+	inline-size: fit-content;
+}
+
+/* on the homepage, the name and nav ease into their twins in the bar as you scroll */
+@supports (animation-timeline: view()) and (timeline-scope: --band) {
+	@media (prefers-reduced-motion: no-preference) and (width >= 40rem) {
+		.dock {
+			position: relative;
+			z-index: var(--layer-hero);
+			transform-origin: 0 0;
+			animation-name: pin, dock, hand-over;
+			animation-timing-function: linear, var(--ease-settle), step-end;
+			animation-fill-mode: both;
+			animation-timeline: --band;
+			animation-range: exit-crossing;
+		}
+	}
+}
+
+/* holds it still on screen while the page scrolls on underneath */
+@keyframes pin {
+	to {
+		translate: 0 var(--dock-pin, 0);
+	}
+}
+
+@keyframes dock {
+	to {
+		transform: translate(var(--dock-x, 0), var(--dock-y, 0)) scale(var(--dock-scale, 1));
+	}
+}
+
+/* --landed: hidden also takes it out of the tab order once its twin shows */
+@keyframes hand-over {
+	to {
+		opacity: 0;
+		visibility: var(--landed, visible);
 	}
 }
 

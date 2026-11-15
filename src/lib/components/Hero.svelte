@@ -2,13 +2,13 @@
 	import Wordmark from '$components/Wordmark.svelte';
 	import { site } from '$lib/config';
 	import { photo } from '$lib/content';
-	import { collapse, hero, trackFold } from '$lib/hero.svelte';
+	import { dockInto, hero, trackFold } from '$lib/hero.svelte';
 </script>
 
 <div class="band masthead" class:leaving={hero.leaving} {@attach trackFold}>
 	<div class="wrap">
 		<div class="intro">
-			<h1 {@attach collapse}><Wordmark /></h1>
+			<h1 class="dock" {@attach dockInto('[data-wordmark]', '.masthead')}><Wordmark /></h1>
 			<p>{site.tagline}</p>
 		</div>
 		<img src={photo} alt={site.name} width="720" height="1080" fetchpriority="high" />
@@ -70,20 +70,20 @@
 		}
 	}
 
-	/* on wider screens the name shrinks into the bar as you scroll */
+	/* shrinks on short screens, so the page links below still fit above the fold */
+	@media (width >= 56rem) {
+		h1 {
+			font-size: min(var(--text-hero), 27.5cqi, 19svh);
+		}
+
+		img {
+			--size: min(16rem, 20vw, 30svh);
+		}
+	}
+
+	/* the tagline fades as the name starts shrinking into the bar */
 	@supports (animation-timeline: view()) and (timeline-scope: --band) {
 		@media (prefers-reduced-motion: no-preference) and (width >= 40rem) {
-			h1 {
-				position: relative;
-				z-index: var(--layer-hero);
-				transform-origin: 0 0;
-				animation-name: collapse, hand-over;
-				animation-timing-function: linear, step-end;
-				animation-fill-mode: both;
-				animation-timeline: --band;
-				animation-range: exit-crossing;
-			}
-
 			p {
 				transition: opacity var(--duration-page) var(--ease-out);
 			}
@@ -91,19 +91,6 @@
 			.leaving p {
 				opacity: 0;
 			}
-		}
-	}
-
-	@keyframes collapse {
-		to {
-			translate: var(--collapse-x, 0) var(--collapse-y, 0);
-			scale: var(--collapse-scale, 1);
-		}
-	}
-
-	@keyframes hand-over {
-		to {
-			opacity: 0;
 		}
 	}
 </style>

@@ -107,8 +107,8 @@ export const contact: {
 };
 
 export const nav: { href: Pathname; label: string }[] = [
-	{ href: '/about', label: 'About' },
 	{ href: '/projects', label: 'Projects' },
+	{ href: '/about', label: 'About' },
 	{ href: '/blog', label: 'Blog' },
 	{ href: '/contact', label: 'Contact' }
 ];

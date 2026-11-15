@@ -13,7 +13,7 @@
 	<div class="wrap">
 		<a class="brand press" href={resolve('/')} aria-label={site.name}>
 			<img class="icon" src={asset('/favicon.svg')} alt="" width="36" height="36" />
-			<span class="wordmark" data-collapse-to><Wordmark /></span>
+			<span class="wordmark" data-wordmark><Wordmark /></span>
 		</a>
 		<Nav />
 	</div>
@@ -83,7 +83,7 @@
 	}
 
 	@supports (animation-timeline: view()) and (timeline-scope: --band) {
-		/* the shadow waits until the pink band has gone */
+		/* the shadow waits until the band, or on the homepage the whole first screen, has gone */
 		header {
 			animation-name: lift;
 			animation-fill-mode: both;
@@ -91,14 +91,41 @@
 			animation-range: exit-crossing 100% exit-crossing calc(100% + 1.5rem);
 		}
 
+		.home {
+			animation-timeline: --landing;
+		}
+
 		/* the name swaps in the moment the hero's one lands */
 		@media (prefers-reduced-motion: no-preference) {
 			.home .wordmark {
-				animation-name: take-over;
-				animation-timing-function: step-end;
-				animation-fill-mode: both;
+				animation: take-over step-end both;
 				animation-timeline: --band;
 				animation-range: exit-crossing;
+			}
+		}
+
+		/* and on desktop the nav does once its big copy below the hero lands */
+		@media (width >= 56rem) {
+			.home .wrap > :global(nav) {
+				animation: take-over step-end both;
+				animation-timeline: --landing;
+				animation-range: exit-crossing;
+			}
+		}
+	}
+
+	/* without scroll-driven animation, the nav fades in with the logo instead */
+	@supports not (animation-timeline: view()) {
+		@media (width >= 56rem) {
+			.wrap > :global(nav) {
+				transition:
+					visibility var(--duration-base),
+					opacity var(--duration-base) var(--ease-out);
+			}
+
+			.tucked .wrap > :global(nav) {
+				visibility: hidden;
+				opacity: 0;
 			}
 		}
 	}
@@ -116,6 +143,7 @@
 	@keyframes take-over {
 		from {
 			opacity: 0;
+			visibility: hidden;
 		}
 	}
 </style>
