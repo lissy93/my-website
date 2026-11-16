@@ -10,7 +10,7 @@ const named = new Set(moments.flatMap((m) => (m.kind === 'launch' ? [key(m.repo)
 
 for (const moment of moments) {
 	if (moment.kind === 'launch' && !moment.note && isFeatured.has(key(moment.repo)))
-		throw new Error(`${moment.repo} is featured, so it's on the About page already`);
+		throw new Error(`${moment.repo} is featured, so it's on the timeline already`);
 }
 
 /* every featured project is a launch, plus whatever else about.ts names */

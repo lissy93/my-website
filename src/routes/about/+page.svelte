@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { asset } from '$app/paths';
-	import DayNight from '$components/DayNight.svelte';
 	import Numbers from '$components/Numbers.svelte';
 	import PageHeader from '$components/PageHeader.svelte';
 	import Section from '$components/Section.svelte';
@@ -13,6 +12,7 @@
 
 	const [lead, ...rest] = intro;
 	const links = [
+		{ label: 'Timeline', href: '/timeline' },
 		{ label: 'CV', href: 'https://cv.aliciasykes.com' },
 		{ label: 'Sponsor', href: 'https://github.com/sponsors/Lissy93' }
 	];
@@ -55,7 +55,7 @@
 
 <Seo
 	title="About"
-	description="Alicia Sykes, software engineer in London. What I do by day, what I build by night, and why it’s all free and open source."
+	description="Alicia Sykes, software engineer in London. Who I am, what I care about, and why it’s all free and open source."
 	{schema}
 />
 
@@ -93,8 +93,6 @@
 			</dl>
 		</Section>
 	</div>
-
-	<DayNight nights={data.nights} />
 
 	<div class="values">
 		<Section title="What I care about">

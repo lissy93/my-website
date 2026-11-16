@@ -52,7 +52,7 @@ export type Post = {
 	source: string;
 };
 
-/* a job, or a course, on the About page's "by day" side */
+/* a job, or a course, on the timeline's "by day" side */
 export type Job = {
 	org: string;
 	role: string;

@@ -45,7 +45,7 @@
 
 <Seo
 	title="FAQ"
-	description="How Alicia Sykes got into coding, why her apps are free, where she works, and what she gets up to away from the keyboard."
+	description="How Alicia Sykes got into coding, why her apps are free, where she’s worked, and what she gets up to away from the keyboard."
 	{schema}
 />
 

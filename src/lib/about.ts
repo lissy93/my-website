@@ -25,7 +25,7 @@ export const facts: { label: string; value: string; tz?: string }[] = [
 ];
 
 export const lanes = {
-	day: 'I enjoy wearing many hats: architect, engineer, mentor, product-thinker, and occasional DevRel. But above all, I love working with kind, curious people to build great things—and leaving things better than I found them.',
+	day: 'I wear many hats: architect, engineer, mentor, product-thinker and occasional DevRel. Above all, I love building great things with kind, curious people.',
 	night:
 		'But what I really love, is the world of open source. I’ve published 100+ production grade tools/applications, and have contributed to many, many more.'
 };

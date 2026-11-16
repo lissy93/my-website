@@ -4,12 +4,11 @@
 	import { seeded } from '$lib/random';
 	import type { Job, Night } from '$lib/types';
 
-	/* a year on its own counts as January for a job starting, and as July for anything by night */
+	/* a bare year counts as January for a job, and July for a night entry */
 	const start = (when: string) => (when.length === 4 ? `${when}-01` : when);
 	const middle = (when: string) => (when.length === 4 ? `${when}-07` : when);
 
-	/* each night sits beside the latest job that had started by then, so the night side always reads
-	   newest to oldest whatever the jobs' dates, and anything older than every job sits beside the Army at the end */
+	/* puts each night beside the latest job that had started by then */
 	function besideJobs(jobs: Job[], nights: Night[]) {
 		const rows = jobs
 			.toSorted((a, b) => start(b.from).localeCompare(start(a.from)))
@@ -24,10 +23,10 @@
 		return { rows, earlier };
 	}
 
-	/* the line gets each year by its newest entry, skipping years with nothing in them,
-	   and in a run of quiet years with one entry each, only every other one is marked */
+	const year = (night: Night) => night.when.slice(0, 4);
+
+	/* each year's newest entry, marking only every other year in a quiet run */
 	function yearMarks(nights: Night[]) {
-		const year = (night: Night) => night.when.slice(0, 4);
 		const newestOfYear = nights.filter(
 			(night, i) => i === 0 || year(night) !== year(nights[i - 1])
 		);
@@ -67,7 +66,7 @@
 
 	type Speck = { x: number; y: number; r: number; glow: number; tint: string };
 
-	/* mostly white, with the odd pink or yellow one, like the sky at the bottom of the page */
+	/* mostly white, with the odd pink or yellow star */
 	function tint(roll: number) {
 		if (roll < 0.07) return 'pink';
 		if (roll < 0.12) return 'sun';
@@ -143,7 +142,7 @@
 		{#each beside as night (night.title)}
 			<li class="item" class:marked={marks.includes(night)}>
 				{#if marks.includes(night)}
-					<span class="year" aria-hidden="true">{night.when.slice(0, 4)}</span>
+					<span class="year" aria-hidden="true">{year(night)}</span>
 				{/if}
 				{@render lane(moonIcon)}
 				{@render mark(night.logo, nightGlyph[night.kind])}
@@ -158,7 +157,7 @@
 						{/if}
 					</p>
 					<p class="meta specs">
-						<time datetime={night.when}>{night.when.slice(0, 4)}</time>
+						<time datetime={night.when}>{year(night)}</time>
 						{#if night.stars}
 							<span class="stars">
 								{@render glyph(glyphs.award)}{compact.format(night.stars)}
@@ -187,6 +186,7 @@
 	{@render starfield(panelStars, 'panel')}
 
 	<div class="head day">
+		<img class="dino" src={asset('/dinos/code-review.svg')} alt="" width="64" height="64" />
 		<p class="label">{@render glyph(sunIcon)}By day</p>
 		<blockquote>{lanes.day}</blockquote>
 	</div>
@@ -252,11 +252,18 @@
 	}
 
 	.head {
+		position: relative;
 		display: grid;
 		align-content: start;
 		gap: var(--space-sm);
 		border-radius: var(--radius-lg);
 		padding: var(--card-padding);
+
+		.dino {
+			position: absolute;
+			inset: var(--space-sm) var(--space-sm) auto auto;
+			inline-size: clamp(3.5rem, 8vw, 5rem);
+		}
 
 		.label {
 			display: flex;
@@ -277,6 +284,7 @@
 
 		blockquote {
 			max-inline-size: 46ch;
+			padding-inline-end: 4.5rem;
 			text-wrap: pretty;
 		}
 	}
@@ -295,7 +303,6 @@
 	}
 
 	.head.night {
-		position: relative;
 		isolation: isolate;
 		background: var(--night);
 		color: var(--night-text);
@@ -305,14 +312,7 @@
 		}
 
 		blockquote {
-			padding-inline-end: 4.5rem;
 			color: var(--night-muted);
-		}
-
-		.dino {
-			position: absolute;
-			inset: var(--space-sm) var(--space-sm) auto auto;
-			inline-size: clamp(3.5rem, 8vw, 5rem);
 		}
 	}
 
@@ -326,7 +326,6 @@
 		gap: var(--space-sm);
 	}
 
-	/* a year sits above its first entry on phones, and on the line between the panels on wide screens */
 	.year,
 	.end {
 		color: var(--color-text);
@@ -339,7 +338,7 @@
 		line-height: 1;
 	}
 
-	/* entries keep their own height, rather than stretching to match a taller job beside them */
+	/* stops a short night list stretching to the height of its job */
 	.nights {
 		display: grid;
 		align-content: start;
@@ -465,12 +464,14 @@
 			color: var(--primary-300);
 		}
 
-		.meta,
-		.note {
+		.meta {
 			color: var(--night-muted);
 		}
 
-		/* the year, then stars, language and licence like on the projects page */
+		.note {
+			color: color-mix(in oklab, var(--night-muted) 80%, var(--night));
+		}
+
 		.specs {
 			display: flex;
 			flex-wrap: wrap;
@@ -505,7 +506,6 @@
 		}
 	}
 
-	/* faint stars behind the night side, fading out where the text sits */
 	.starfield {
 		position: absolute;
 		z-index: -1;
@@ -532,7 +532,6 @@
 		display: none;
 	}
 
-	/* phones get one list, each entry keeping its lane's colours and a sun or moon */
 	.lane {
 		position: absolute;
 		inset: var(--space-sm) var(--space-sm) auto auto;
@@ -547,7 +546,6 @@
 		}
 	}
 
-	/* wide screens get two long panels, with the years down a spine between them */
 	@media (width >= 56rem) {
 		.lanes {
 			grid-template-columns: minmax(0, 1fr) var(--spine) minmax(0, 1fr);
@@ -644,7 +642,6 @@
 			margin-block-start: 0;
 		}
 
-		/* where the line runs out */
 		.end {
 			display: block;
 			grid-column: 2;
@@ -675,7 +672,6 @@
 		}
 	}
 
-	/* a long night list scrolls past its job, which waits at the top until the row ends */
 	@media (width >= 56rem) and (height >= 40rem) {
 		.job {
 			position: sticky;

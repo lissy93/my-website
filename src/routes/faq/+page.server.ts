@@ -8,7 +8,7 @@ const ids = questions.map(({ id }) => id);
 const twice = ids.find((id, index) => ids.indexOf(id) !== index);
 if (twice) throw new Error(`"${twice}" is in src/lib/faq.ts twice`);
 
-/* the featured ones from the projects page, rather than every launch on the About timeline */
+/* the projects page's featured ones, not every launch on the timeline */
 const projects = featured.map((project) => ({
 	title: project.name,
 	href: sourceUrl(project),

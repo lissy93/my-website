@@ -49,7 +49,7 @@ Bio and photo are in [`src/lib/content.ts`](src/lib/content.ts).<br>
 Projects are in [`src/lib/projects.ts`](src/lib/projects.ts), in the order they're shown. Only what's listed there appears, and GitHub fills in stars, years and licences at build time.<br>
 Screenshots are ids from the `project-screens` album on Pixelflare. A screenshot with no id is a placeholder, and stays hidden until you add one.<br>
 Logos are a path in [`static/logos`](static/logos), or `logoUrl('id')` for one in the `logo` album on Pixelflare.<br>
-The About page is in [`src/lib/about.ts`](src/lib/about.ts): the intro, jobs, what happened by night, and values. Featured projects show up on it by themselves, any other launch just names its repo, and the rest comes from `projects.ts` and GitHub.<br>
+The About page and the timeline are in [`src/lib/about.ts`](src/lib/about.ts): the intro and values, then the jobs and what happened by night. Featured projects show up on the timeline by themselves, any other launch just names its repo, and the rest comes from `projects.ts` and GitHub.<br>
 The FAQ's questions and answers are in [`src/lib/faq.ts`](src/lib/faq.ts).<br>
 Secrets (GitHub token, mail API key) go in `.env`. Copy [`.env.example`](.env.example) to get started, each one is explained in there.
 
