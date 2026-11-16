@@ -2,6 +2,7 @@
 	import { asset, resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import Nav from '$components/Nav.svelte';
+	import ThemeToggle from '$components/ThemeToggle.svelte';
 	import Wordmark from '$components/Wordmark.svelte';
 	import { site } from '$lib/config';
 	import { hero } from '$lib/hero.svelte';
@@ -16,6 +17,7 @@
 			<span class="wordmark" data-wordmark><Wordmark /></span>
 		</a>
 		<Nav />
+		<ThemeToggle place="bar" />
 	</div>
 </header>
 
@@ -34,6 +36,11 @@
 		justify-content: space-between;
 		gap: var(--space-sm);
 		block-size: var(--bar-height);
+
+		/* keeps the nav beside the theme toggle on the right */
+		> :global(nav) {
+			margin-inline-start: auto;
+		}
 	}
 
 	.brand {

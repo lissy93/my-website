@@ -8,8 +8,19 @@
 		<link rel="apple-touch-icon" href="%sveltekit.assets%/apple-touch-icon.png" />
 		<link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
 		<meta name="color-scheme" content="light dark" />
-		<meta name="theme-color" content="#f04c8a" media="(prefers-color-scheme: light)" />
-		<meta name="theme-color" content="#d8278f" media="(prefers-color-scheme: dark)" />
+		<meta
+			name="theme-color"
+			content="#f04c8a"
+			media="(prefers-color-scheme: light)"
+			data-scheme="light"
+		/>
+		<meta
+			name="theme-color"
+			content="#d8278f"
+			media="(prefers-color-scheme: dark)"
+			data-scheme="dark"
+		/>
+		<script src="%sveltekit.assets%/theme.js"></script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

@@ -32,8 +32,10 @@
 	--neutral-dark-850: oklch(18.5% 0.055 var(--hue-ink));
 	--neutral-dark-900: oklch(16% 0.05 var(--hue-ink));
 
-	/* light-dark(light value, dark value) follows the system setting */
+	/* light-dark(light value, dark value) follows the system setting, unless a theme is picked */
 	color-scheme: light dark;
+	/* 1 in dark mode, for the few things that switch by more than colour */
+	--dark: 0;
 
 	--color-primary: light-dark(var(--primary-500), var(--primary-dark-600));
 	--color-on-primary: light-dark(var(--ink-900), var(--neutral-0));
@@ -145,6 +147,23 @@
 	--grow-scale: 1.05;
 	--lift: 2px;
 	--rise: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--dark: 1;
+	}
+}
+
+/* a theme picked with the toggle beats the system's */
+:root[data-theme='light'] {
+	color-scheme: light;
+	--dark: 0;
+}
+
+:root[data-theme='dark'] {
+	color-scheme: dark;
+	--dark: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {

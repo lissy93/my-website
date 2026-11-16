@@ -7,10 +7,12 @@
 	import Header from '$components/Header.svelte';
 	import { analytics } from '$lib/config';
 	import { pageTransition, watchSwipes } from '$lib/page-transition';
+	import { theme } from '$lib/theme.svelte';
 
 	let { children } = $props();
 
 	$effect(watchSwipes);
+	$effect(theme.watch);
 	onNavigate(pageTransition);
 </script>
 

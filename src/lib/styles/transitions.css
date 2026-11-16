@@ -56,6 +56,22 @@
 		follow-in var(--duration-page) var(--ease-in-out) both;
 }
 
+/* a theme change stays put and dissolves from the old colours to the new */
+:root:active-view-transition-type(theme) {
+	&::view-transition-old(*),
+	&::view-transition-new(*) {
+		mix-blend-mode: plus-lighter;
+	}
+
+	&::view-transition-old(*) {
+		animation: fade-out var(--duration-release) var(--ease-in-out) both;
+	}
+
+	&::view-transition-new(*) {
+		animation: fade-in var(--duration-release) var(--ease-in-out) both;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	::view-transition-group(*) {
 		animation: none;

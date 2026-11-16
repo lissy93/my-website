@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import SmartLink from '$components/SmartLink.svelte';
+	import ThemeToggle from '$components/ThemeToggle.svelte';
 	import { footer, site } from '$lib/config';
 
 	const year = new Date().getFullYear();
@@ -11,6 +12,7 @@
 	<div class="wrap">
 		<div class="brand">
 			<a class="name" href={resolve('/')}>{site.name}</a>
+			<ThemeToggle place="footer" />
 			<p>{site.tagline}</p>
 		</div>
 
@@ -51,13 +53,17 @@
 		gap: var(--space-xl) var(--space-lg);
 	}
 
+	/* the name shares its row with the theme toggle, on screens too narrow for it in the bar */
 	.brand {
 		grid-column: 1 / -1;
 		display: grid;
+		grid-template-columns: 1fr auto;
 		align-content: start;
+		align-items: center;
 		gap: var(--space-xs);
 
 		p {
+			grid-column: 1 / -1;
 			max-inline-size: 30ch;
 			color: var(--color-text-muted);
 			line-height: var(--leading-snug);
