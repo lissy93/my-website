@@ -17,6 +17,7 @@
 	--ink-900: oklch(22.6% 0.08 var(--hue-ink));
 
 	--neutral-0: oklch(100% 0 0);
+	--neutral-25: oklch(98.2% 0.008 var(--hue-grey));
 	--neutral-50: oklch(96.6% 0.011 var(--hue-grey));
 	--neutral-100: oklch(93.3% 0.019 var(--hue-grey));
 	--neutral-500: oklch(60.4% 0.03 var(--hue-grey));
@@ -45,7 +46,7 @@
 	--color-action: light-dark(var(--ink-500), var(--primary-300));
 	--color-on-action: light-dark(var(--neutral-0), var(--primary-900));
 
-	--color-bg: light-dark(var(--neutral-50), var(--neutral-dark-900));
+	--color-bg: light-dark(var(--neutral-25), var(--neutral-dark-900));
 	--color-surface: light-dark(var(--neutral-0), var(--neutral-dark-800));
 	--color-surface-sunken: light-dark(var(--neutral-50), var(--neutral-dark-850));
 	--color-text: light-dark(var(--neutral-900), var(--neutral-dark-100));
@@ -56,7 +57,7 @@
 	--color-focus: var(--color-primary-text);
 	--color-selection: oklch(from var(--primary-500) l c h / 0.25);
 	--color-dot: light-dark(
-		oklch(from var(--neutral-900) l c h / 0.14),
+		oklch(from var(--neutral-900) l c h / 0.11),
 		oklch(from var(--neutral-dark-100) l c h / 0.14)
 	);
 
