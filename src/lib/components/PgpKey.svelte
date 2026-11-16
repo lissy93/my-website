@@ -1,79 +1,64 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { pgp } from '$lib/pgp';
+	import { onMount } from 'svelte';
+
+	/* gpg prints the fingerprint in two halves, so it only ever wraps between them */
+	const groups = pgp.fingerprint.split(' ');
+	const head = groups.slice(0, 5).join(' ');
+	const tail = groups.slice(5).join(' ');
+
+	let canCopy = $state(false);
+	let copied = $state(false);
+
+	onMount(() => {
+		canCopy = Boolean(navigator.clipboard);
+	});
+
+	async function copy() {
+		try {
+			await navigator.clipboard.writeText(pgp.key);
+			copied = true;
+		} catch {
+			copied = false;
+		}
+	}
 </script>
 
 <div class="key">
-	<p class="line">
-		<code>{pgp.fingerprint}</code>
-		<a href={resolve('/pgp.txt')} download>Download</a>
+	<code><span>{head}</span> <span>{tail}</span></code>
+	<p class="actions">
+		{#if canCopy}
+			<button class="chip" type="button" onclick={copy}>{copied ? 'Copied' : 'Copy key'}</button>
+		{/if}
+		<a class="chip" href={resolve('/pgp.txt')} download>Download</a>
 	</p>
-	<details>
-		<summary>Armoured public key</summary>
-		<pre>{pgp.key}</pre>
-	</details>
+	<p class="visually-hidden" role="status">{copied ? 'Public key copied' : ''}</p>
 </div>
 
 <style>
 	.key {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr);
 		gap: var(--space-md);
 		justify-items: start;
 	}
 
-	.line {
+	code {
+		font-size: var(--text-2xs);
+		word-spacing: -0.5ch;
+
+		span {
+			white-space: nowrap;
+		}
+	}
+
+	.actions {
 		display: flex;
 		flex-wrap: wrap;
-		align-items: baseline;
-		gap: var(--space-xs) var(--space-lg);
-		font-size: var(--text-sm);
+		gap: var(--space-xs);
 	}
 
-	details {
-		justify-self: stretch;
-	}
-
-	/* slides open in browsers that can animate to auto height */
-	@media (prefers-reduced-motion: no-preference) {
-		details::details-content {
-			block-size: 0;
-			overflow-y: clip;
-			transition:
-				block-size var(--duration-base) var(--ease-out),
-				content-visibility var(--duration-base) allow-discrete;
-		}
-
-		details[open]::details-content {
-			block-size: auto;
-		}
-	}
-
-	summary {
-		inline-size: fit-content;
-		color: var(--color-text-muted);
-		font-size: var(--text-sm);
-		cursor: pointer;
-		transition: color var(--duration-fast) var(--ease-out);
-
-		@media (hover: hover) {
-			&:hover {
-				color: var(--color-primary-text);
-			}
-		}
-	}
-
-	pre {
-		inline-size: fit-content;
-		max-inline-size: 100%;
-		margin-block-start: var(--space-sm);
-		border: var(--border-thin) solid var(--color-border);
-		border-radius: var(--radius-md);
-		padding: var(--space-md);
-		overflow-x: auto;
-		background: var(--color-surface-sunken);
-		color: var(--color-text-muted);
-		font-size: var(--text-2xs);
-		line-height: var(--leading-snug);
+	.chip {
+		--chip-bg: var(--color-secondary-container);
 	}
 </style>

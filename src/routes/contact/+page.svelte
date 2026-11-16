@@ -22,8 +22,7 @@
 <Seo title="Contact" {description} {schema} />
 
 <PageHeader title="Contact">
-	Got a question, an idea, or found a bug in something I’ve built? Send it over and I’ll get back to
-	you.
+	Got a question, an idea, or just want to say hi? Send it over and I’ll get back to you :)
 </PageHeader>
 
 <div class="wrap page">
@@ -31,26 +30,38 @@
 		<ContactForm result={form} stamp={data.stamp} />
 	</Section>
 
-	<Section title="Other ways">
-		<ContactDetails />
-	</Section>
+	<div class="side">
+		<Section title="Other ways">
+			<ContactDetails />
+		</Section>
 
-	<Section title="Keys" wide>
-		<p class="note">If it’s sensitive, encrypt it with this key.</p>
-		<PgpKey />
-	</Section>
+		<Section title="Keys">
+			<p class="note">If it’s sensitive, encrypt it with this key.</p>
+			<PgpKey />
+		</Section>
+	</div>
 </div>
 
 <style>
+	.side {
+		display: grid;
+		gap: var(--space-section);
+	}
+
 	.note {
 		margin-block-end: var(--space-md);
 		color: var(--color-text-muted);
 	}
 
-	@media (width >= 52rem) {
+	@media (width >= 56rem) {
 		.page {
-			grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
+			grid-template-columns: minmax(0, 1fr) 24rem;
 			align-items: start;
+		}
+
+		.side {
+			align-self: stretch;
+			grid-template-rows: auto 1fr;
 		}
 	}
 </style>

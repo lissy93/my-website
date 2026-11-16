@@ -153,6 +153,10 @@
 			background: var(--color-primary);
 			color: var(--color-on-primary);
 
+			&::selection {
+				background: var(--color-surface);
+			}
+
 			@media (hover: hover) {
 				&:hover {
 					background: color-mix(in oklab, var(--color-primary), var(--color-surface) 15%);

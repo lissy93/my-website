@@ -101,6 +101,10 @@
 			background: var(--color-primary);
 			box-shadow: none;
 			color: var(--color-on-primary);
+
+			&::selection {
+				background: var(--color-surface);
+			}
 		}
 	}
 

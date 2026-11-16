@@ -21,16 +21,14 @@
 		gap: var(--space-xs);
 	}
 
-	/* lifts and fills with the network's own colour on hover */
 	a {
 		display: grid;
 		place-items: center;
 		inline-size: 2.75rem;
 		block-size: 2.75rem;
 		border-radius: var(--radius-full);
-		background: var(--color-surface);
+		background: var(--color-secondary-container);
 		color: var(--color-on-secondary-container);
-		box-shadow: var(--shadow-1);
 		transition:
 			background-color var(--duration-fast) var(--ease-out),
 			color var(--duration-fast) var(--ease-out),
