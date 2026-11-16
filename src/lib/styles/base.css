@@ -15,7 +15,10 @@ html {
 body {
 	display: flex;
 	flex-direction: column;
-	background: var(--color-bg);
+	background-color: var(--color-bg);
+	/* a faint dot grid, like notebook paper */
+	background-image: radial-gradient(var(--color-dot) 1px, transparent 1.5px);
+	background-size: 1.25rem 1.25rem;
 	color: var(--color-text);
 	font-family: var(--font-sans);
 	font-size: var(--text-md);

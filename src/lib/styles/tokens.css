@@ -1,22 +1,20 @@
-/* --hue is the pink (1.4 is #f04c8a), --hue-violet the panels and tonal buttons, --hue-grey tints every grey */
+/* --hue is the pink (1.4 is #f04c8a), --hue-ink the navy, --hue-grey tints light mode's greys */
 :root {
 	--hue: 1.4;
-	--hue-violet: 285.4;
+	--hue-ink: 276;
 	--hue-grey: 265;
 
 	--primary-300: oklch(81.1% 0.115 var(--hue));
 	--primary-500: oklch(66.1% 0.205 var(--hue));
-	--primary-600: oklch(59.1% 0.23 var(--hue));
 	--primary-900: oklch(24.7% 0.1 var(--hue));
 	/* a deeper, cooler pink for dark mode's band, so white text on it stays readable */
 	--primary-dark-600: oklch(59.5% 0.225 351.1);
 
-	--violet-100: oklch(92% 0.043 var(--hue-violet));
-	/* #7a5dff, a shade deeper so white text on it passes AA */
-	--violet-500: oklch(58.8% 0.229 var(--hue-violet));
-
-	/* navy ink, since the pink band is too bright to carry white text */
-	--ink: oklch(22.6% 0.08 276.9);
+	/* navy ink, the second brand colour, which also carries the text on the pink band */
+	--ink-100: oklch(92% 0.03 var(--hue-ink));
+	--ink-500: oklch(42% 0.15 var(--hue-ink));
+	--ink-600: oklch(36% 0.11 var(--hue-ink));
+	--ink-900: oklch(22.6% 0.08 var(--hue-ink));
 
 	--neutral-0: oklch(100% 0 0);
 	--neutral-50: oklch(96.6% 0.011 var(--hue-grey));
@@ -25,23 +23,24 @@
 	--neutral-600: oklch(45.4% 0.026 var(--hue-grey));
 	--neutral-900: oklch(22.8% 0.021 var(--hue-grey));
 
-	--neutral-dark-100: oklch(94% 0.016 var(--hue-grey));
-	--neutral-dark-300: oklch(77% 0.032 var(--hue-grey));
-	--neutral-dark-500: oklch(52% 0.035 var(--hue-grey));
-	--neutral-dark-700: oklch(31% 0.035 var(--hue-grey));
-	--neutral-dark-800: oklch(22% 0.027 var(--hue-grey));
-	--neutral-dark-850: oklch(19% 0.022 var(--hue-grey));
-	--neutral-dark-900: oklch(17.05% 0.031 var(--hue-grey));
+	/* dark mode is navy rather than slate */
+	--neutral-dark-100: oklch(95% 0.015 var(--hue-ink));
+	--neutral-dark-300: oklch(78% 0.04 var(--hue-ink));
+	--neutral-dark-500: oklch(56% 0.06 var(--hue-ink));
+	--neutral-dark-700: oklch(32% 0.07 var(--hue-ink));
+	--neutral-dark-800: oklch(21% 0.06 var(--hue-ink));
+	--neutral-dark-850: oklch(18.5% 0.055 var(--hue-ink));
+	--neutral-dark-900: oklch(16% 0.05 var(--hue-ink));
 
 	/* light-dark(light value, dark value) follows the system setting */
 	color-scheme: light dark;
 
 	--color-primary: light-dark(var(--primary-500), var(--primary-dark-600));
-	--color-on-primary: light-dark(var(--ink), var(--neutral-0));
-	--color-primary-text: light-dark(var(--primary-600), var(--primary-300));
-	--color-secondary-container: light-dark(var(--violet-100), var(--violet-500));
-	--color-on-secondary-container: light-dark(var(--ink), var(--neutral-0));
-	--color-action: light-dark(var(--primary-600), var(--primary-300));
+	--color-on-primary: light-dark(var(--ink-900), var(--neutral-0));
+	--color-primary-text: light-dark(var(--ink-500), var(--primary-300));
+	--color-secondary-container: light-dark(var(--ink-100), var(--ink-600));
+	--color-on-secondary-container: light-dark(var(--ink-900), var(--neutral-0));
+	--color-action: light-dark(var(--ink-500), var(--primary-300));
 	--color-on-action: light-dark(var(--neutral-0), var(--primary-900));
 
 	--color-bg: light-dark(var(--neutral-50), var(--neutral-dark-900));
@@ -54,12 +53,16 @@
 	--color-danger: light-dark(oklch(50% 0.19 27), oklch(80% 0.11 27));
 	--color-focus: var(--color-primary-text);
 	--color-selection: oklch(from var(--primary-500) l c h / 0.25);
+	--color-dot: light-dark(
+		oklch(from var(--neutral-900) l c h / 0.14),
+		oklch(from var(--neutral-dark-100) l c h / 0.14)
+	);
 
 	--state-hover: oklch(from var(--primary-500) l c h / 0.07);
 	--state-press: oklch(from var(--primary-500) l c h / 0.13);
 
-	--shadow-key: light-dark(oklch(from var(--ink) l c h / 0.12), oklch(0% 0 0 / 0.5));
-	--shadow-ambient: light-dark(oklch(from var(--ink) l c h / 0.07), oklch(0% 0 0 / 0.3));
+	--shadow-key: light-dark(oklch(from var(--ink-900) l c h / 0.12), oklch(0% 0 0 / 0.5));
+	--shadow-ambient: light-dark(oklch(from var(--ink-900) l c h / 0.07), oklch(0% 0 0 / 0.3));
 	--shadow-1: 0 1px 2px var(--shadow-key), 0 1px 3px 1px var(--shadow-ambient);
 	--shadow-2: 0 1px 2px var(--shadow-key), 0 4px 10px 3px var(--shadow-ambient);
 
