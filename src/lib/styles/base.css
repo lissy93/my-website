@@ -230,7 +230,7 @@ pre {
 	border-radius: var(--radius-sm);
 	padding: 0.4rem 0.85rem;
 	background: var(--color-surface);
-	color: var(--color-on-primary-container);
+	color: var(--color-on-secondary-container);
 	font-size: var(--text-sm);
 	font-weight: var(--weight-semibold);
 	line-height: var(--leading-snug);

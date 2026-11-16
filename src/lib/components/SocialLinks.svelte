@@ -29,7 +29,7 @@
 		block-size: 2.75rem;
 		border-radius: var(--radius-full);
 		background: var(--color-surface);
-		color: var(--color-on-primary-container);
+		color: var(--color-on-secondary-container);
 		box-shadow: var(--shadow-1);
 		transition:
 			background-color var(--duration-fast) var(--ease-out),

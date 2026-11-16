@@ -93,8 +93,8 @@
 		display: grid;
 		place-items: center;
 		border-radius: var(--radius-md);
-		background: var(--color-primary-container);
-		color: var(--color-on-primary-container);
+		background: var(--color-secondary-container);
+		color: var(--color-on-secondary-container);
 		font-family: var(--font-display);
 		font-weight: var(--weight-heavy);
 	}

@@ -58,7 +58,7 @@
 		isolation: isolate;
 
 		&[aria-current='page'] {
-			color: var(--color-primary-container);
+			color: var(--color-secondary-container);
 		}
 	}
 
@@ -72,7 +72,7 @@
 		inset: 0;
 		z-index: -1;
 		border-radius: inherit;
-		background: var(--color-on-primary-container);
+		background: var(--color-on-secondary-container);
 		view-transition-name: nav-pill;
 	}
 </style>

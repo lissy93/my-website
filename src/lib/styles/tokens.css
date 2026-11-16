@@ -1,16 +1,19 @@
-/* --hue is the pink (1.4 is #f04c8a), --hue-grey tints every grey */
+/* --hue is the pink (1.4 is #f04c8a), --hue-violet the panels and tonal buttons, --hue-grey tints every grey */
 :root {
 	--hue: 1.4;
+	--hue-violet: 285.4;
 	--hue-grey: 265;
 
-	--primary-100: oklch(92% 0.043 var(--hue));
 	--primary-300: oklch(81.1% 0.115 var(--hue));
 	--primary-500: oklch(66.1% 0.205 var(--hue));
 	--primary-600: oklch(59.1% 0.23 var(--hue));
-	--primary-800: oklch(33% 0.13 var(--hue));
 	--primary-900: oklch(24.7% 0.1 var(--hue));
 	/* a deeper, cooler pink for dark mode's band, so white text on it stays readable */
 	--primary-dark-600: oklch(59.5% 0.225 351.1);
+
+	--violet-100: oklch(92% 0.043 var(--hue-violet));
+	/* #7a5dff, a shade deeper so white text on it passes AA */
+	--violet-500: oklch(58.8% 0.229 var(--hue-violet));
 
 	/* navy ink, since the pink band is too bright to carry white text */
 	--ink: oklch(22.6% 0.08 276.9);
@@ -36,8 +39,8 @@
 	--color-primary: light-dark(var(--primary-500), var(--primary-dark-600));
 	--color-on-primary: light-dark(var(--ink), var(--neutral-0));
 	--color-primary-text: light-dark(var(--primary-600), var(--primary-300));
-	--color-primary-container: light-dark(var(--primary-100), var(--primary-800));
-	--color-on-primary-container: light-dark(var(--ink), var(--primary-100));
+	--color-secondary-container: light-dark(var(--violet-100), var(--violet-500));
+	--color-on-secondary-container: light-dark(var(--ink), var(--neutral-0));
 	--color-action: light-dark(var(--primary-600), var(--primary-300));
 	--color-on-action: light-dark(var(--neutral-0), var(--primary-900));
 
@@ -103,6 +106,7 @@
 	--space-3xl: 4.5rem;
 	--space-section: clamp(1rem, 0.5rem + 1.6vw, 1.75rem);
 
+	--radius-xs: 0.1875rem;
 	--radius-sm: 0.5rem;
 	--radius-md: 0.75rem;
 	--radius-lg: 1rem;

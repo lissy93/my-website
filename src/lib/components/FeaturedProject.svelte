@@ -144,7 +144,7 @@
 		/* bigger than the usual chip, and tinted so it shows on the card */
 		:global(.chip) {
 			padding: var(--space-xs) var(--space-lg) var(--space-xs) var(--space-md);
-			background: var(--color-primary-container);
+			background: var(--color-secondary-container);
 			font-size: var(--text-md);
 		}
 

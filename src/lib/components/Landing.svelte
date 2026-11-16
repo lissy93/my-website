@@ -49,17 +49,13 @@
 		display: none;
 	}
 
-	/* on desktop the band lies like a sheet on a strip that fills the screen */
+	/* on desktop a strip under the band fills the rest of the screen */
 	@media (width >= 56rem) {
 		.landing {
 			display: grid;
 			grid-template-rows: auto 1fr;
 			min-block-size: calc(100svh - var(--bar-height));
 			background: var(--color-surface);
-		}
-
-		.landing > :global(.masthead) {
-			border-radius: 0 0 3rem 3rem;
 		}
 
 		.strip {
@@ -85,11 +81,12 @@
 		}
 	}
 
-	/* tonal, zoomed one by one, as zooming the nav would scale its movement too */
+	/* tonal and squarer than the bar's, zoomed one by one so the nav's movement isn't */
 	.chip {
-		--chip-bg: var(--color-primary-container);
+		--chip-bg: var(--color-secondary-container);
 
 		zoom: var(--zoom);
+		border-radius: calc(var(--radius-xs) / var(--zoom));
 		background: var(--chip-bg);
 
 		/* so the focus ring stays as thin as everywhere else */
@@ -128,6 +125,7 @@
 	@keyframes to-chip {
 		to {
 			--chip-bg: var(--color-surface);
+			border-radius: var(--radius-sm);
 		}
 	}
 </style>

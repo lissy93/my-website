@@ -52,8 +52,8 @@
 		gap: var(--space-md);
 		min-block-size: 3.5rem;
 		padding: var(--space-sm) var(--space-sm) var(--space-sm) var(--card-padding);
-		background: var(--color-primary-container);
-		color: var(--color-on-primary-container);
+		background: var(--color-secondary-container);
+		color: var(--color-on-secondary-container);
 	}
 
 	.body {
