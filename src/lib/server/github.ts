@@ -1,6 +1,6 @@
 import { env } from '$env/dynamic/private';
 import { allProjects } from '$lib/projects';
-import type { Project } from '$lib/types';
+import type { OwnRepo, Project } from '$lib/types';
 
 type Repo = {
 	full_name: string;
@@ -15,7 +15,7 @@ type Repo = {
 
 const api = 'https://api.github.com/users/Lissy93/repos?per_page=100';
 
-const headers = {
+export const headers = {
 	accept: 'application/vnd.github+json',
 	'user-agent': 'aliciasykes.com',
 	...(env.GITHUB_TOKEN ? { authorization: `Bearer ${env.GITHUB_TOKEN}` } : {})
@@ -39,6 +39,12 @@ function toStats(repo: Repo): Stats {
 	};
 }
 
+const toOwn = (repo: Repo): OwnRepo => ({
+	name: repo.full_name.split('/')[1],
+	stars: repo.stargazers_count,
+	created: repo.created_at.slice(0, 7)
+});
+
 async function fetchPage(page: number): Promise<Repo[]> {
 	const res = await fetch(`${api}&page=${page}`, { headers, signal: AbortSignal.timeout(8000) });
 	if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
@@ -49,20 +55,20 @@ async function fetchPage(page: number): Promise<Repo[]> {
 /* all or nothing, so a page that fails can't leave the star count short */
 async function fetchRepos() {
 	const found = new Map<string, Stats>();
-	let stars = 0;
+	const own: OwnRepo[] = [];
 
 	try {
 		for (let page = 1; page <= 5; page++) {
 			const batch = await fetchPage(page);
 			for (const repo of batch) {
 				found.set(key(repo.full_name), toStats(repo));
-				if (!repo.fork) stars += repo.stargazers_count;
+				if (!repo.fork) own.push(toOwn(repo));
 			}
 			if (batch.length < 100) break;
 		}
 	} catch (error) {
 		console.warn(`GitHub stats unavailable, building without them (${error})`);
-		return { found: new Map<string, Stats>(), stars: 0 };
+		return { found: new Map<string, Stats>(), own: [] };
 	}
 
 	/* a typo or a private repo just goes without stats, so flag it rather than fail */
@@ -70,7 +76,7 @@ async function fetchRepos() {
 	if (missing.length)
 		console.warn(`Not found on GitHub: ${missing.map(({ repo }) => repo).join(', ')}`);
 
-	return { found, stars };
+	return { found, own };
 }
 
 let buildCache: ReturnType<typeof fetchRepos> | undefined;
@@ -89,5 +95,7 @@ export async function withLiveStats<T extends Project>(list: T[]): Promise<T[]> 
 	return list.map((project) => overlay(project, found.get(key(project.repo))));
 }
 
-/* stars across all my own repos, leaving out forks */
-export const totalStars = async () => (await allRepos()).stars;
+/* my own public repos, leaving out forks */
+export const ownRepos = async () => (await allRepos()).own;
+
+export const totalStars = async () => (await ownRepos()).reduce((sum, repo) => sum + repo.stars, 0);

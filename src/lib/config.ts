@@ -124,7 +124,7 @@ export const footer: {
 		licenseLink: 'https://github.com/Lissy93/my-website/blob/HEAD/LICENSE'
 	},
 	groups: [
-		{ title: 'Site', links: nav },
+		{ title: 'Site', links: [...nav, { label: 'FAQ', href: '/faq' }] },
 		{ title: 'Elsewhere', links: socials },
 		{
 			title: 'More',

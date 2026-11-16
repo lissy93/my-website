@@ -1,16 +1,238 @@
 <script lang="ts">
-	import Bio from '$components/Bio.svelte';
+	import { asset } from '$app/paths';
+	import DayNight from '$components/DayNight.svelte';
+	import Numbers from '$components/Numbers.svelte';
 	import PageHeader from '$components/PageHeader.svelte';
+	import Section from '$components/Section.svelte';
 	import Seo from '$components/Seo.svelte';
+	import Sky from '$components/Sky.svelte';
+	import { facts, intro, jobs, offTheClock, portrait, values } from '$lib/about';
+	import { site, socials } from '$lib/config';
+
+	let { data } = $props();
+
+	const [lead, ...rest] = intro;
+	const links = [
+		{ label: 'CV', href: 'https://cv.aliciasykes.com' },
+		{ label: 'Sponsor', href: 'https://github.com/sponsors/Lissy93' }
+	];
+
+	/* only claimed while a job is still going */
+	const current = jobs.find((job) => job.from && !job.to);
+
+	const schema = {
+		'@type': 'ProfilePage',
+		mainEntity: {
+			'@type': 'Person',
+			name: site.name,
+			alternateName: 'Lissy93',
+			url: site.url,
+			image: portrait.src,
+			...(current && {
+				jobTitle: current.role,
+				worksFor: { '@type': 'Organization', name: current.org }
+			}),
+			alumniOf: { '@type': 'CollegeOrUniversity', name: 'Oxford Brookes University' },
+			address: { '@type': 'PostalAddress', addressLocality: 'London', addressCountry: 'GB' },
+			sameAs: socials.map((social) => social.href)
+		}
+	};
+
+	/* set once the page is open, so the prerendered page never shows a stale time */
+	let now = $state<Date>();
+
+	$effect(() => {
+		now = new Date();
+		const timer = setInterval(() => (now = new Date()), 30_000);
+		return () => clearInterval(timer);
+	});
+
+	const clock = (tz: string, at: Date) =>
+		new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: tz }).format(
+			at
+		);
 </script>
 
 <Seo
 	title="About"
-	description="Who I am, what I work on, and why everything I build is free and open source."
+	description="Alicia Sykes, software engineer in London. What I do by day, what I build by night, and why it’s all free and open source."
+	{schema}
 />
 
-<PageHeader title="About" />
+<PageHeader title="About" {links}>
+	{#snippet aside()}
+		<img
+			class="portrait"
+			src={portrait.src}
+			alt={portrait.alt}
+			width={portrait.width}
+			height={portrait.height}
+			fetchpriority="high"
+		/>
+	{/snippet}
+</PageHeader>
 
 <div class="wrap page">
-	<Bio />
+	<div class="story">
+		<p class="lead">{lead}</p>
+		{#each rest as paragraph (paragraph)}
+			<p>{paragraph}</p>
+		{/each}
+	</div>
+
+	<div class="facts">
+		<Section title="Quick facts">
+			<dl>
+				{#each facts as { label, value, tz } (label)}
+					<dt>{label}</dt>
+					<dd>
+						{value}
+						{#if tz && now}<span class="local">{clock(tz, now)} there now</span>{/if}
+					</dd>
+				{/each}
+			</dl>
+		</Section>
+	</div>
+
+	<DayNight nights={data.nights} />
+
+	<div class="values">
+		<Section title="What I care about">
+			<ul role="list">
+				{#each values as value (value)}
+					<li>{value}</li>
+				{/each}
+			</ul>
+		</Section>
+	</div>
+
+	{#if data.numbers.length}
+		<div class="numbers">
+			<Section title="In numbers" flush>
+				<Numbers stats={data.numbers} />
+			</Section>
+		</div>
+	{/if}
+
+	<div class="off">
+		<Section title="Off the clock">
+			<div class="nap">
+				<img src={asset('/dinos/nap-time.svg')} alt="" width="64" height="64" />
+				<p>{offTheClock}</p>
+			</div>
+		</Section>
+	</div>
 </div>
+
+<Sky repos={data.sky} />
+
+<style>
+	.portrait {
+		--size: clamp(6.5rem, 22vw, 15rem);
+
+		inline-size: var(--size);
+		aspect-ratio: 4 / 5;
+		border: 0.4rem solid var(--color-on-primary);
+		border-radius: calc(var(--size) * 0.17);
+		background: var(--color-on-primary);
+		object-fit: cover;
+		object-position: 50% 25%;
+	}
+
+	.story {
+		display: grid;
+		align-content: start;
+		gap: var(--space-lg);
+
+		p {
+			max-inline-size: 62ch;
+			color: var(--color-text-muted);
+			text-wrap: pretty;
+		}
+
+		.lead {
+			max-inline-size: 38ch;
+			color: var(--color-text);
+			font-size: var(--text-intro);
+			font-weight: var(--weight-medium);
+			line-height: var(--leading-snug);
+		}
+	}
+
+	dl {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		gap: var(--space-xs) var(--space-md);
+		font-size: var(--text-sm);
+	}
+
+	dt {
+		color: var(--color-text-muted);
+	}
+
+	.local {
+		margin-inline-start: var(--space-xs);
+		border-radius: var(--radius-xs);
+		padding: 0.1rem 0.4rem;
+		background: var(--color-secondary-container);
+		color: var(--color-on-secondary-container);
+		font-size: var(--text-2xs);
+		font-weight: var(--weight-semibold);
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
+	}
+
+	.values ul {
+		display: grid;
+		gap: var(--space-lg);
+	}
+
+	.values li {
+		max-inline-size: 58ch;
+		border-inline-start: var(--border-thin) solid var(--color-border-field);
+		padding-inline-start: var(--space-md);
+		font-size: var(--text-lg);
+		line-height: var(--leading-snug);
+		text-wrap: pretty;
+	}
+
+	.nap {
+		display: grid;
+		grid-template-columns: 5rem minmax(0, 1fr);
+		align-items: center;
+		gap: var(--space-lg);
+
+		img {
+			inline-size: 5rem;
+		}
+
+		p {
+			text-wrap: pretty;
+		}
+	}
+
+	.values,
+	.numbers,
+	.off {
+		display: grid;
+	}
+
+	.facts {
+		align-self: start;
+	}
+
+	@media (width >= 56rem) {
+		.page {
+			grid-template-columns: 7fr 5fr;
+		}
+
+		.story {
+			align-self: start;
+		}
+
+		.numbers {
+			grid-column: 2;
+			grid-row: span 2;
+		}
+	}
+</style>

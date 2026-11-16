@@ -3,16 +3,19 @@
 	import type { Link } from '$lib/types';
 	import type { Snippet } from 'svelte';
 
-	/* children is the lede under the title, links become chips below it */
+	/* children is the lede under the title, links become chips below it, aside sits to the right */
 	let {
 		title,
 		links = [],
-		children
-	}: { title: string; links?: Link[]; children?: Snippet } = $props();
+		children,
+		aside
+	}: { title: string; links?: Link[]; children?: Snippet; aside?: Snippet } = $props();
+
+	let rows = $derived(1 + Number(Boolean(children)) + Number(links.length > 0));
 </script>
 
 <div class="band masthead">
-	<div class="wrap">
+	<div class="wrap" class:split={aside}>
 		<h1>{title}</h1>
 		{#if children}<p>{@render children()}</p>{/if}
 		{#if links.length}
@@ -22,6 +25,7 @@
 				{/each}
 			</ul>
 		{/if}
+		{#if aside}<div class="aside" style:grid-row="1 / span {rows}">{@render aside()}</div>{/if}
 	</div>
 </div>
 
@@ -30,6 +34,19 @@
 		display: grid;
 		justify-items: start;
 		gap: var(--space-lg);
+	}
+
+	.split {
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: end;
+
+		> :not(.aside) {
+			grid-column: 1;
+		}
+	}
+
+	.aside {
+		grid-column: 2;
 	}
 
 	h1 {
