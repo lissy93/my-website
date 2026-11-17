@@ -2,10 +2,14 @@
 	import { resolve } from '$app/paths';
 	import SmartLink from '$lib/bits-and-bobs/SmartLink.svelte';
 	import { footer, site } from '$lib/me/site';
+	import Stargazer from '$lib/stargazing/Stargazer.svelte';
 	import ThemeToggle from './ThemeToggle.svelte';
 
 	const year = new Date().getFullYear();
 	const years = footer.since === year ? `${year}` : `${footer.since}–${year}`;
+
+	/* a four-pointed sparkle, one unit from its middle to each tip */
+	const sparkle = 'M0-1Q0 0 1 0Q0 0 0 1Q0 0-1 0Q0 0 0-1Z';
 </script>
 
 <footer>
@@ -13,7 +17,17 @@
 		<div class="brand">
 			<a class="name" href={resolve('/')}>{site.name}</a>
 			<ThemeToggle place="footer" />
-			<p>{site.tagline}</p>
+			<div class="tagline">
+				<!-- the sparkles sit just above the dino, drawn in his own coordinates -->
+				<span class="dino" aria-hidden="true">
+					<svg class="sparkles" viewBox="-6 -5.5 64 15">
+						<path d={sparkle} transform="translate(51.5 0) scale(4.5)" />
+						<path d={sparkle} transform="translate(40.5 -3) scale(2.25)" />
+					</svg>
+					<Stargazer />
+				</span>
+				<p>{site.tagline}</p>
+			</div>
 		</div>
 
 		{#each footer.groups as { title, links } (title)}
@@ -61,13 +75,30 @@
 		align-content: start;
 		align-items: center;
 		gap: var(--space-xs);
+	}
+
+	.tagline {
+		grid-column: 1 / -1;
+		display: flex;
+		align-items: center;
+		gap: var(--space-sm);
 
 		p {
-			grid-column: 1 / -1;
 			max-inline-size: 30ch;
 			color: var(--color-text-muted);
 			line-height: var(--leading-snug);
 		}
+	}
+
+	.dino {
+		flex: none;
+		inline-size: 3.5rem;
+	}
+
+	.sparkles {
+		display: block;
+		inline-size: 100%;
+		fill: light-dark(var(--ink-900), #ffc845);
 	}
 
 	.name {
