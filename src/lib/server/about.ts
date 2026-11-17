@@ -1,12 +1,15 @@
-import { moments, skyHidden, skyNames } from '$lib/about';
+import { moments } from '$lib/about';
 import { allProjects, featured, sourceUrl } from '$lib/projects';
-import type { Moment, Night, SkyRepo } from '$lib/types';
-import { ownRepos, withLiveStats } from './github';
+import type { Moment, Night, SkyProject } from '$lib/types';
+import { withLiveStats } from './github';
 
 const key = (repo: string) => repo.toLowerCase();
 
+const launches = (list: Moment[]) =>
+	new Set(list.flatMap((m) => (m.kind === 'launch' ? [key(m.repo)] : [])));
+
 const isFeatured = new Set(featured.map((project) => key(project.repo)));
-const named = new Set(moments.flatMap((m) => (m.kind === 'launch' ? [key(m.repo)] : [])));
+const named = launches(moments);
 
 for (const moment of moments) {
 	if (moment.kind === 'launch' && !moment.note && isFeatured.has(key(moment.repo)))
@@ -20,6 +23,8 @@ const allMoments: Moment[] = [
 		.map((project): Moment => ({ kind: 'launch', repo: project.repo })),
 	...moments
 ];
+
+const launched = launches(allMoments);
 
 /* fills in each launch from projects.ts and GitHub, newest first */
 export async function nights(): Promise<Night[]> {
@@ -49,26 +54,15 @@ export async function nights(): Promise<Night[]> {
 	return filled.sort((a, b) => b.when.localeCompare(a.when));
 }
 
-const pretty = (repo: string) =>
-	repo.replace(/[-_]+/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
-
-/* every public repo, named after its project where it has one, and marked if it's one of the launches */
-export async function skyRepos(): Promise<SkyRepo[]> {
-	const repos = await ownRepos();
-	const name = (repo: string) => key(repo.split('/')[1]);
-	const projects = new Map(allProjects().map((project) => [name(project.repo), project]));
-	const launched = new Set(allMoments.flatMap((m) => (m.kind === 'launch' ? [name(m.repo)] : [])));
-
-	return repos
-		.filter((repo) => !skyHidden.includes(repo.name))
-		.map((repo) => {
-			const project = projects.get(key(repo.name));
-
-			return {
-				...repo,
-				title: skyNames[repo.name] ?? project?.name ?? pretty(repo.name),
-				launch: launched.has(key(repo.name)) ? project?.from : undefined,
-				logo: project?.logo
-			};
-		});
+/* every project on /projects, flagged if it's on the timeline too */
+export async function skyProjects(): Promise<SkyProject[]> {
+	return (await withLiveStats(allProjects())).map((project) => ({
+		repo: project.repo,
+		name: project.name,
+		href: sourceUrl(project),
+		stars: project.stars ?? 0,
+		year: project.from,
+		logo: project.logo,
+		launch: launched.has(key(project.repo))
+	}));
 }

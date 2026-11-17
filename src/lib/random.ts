@@ -1,4 +1,4 @@
-/* random numbers seeded from some text, so anything scattered with them lands in the same place on every build */
+/* random numbers from a seed, so scattered things land the same every build */
 export function seeded(text: string) {
 	let seed = 2166136261;
 	for (const ch of text) seed = Math.imul(seed ^ ch.charCodeAt(0), 16777619);

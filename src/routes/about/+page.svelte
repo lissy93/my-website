@@ -122,7 +122,7 @@
 	</div>
 </div>
 
-<Sky repos={data.sky} />
+<Sky {...data.sky} />
 
 <style>
 	.portrait {

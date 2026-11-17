@@ -337,11 +337,3 @@ export const interests = [
 	'a good adventure',
 	'the pub'
 ];
-
-/* the night sky shows every public repo, these get a nicer name than the repo's, or none at all */
-export const skyNames: Record<string, string> = {
-	'my-website': 'This website',
-	Lissy93: 'GitHub profile README'
-};
-
-export const skyHidden = ['OlliePoole.github.io'];

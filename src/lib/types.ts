@@ -93,11 +93,19 @@ export type Night = {
 /* one of the About page's numbers, links to where it can be checked */
 export type Stat = { value: number; label: string; detail?: string; href: string };
 
-/* one of my own public repos, a star in the About page's night sky */
-export type OwnRepo = { name: string; stars: number; created: string };
+/* one of my own public repos, for the star count */
+export type OwnRepo = { name: string; stars: number };
 
-/* launch is the year about.ts gives it, which can be earlier than the repo */
-export type SkyRepo = OwnRepo & { title: string; launch?: number; logo?: string };
+/* a project as a star in the About page's night sky */
+export type SkyProject = {
+	repo: string;
+	name: string;
+	href: string;
+	stars: number;
+	year?: number;
+	logo?: string;
+	launch: boolean;
+};
 
 /* a paragraph, a pull quote, the morning and evening pair, some links, or one of the page's lists */
 export type Block =

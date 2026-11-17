@@ -1,124 +1,98 @@
 <script lang="ts" module>
-	import { seeded } from '$lib/random';
-	import type { SkyRepo } from '$lib/types';
+	import { leoLines, type SkyLayout, type Star } from '$lib/sky';
 
-	type Star = SkyRepo & {
-		x: number;
-		y: number;
-		d: number;
-		year: number;
-		tone: string;
-		named: boolean;
-		rank: number;
-	};
+	const count = new Intl.NumberFormat('en-GB');
+	const compact = new Intl.NumberFormat('en-GB', { notation: 'compact' });
 
-	/* a few of the brightest, joined up by when they came out */
-	const constellations = [
-		{ label: '2017–19', repos: ['personal-security-checklist', 'awesome-privacy', 'dashy'], y: 34 },
-		{ label: '2022–23', repos: ['AdGuardian-Term', 'web-check', 'portainer-templates'], y: 46 },
-		{ label: '2024–25', repos: ['domain-locker', 'who-dat', 'networking-toolbox'], y: 30 }
-	];
-
-	const thisYear = new Date().getFullYear();
-	const firstYear = 2013;
-	const ticks = [thisYear - 9, thisYear - 6, thisYear - 3, thisYear];
-	const xOf = (year: number) => 4 + (92 * (year - firstYear)) / (thisYear + 1 - firstYear);
-
-	/* a launch keeps the year about.ts gives it, everything else sits at the month it was made */
-	function yearOf({ created, launch }: SkyRepo) {
-		const [year, month] = created.split('-').map(Number);
-		if (launch && launch !== year) return launch + 0.5;
-		return year + (month - 1) / 12;
+	/* what the tooltip and screen readers say, like "35,531 stars · 2023" */
+	function describe({ stars, year }: Star) {
+		const noun = stars === 1 ? 'star' : 'stars';
+		return [`${count.format(stars)} ${noun}`, year].filter(Boolean).join(' · ');
 	}
 
-	function tone({ stars, launch }: SkyRepo) {
-		if (stars >= 10000) return 'var(--star-sun)';
+	/* gold for the brightest, pink for the ones on the timeline */
+	function tone({ bright, launch }: Star) {
+		if (bright) return 'var(--star-sun)';
 		return launch ? 'var(--star-pink)' : 'var(--star)';
 	}
 
-	/* the legend sits top left and the dino bottom left, so the stars keep clear of both */
-	const blocked = ({ x, y }: Star) => (x < 34 && y < 11) || (x < 17 && y > 62);
-
-	/* measured in phone pixels, the tightest the sky ever gets */
-	const gap = (a: Star, b: Star) => Math.hypot((a.x - b.x) * 3.9, (a.y - b.y) * 4.8);
-
-	function place(repos: SkyRepo[]) {
-		const placed: Star[] = [];
-		const brightest = [...repos].sort((a, b) => b.stars - a.stars);
-
-		brightest.forEach((repo, rank) => {
-			const roll = seeded(repo.name);
-			const constellation = constellations.find(({ repos }) => repos.includes(repo.name));
-			const star: Star = {
-				...repo,
-				year: yearOf(repo),
-				x: 0,
-				y: 0,
-				d: 1.3 + 1.9 * Math.log10(repo.stars + 1),
-				tone: tone(repo),
-				named: repo.stars >= 100,
-				rank
-			};
-
-			for (let attempt = 0; attempt < 120; attempt++) {
-				star.x = Math.min(96, Math.max(3, xOf(star.year) + (roll() - 0.5) * 2.5));
-				star.y = constellation ? constellation.y + (roll() - 0.5) * 34 : 5 + roll() * 72;
-				const near = placed.some(
-					(other) => gap(star, other) < (star.named && other.named ? 30 : 12)
-				);
-				if (!blocked(star) && !near) break;
-			}
-			placed.push(star);
-		});
-
-		return placed;
-	}
-
-	function lines(stars: Star[]) {
-		return constellations.flatMap(({ label, repos }) => {
-			const members = stars.filter((star) => repos.includes(star.name)).sort((a, b) => a.x - b.x);
-			if (members.length < 2) return [];
-			const top = members.reduce((a, b) => (a.y < b.y ? a : b));
-			return [{ label, top, points: members.map(({ x, y }) => `${x},${y}`).join(' ') }];
-		});
-	}
-
-	const count = new Intl.NumberFormat('en-GB');
-	const describe = (star: Star) =>
-		`${count.format(star.stars)} ${star.stars === 1 ? 'star' : 'stars'} · ${Math.floor(star.year)}`;
+	const steps: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
 </script>
 
 <script lang="ts">
 	import { asset } from '$app/paths';
+	import { tick } from 'svelte';
 
-	let { repos }: { repos: SkyRepo[] } = $props();
+	let { stars, box, ticks }: SkyLayout = $props();
+	const uid = $props.id();
 
-	let stars = $derived(place(repos));
-	let shapes = $derived(lines(stars));
-	let byX = $derived([...stars].sort((a, b) => a.x - b.x));
+	let leo = $derived(stars.filter((star) => star.leo));
+	let rest = $derived(stars.filter((star) => !star.leo));
+	let counts = $derived(stars.map((star) => star.stars));
+	let range = $derived([Math.min(...counts), Math.max(...counts)].map(compact.format).join('–'));
 
 	let field = $state<HTMLElement>();
 	let tip = $state<HTMLElement>();
-	let pointed = $state<{ star: Star; left: number; top: number }>();
+	let pointed = $state<Star>();
+	let spot = $state({ left: 0, top: 0 });
+	let current = $state(0);
+	const links: HTMLAnchorElement[] = [];
 
 	/* one shared label that follows whichever star you point at or tab to */
-	function show(star: Star, el: HTMLElement) {
+	async function show(star: Star, el: HTMLElement) {
+		pointed = star;
+		await tick();
 		if (!field || !tip) return;
-		const box = field.getBoundingClientRect();
-		const spot = el.getBoundingClientRect();
+
+		const sky = field.getBoundingClientRect();
+		const target = el.getBoundingClientRect();
 		const width = tip.offsetWidth;
-		const left = Math.min(
-			Math.max(spot.left - box.left + spot.width / 2 - width / 2, 8),
-			box.width - width - 8
-		);
-		const above = spot.top - box.top - tip.offsetHeight - 6;
-		pointed = { star, left, top: above > 0 ? above : spot.bottom - box.top + 6 };
+		const centre = target.left - sky.left + target.width / 2;
+		const left = Math.min(Math.max(centre - width / 2, 8), sky.width - width - 8);
+		const above = target.top - sky.top - tip.offsetHeight - 6;
+		const below = target.bottom - sky.top + 6;
+		spot = { left, top: above > 0 ? above : below };
 	}
 
 	const hide = () => (pointed = undefined);
+
+	/* the sky is one tab stop, and arrow keys step through it brightest first */
+	function step(event: KeyboardEvent) {
+		const by = steps[event.key];
+		if (!by) return;
+		event.preventDefault();
+		links[(current + by + stars.length) % stars.length]?.focus();
+	}
 </script>
 
-<section class="sky" aria-label="Every public repo I’ve made, as a star sized by its GitHub stars">
+{#snippet glint(star: Star)}
+	<a
+		class="star"
+		class:bright={star.bright}
+		class:twinkle={star.twinkle}
+		href={star.href}
+		rel="external"
+		aria-label="{star.name}, {describe(star)}"
+		tabindex={star.rank === current ? 0 : -1}
+		style:--x="{star.x.toFixed(2)}%"
+		style:--y="{star.y.toFixed(2)}%"
+		style:--size="{star.size.toFixed(2)}px"
+		style:--c={tone(star)}
+		style:--rank={star.rank}
+		style:--twinkle={star.twinkle && `${star.twinkle.toFixed(1)}s`}
+		bind:this={links[star.rank]}
+		onpointerenter={(event) => show(star, event.currentTarget)}
+		onpointerleave={hide}
+		onfocus={(event) => {
+			current = star.rank;
+			show(star, event.currentTarget);
+		}}
+		onblur={hide}
+		onkeydown={step}
+	></a>
+{/snippet}
+
+<section class="sky" aria-labelledby="{uid}-title">
 	<svg class="moon" viewBox="0 0 24 24" aria-hidden="true">
 		<circle cx="12" cy="12" r="11" fill="var(--moon)" />
 		<circle cx="8.5" cy="9" r="2.4" fill="var(--crater)" />
@@ -126,77 +100,50 @@
 		<circle cx="15.5" cy="7.5" r="1.1" fill="var(--crater)" />
 	</svg>
 
+	<p class="caption">
+		<strong id="{uid}-title">My projects, mapped onto the night sky.</strong>
+		Star size shows GitHub stars <span class="range">({range})</span>.
+		<span class="by-year">The x-axis is the year released.</span>
+	</p>
+
 	<div class="field" bind:this={field}>
-		<div class="legend" aria-hidden="true">
-			<span><i style:--d="3px"></i>10</span>
-			<span><i style:--d="6px"></i>1k</span>
-			<span><i style:--d="10px"></i>35k</span>
-			<span>GitHub stars</span>
+		<div
+			class="leo"
+			style:--left="{box.left}%"
+			style:--width="{box.width}%"
+			style:inset-block-start="{box.centre}%"
+			style:aspect-ratio={box.aspect}
+		>
+			<svg class="lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+				{#each leoLines as points (points)}
+					<polyline {points} />
+				{/each}
+			</svg>
+			{#each leo as star (star.repo)}
+				{@render glint(star)}
+			{/each}
 		</div>
 
-		<svg class="lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-			{#each shapes as shape (shape.label)}
-				<polyline points={shape.points} />
-			{/each}
-		</svg>
-
-		{#each byX as star (star.name)}
-			{#if star.named}
-				<a
-					class="star"
-					class:bright={star.stars >= 10000}
-					href="https://github.com/Lissy93/{star.name}"
-					aria-label="{star.title}, {describe(star)}"
-					style:--x="{star.x}%"
-					style:--y="{star.y}%"
-					style:--d="{star.d.toFixed(2)}px"
-					style:--c={star.tone}
-					style:--rank={star.rank}
-					onpointerenter={(event) => show(star, event.currentTarget)}
-					onpointerleave={hide}
-					onfocus={(event) => show(star, event.currentTarget)}
-					onblur={hide}
-				></a>
-			{:else}
-				<span
-					class="star"
-					aria-hidden="true"
-					style:--x="{star.x}%"
-					style:--y="{star.y}%"
-					style:--d="{star.d.toFixed(2)}px"
-					style:--c={star.tone}
-					style:--rank={star.rank}
-				></span>
-			{/if}
+		{#each rest as star (star.repo)}
+			{@render glint(star)}
 		{/each}
 
-		{#each shapes as { label, top } (label)}
-			<span
-				class="era"
-				aria-hidden="true"
-				style:left="calc({top.x}% + 0.7rem)"
-				style:top="calc({top.y}% - 1.7rem)"
-			>
-				{label}
-			</span>
-		{/each}
-
-		{#each ticks as year (year)}
-			<span class="year" aria-hidden="true" style:left="{xOf(year)}%">{year}</span>
+		{#each ticks as { year, x } (year)}
+			<span class="year" aria-hidden="true" style:inset-inline-start="{x.toFixed(2)}%">{year}</span>
 		{/each}
 
 		<div
 			class="tip"
 			class:shown={pointed}
-			class:with-logo={pointed?.star.logo}
+			class:with-logo={pointed?.logo}
 			aria-hidden="true"
 			bind:this={tip}
-			style:left="{pointed?.left ?? 0}px"
-			style:top="{pointed?.top ?? 0}px"
+			style:left="{spot.left}px"
+			style:top="{spot.top}px"
 		>
-			{#if pointed?.star.logo}<img src={pointed.star.logo} alt="" width="24" height="24" />{/if}
-			<strong>{pointed?.star.title}</strong>
-			<span>{pointed ? describe(pointed.star) : ''}</span>
+			{#if pointed?.logo}<img src={pointed.logo} alt="" width="24" height="24" />{/if}
+			<strong>{pointed?.name}</strong>
+			<span>{pointed ? describe(pointed) : ''}</span>
 		</div>
 	</div>
 
@@ -215,6 +162,7 @@
 		--moon: #ffe6a3;
 		--crater: #f2cf73;
 		--edge: max(var(--gutter), calc((100% - var(--width-page)) / 2 + var(--gutter)));
+		--moon-size: clamp(2.25rem, 4.5vw, 3.75rem);
 
 		position: relative;
 		padding-block-start: clamp(2.5rem, 6vw, 4.5rem);
@@ -234,13 +182,72 @@
 		position: absolute;
 		inset-block-start: clamp(2.5rem, 5vw, 4rem);
 		inset-inline-end: var(--edge);
-		inline-size: clamp(2.25rem, 4.5vw, 3.75rem);
+		inline-size: var(--moon-size);
+	}
+
+	.caption {
+		max-inline-size: min(80ch, 100% - 2 * var(--edge) - var(--moon-size) - var(--space-md));
+		margin-inline: var(--edge);
+		margin-block-end: var(--space-md);
+		color: oklch(100% 0 0 / 0.7);
+		font-size: var(--text-xs);
+		line-height: var(--leading-snug);
+		text-wrap: pretty;
+
+		strong {
+			display: block;
+			color: var(--neutral-0);
+			font-weight: var(--weight-semibold);
+		}
+	}
+
+	.range {
+		white-space: nowrap;
+	}
+
+	.by-year {
+		display: none;
 	}
 
 	.field {
 		position: relative;
-		block-size: clamp(19rem, 32vw, 27rem);
+		aspect-ratio: 1;
 		margin-inline: var(--edge);
+	}
+
+	.leo {
+		position: absolute;
+		inset-inline: 5%;
+		translate: 0 -50%;
+	}
+
+	.year {
+		display: none;
+		position: absolute;
+		inset-block-end: var(--space-sm);
+		translate: -50% 0;
+		color: oklch(100% 0 0 / 0.58);
+		font-size: var(--text-2xs);
+		font-weight: var(--weight-semibold);
+		font-variant-numeric: tabular-nums;
+		letter-spacing: 0.12em;
+		pointer-events: none;
+	}
+
+	@media (width >= 40rem) {
+		.field {
+			aspect-ratio: 2.75;
+		}
+
+		.leo {
+			inset-inline: var(--left) auto;
+			inline-size: var(--width);
+		}
+
+		.year,
+		.by-year {
+			display: inline;
+		}
 	}
 
 	.lines {
@@ -260,32 +267,15 @@
 		}
 	}
 
-	.era,
-	.year {
-		position: absolute;
-		color: oklch(100% 0 0 / 0.58);
-		font-size: var(--text-2xs);
-		font-weight: var(--weight-semibold);
-		letter-spacing: 0.12em;
-		white-space: nowrap;
-		pointer-events: none;
-	}
-
-	.year {
-		inset-block-end: var(--space-sm);
-		translate: -50% 0;
-		font-variant-numeric: tabular-nums;
-	}
-
 	.star {
-		--size: calc(var(--d) * 2.6);
+		--glow: calc(var(--size) * 2.6);
 
 		position: absolute;
 		inset-inline-start: var(--x);
 		inset-block-start: var(--y);
 		display: grid;
 		place-items: center;
-		inline-size: max(var(--size), 0.9rem);
+		inline-size: max(var(--glow), 1.5rem);
 		aspect-ratio: 1;
 		translate: -50% -50%;
 		border-radius: var(--radius-full);
@@ -293,7 +283,7 @@
 
 		&::before {
 			content: '';
-			inline-size: var(--size);
+			inline-size: var(--glow);
 			aspect-ratio: 1;
 			border-radius: inherit;
 			background: radial-gradient(
@@ -305,11 +295,7 @@
 			transition: scale var(--duration-base) var(--ease-out);
 		}
 
-		&:is(a) {
-			inline-size: max(var(--size), 1.75rem);
-		}
-
-		&:is(a:hover, a:focus-visible)::before {
+		&:is(:hover, :focus-visible)::before {
 			scale: 1.35;
 		}
 	}
@@ -318,7 +304,7 @@
 	.bright::after {
 		content: '';
 		position: absolute;
-		inline-size: calc(var(--d) * 5.5);
+		inline-size: calc(var(--size) * 5.5);
 		aspect-ratio: 1;
 		background:
 			linear-gradient(
@@ -333,31 +319,6 @@
 		pointer-events: none;
 	}
 
-	.legend {
-		position: absolute;
-		inset-block-start: 0;
-		inset-inline-start: 0;
-		display: flex;
-		align-items: center;
-		gap: var(--space-sm);
-		color: oklch(100% 0 0 / 0.7);
-		font-size: var(--text-2xs);
-		font-weight: var(--weight-semibold);
-
-		span {
-			display: inline-flex;
-			align-items: center;
-			gap: 0.35rem;
-		}
-
-		i {
-			inline-size: var(--d);
-			aspect-ratio: 1;
-			border-radius: var(--radius-full);
-			background: var(--star);
-		}
-	}
-
 	.tip {
 		position: absolute;
 		z-index: 1;
@@ -365,6 +326,7 @@
 		grid-template-columns: auto 1fr;
 		align-items: center;
 		column-gap: var(--space-xs);
+		inline-size: max-content;
 		max-inline-size: 16rem;
 		border: var(--border-thin) solid oklch(100% 0 0 / 0.16);
 		border-radius: var(--radius-sm);
@@ -414,12 +376,11 @@
 		block-size: auto;
 	}
 
-	/* the stars come out as the sky scrolls into view, brightest first, as they do at dusk */
+	/* the stars come out brightest first as the sky scrolls in, like at dusk */
 	@supports (animation-timeline: view()) {
 		@media (prefers-reduced-motion: no-preference) {
 			.star,
-			.lines,
-			.era {
+			.lines {
 				animation-timing-function: var(--ease-out);
 				animation-fill-mode: backwards;
 				animation-timeline: --sky;
@@ -431,11 +392,16 @@
 					min(calc(40% + var(--rank) * 0.5%), 95%);
 			}
 
-			.lines,
-			.era {
+			.lines {
 				animation-name: fade-in;
 				animation-range: entry 70% entry 100%;
 			}
+		}
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.twinkle::before {
+			animation: twinkle var(--twinkle) ease-in-out infinite;
 		}
 	}
 
@@ -443,6 +409,16 @@
 		from {
 			opacity: 0;
 			scale: 0.2;
+		}
+	}
+
+	@keyframes twinkle {
+		92% {
+			opacity: 1;
+		}
+
+		96% {
+			opacity: 0.45;
 		}
 	}
 

@@ -41,8 +41,7 @@ function toStats(repo: Repo): Stats {
 
 const toOwn = (repo: Repo): OwnRepo => ({
 	name: repo.full_name.split('/')[1],
-	stars: repo.stargazers_count,
-	created: repo.created_at.slice(0, 7)
+	stars: repo.stargazers_count
 });
 
 async function fetchPage(page: number): Promise<Repo[]> {
