@@ -4,10 +4,16 @@
 	import Glyph from '$lib/bits-and-bobs/Glyph.svelte';
 	import { navIcons } from '$lib/bits-and-bobs/icons';
 	import { nav } from '$lib/me/site';
+	import Stargazer, { type Mood } from '$lib/stargazing/Stargazer.svelte';
 	import Hero from './Hero.svelte';
 	import { dockInto } from './hero.svelte';
 
 	let pages: HTMLElement;
+	let landing = $state<HTMLElement>();
+
+	/* the dino grins at whichever page you point at, and smiles when petted */
+	let mood = $state<Mood>('calm');
+	const feel = (to: Mood) => () => (mood = to);
 
 	/* the big link you follow flies into the bar as the next page's current-page pill */
 	onNavigate(({ to }) => {
@@ -18,7 +24,7 @@
 </script>
 
 <!-- the hero, then a big copy of the bar's nav that shrinks into it as you scroll -->
-<div class="landing">
+<div class="landing" bind:this={landing}>
 	<Hero />
 	<div class="strip">
 		<div class="wrap">
@@ -27,6 +33,10 @@
 				aria-label="Pages"
 				bind:this={pages}
 				{@attach dockInto('[data-bar] nav', '.landing')}
+				onpointerenter={feel('grinning')}
+				onpointerleave={feel('calm')}
+				onfocusin={feel('grinning')}
+				onfocusout={feel('calm')}
 			>
 				{#each nav as { href, label } (href)}
 					<a class="chip" href={resolve(href)}>
@@ -35,6 +45,17 @@
 				{/each}
 			</nav>
 		</div>
+		<a
+			class="dino"
+			href="{resolve('/about')}#night-sky"
+			aria-label="The night sky on my About page"
+			onpointerenter={feel('content')}
+			onpointerleave={feel('calm')}
+			onfocus={feel('content')}
+			onblur={feel('calm')}
+		>
+			<Stargazer {mood} watching={landing} aria-hidden="true" />
+		</a>
 	</div>
 </div>
 
@@ -59,9 +80,26 @@
 		}
 
 		.strip {
+			position: relative;
 			display: flex;
 			align-items: center;
 			padding-block: var(--space-xl);
+		}
+	}
+
+	.dino {
+		display: none;
+	}
+
+	/* only wide screens have room for the dino beside the links */
+	@media (width >= 72rem) {
+		.dino {
+			position: absolute;
+			inset-block-end: 0;
+			inset-inline-start: max(var(--gutter), var(--edge) - 3rem);
+			display: block;
+			inline-size: clamp(4rem, 8vw, 6.5rem);
+			pointer-events: none;
 		}
 	}
 

@@ -123,6 +123,8 @@
 
 	--width-page: 80rem;
 	--gutter: clamp(1rem, 4vw, 2.75rem);
+	/* where a page's content starts, for things placed against a full-width box */
+	--edge: max(var(--gutter), calc((100% - var(--width-page)) / 2 + var(--gutter)));
 	--card-padding: 1.25rem;
 	--bar-height: 3.75rem;
 

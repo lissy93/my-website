@@ -1,4 +1,5 @@
 <script lang="ts" module>
+	import { between, nowAndThen } from '$lib/bits-and-bobs/random';
 	import { maria, moonAt } from './moon';
 	import { leoLines, type SkyLayout, type Star } from './sky';
 
@@ -19,22 +20,7 @@
 
 	const steps: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
 
-	const between = (min: number, max: number) => min + Math.random() * (max - min);
 	const pick = <T,>(list: T[]) => list[Math.floor(Math.random() * list.length)];
-
-	/* runs fn again and again, a random min to max seconds apart, until stopped */
-	function nowAndThen(fn: () => void, min: number, max: number) {
-		let timer: ReturnType<typeof setTimeout>;
-		const wait = () => {
-			timer = setTimeout(run, between(min, max) * 1000);
-		};
-		const run = () => {
-			fn();
-			wait();
-		};
-		wait();
-		return () => clearTimeout(timer);
-	}
 
 	/* how visible each band of background stars is, brightest first */
 	const bandOpacity = [0.75, 0.56, 0.38];
@@ -68,7 +54,7 @@
 	let tip = $state<HTMLElement>();
 	let meteor = $state<HTMLElement>();
 	let faintMeteor = $state<HTMLElement>();
-	let stargazer = $state<ReturnType<typeof Stargazer>>();
+	let sky = $state<HTMLElement>();
 	let pointed = $state<Star>();
 	let spot = $state({ left: 0, top: 0 });
 	let current = $state(0);
@@ -95,10 +81,6 @@
 	/* the face the moon or the dino asks for while you point at it */
 	let hovered = $state<Mood>();
 	const hover = (mood?: Mood) => () => (hovered = mood);
-
-	/* the dino tips his head toward the pointer as it moves up and down the sky */
-	const watch = (event: PointerEvent & { currentTarget: HTMLElement }) =>
-		stargazer?.lookAt(event.clientY, event.currentTarget.getBoundingClientRect());
 
 	/* the dino's face follows whatever you point at, stars first */
 	let mood = $derived.by((): Mood => {
@@ -150,15 +132,14 @@
 		);
 	}
 
-	/* a twinkle every second or so, shooting stars, and the dino blinking */
+	/* a twinkle every second or so, plus bright and faint shooting stars */
 	$effect(() => {
 		if (prefersReducedMotion.current) return;
 
 		const stops = [
 			nowAndThen(twinkle, 0.4, 1.6),
 			nowAndThen(() => shoot(meteor), 5, 15),
-			nowAndThen(() => shoot(faintMeteor, { scale: 0.6, bend: 12 }), 3, 12),
-			nowAndThen(() => stargazer?.blink(), 6, 8)
+			nowAndThen(() => shoot(faintMeteor, { scale: 0.6, bend: 12 }), 3, 12)
 		];
 		return () => stops.forEach((stop) => stop());
 	});
@@ -190,11 +171,11 @@
 {/snippet}
 
 <section
+	id="night-sky"
 	class="sky"
 	aria-labelledby="{uid}-title"
 	style:--moonlight={moon.lit.toFixed(2)}
-	onpointermove={watch}
-	onpointerleave={() => stargazer?.lookAhead()}
+	bind:this={sky}
 >
 	<svg
 		class="moon"
@@ -272,12 +253,7 @@
 	</div>
 
 	<div class="dino" aria-hidden="true">
-		<Stargazer
-			{mood}
-			bind:this={stargazer}
-			onpointerenter={hover('content')}
-			onpointerleave={hover()}
-		/>
+		<Stargazer {mood} watching={sky} onpointerenter={hover('content')} onpointerleave={hover()} />
 	</div>
 </section>
 
@@ -294,7 +270,6 @@
 		--maria: #f2cf73;
 		/* see-through and a little blue, like earthshine on the dark side */
 		--moon-shade: oklch(22% 0.1 262 / 0.82);
-		--edge: max(var(--gutter), calc((100% - var(--width-page)) / 2 + var(--gutter)));
 		--moon-size: clamp(2.25rem, 4.5vw, 3.75rem);
 		--dino: clamp(5rem, 10vw, 8.25rem);
 

@@ -5,9 +5,12 @@
 
 <script lang="ts">
 	import type { SVGAttributes } from 'svelte/elements';
+	import { on } from 'svelte/events';
 	import { prefersReducedMotion, Spring } from 'svelte/motion';
+	import { nowAndThen } from '$lib/bits-and-bobs/random';
 
-	let { mood = 'calm', ...rest }: { mood?: Mood } & SVGAttributes<SVGSVGElement> = $props();
+	type Props = { mood?: Mood; watching?: HTMLElement } & SVGAttributes<SVGSVGElement>;
+	let { mood = 'calm', watching, ...rest }: Props = $props();
 
 	let eye = $state<SVGGElement>();
 	let head = $state<SVGGElement>();
@@ -19,7 +22,7 @@
 	};
 
 	/* mostly a quick half blink, and now and then a slow full one */
-	export function blink() {
+	function blink() {
 		const { shut, duration } = Math.random() < 0.3 ? blinks.pronounced : blinks.subtle;
 		const open = { transform: 'none' };
 		const closed = { transform: `scaleY(${shut})` };
@@ -29,20 +32,39 @@
 	/* how far his head tips down in degrees, or up when it's negative */
 	const tilt = new Spring(0, { stiffness: 0.08, damping: 0.7 });
 
-	/* the furthest it tips, with the pointer at the top or bottom of the sky */
+	/* the furthest it tips, with the pointer at the top or bottom of the area */
 	const reach = 8;
 
-	/* tips his head toward a height in the sky, more the further away it is */
-	export function lookAt(y: number, sky: DOMRect) {
-		if (prefersReducedMotion.current || !head) return;
+	/* tips his head toward a height in the area, more the further away it is */
+	function lookAt(y: number, area: DOMRect) {
+		if (!head) return;
 
 		const { top, height } = head.getBoundingClientRect();
 		const level = top + height / 2;
-		const room = y > level ? sky.bottom - level : level - sky.top;
+		const room = y > level ? area.bottom - level : level - area.top;
 		tilt.target = (reach * (y - level)) / room;
 	}
 
-	export const lookAhead = () => (tilt.target = 0);
+	/* he blinks every 6 to 8 seconds, unless motion is reduced */
+	$effect(() => {
+		if (prefersReducedMotion.current) return;
+		return nowAndThen(blink, 6, 8);
+	});
+
+	/* his head follows the pointer up and down the area he's watching */
+	$effect(() => {
+		const area = watching;
+		if (prefersReducedMotion.current || !area) return;
+
+		const stops = [
+			on(area, 'pointermove', (event) => lookAt(event.clientY, area.getBoundingClientRect())),
+			on(area, 'pointerleave', () => (tilt.target = 0))
+		];
+		return () => {
+			stops.forEach((stop) => stop());
+			tilt.target = 0;
+		};
+	});
 </script>
 
 <svg viewBox="-6 9.5 64 50" width="64" height="50" data-mood={mood} {...rest}>
