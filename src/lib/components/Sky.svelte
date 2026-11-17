@@ -17,13 +17,37 @@
 	}
 
 	const steps: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+
+	const between = (min: number, max: number) => min + Math.random() * (max - min);
+	const pick = <T,>(list: T[]) => list[Math.floor(Math.random() * list.length)];
+
+	/* runs fn again and again, a random min to max seconds apart, until stopped */
+	function nowAndThen(fn: () => void, min: number, max: number) {
+		let timer: ReturnType<typeof setTimeout>;
+		const wait = () => {
+			timer = setTimeout(run, between(min, max) * 1000);
+		};
+		const run = () => {
+			fn();
+			wait();
+		};
+		wait();
+		return () => clearTimeout(timer);
+	}
+
+	/* how visible each band of background stars is, brightest first */
+	const bandOpacity = [0.75, 0.56, 0.38];
+
+	/* a quick dim, a flicker, then back to full */
+	const flicker = [1, 0.4, 0.9, 0.55, 1].map((opacity) => ({ opacity }));
 </script>
 
 <script lang="ts">
 	import { asset } from '$app/paths';
 	import { tick } from 'svelte';
+	import { prefersReducedMotion } from 'svelte/motion';
 
-	let { stars, box, ticks }: SkyLayout = $props();
+	let { stars, box, ticks, backdrop }: SkyLayout = $props();
 	const uid = $props.id();
 
 	let leo = $derived(stars.filter((star) => star.leo));
@@ -31,8 +55,15 @@
 	let counts = $derived(stars.map((star) => star.stars));
 	let range = $derived([Math.min(...counts), Math.max(...counts)].map(compact.format).join('–'));
 
+	/* bigger stars hold more tickets, so they twinkle a little more often */
+	let tickets = $derived(
+		stars.flatMap((star) => Array<Star>(Math.round(Math.sqrt(star.size))).fill(star))
+	);
+
 	let field = $state<HTMLElement>();
 	let tip = $state<HTMLElement>();
+	let meteor = $state<HTMLElement>();
+	let faintMeteor = $state<HTMLElement>();
 	let pointed = $state<Star>();
 	let spot = $state({ left: 0, top: 0 });
 	let current = $state(0);
@@ -63,13 +94,60 @@
 		event.preventDefault();
 		links[(current + by + stars.length) % stars.length]?.focus();
 	}
+
+	/* one star twinkles, its spikes too if it has them */
+	function twinkle() {
+		const star = pick(tickets);
+		const parts = star.bright ? ['::before', '::after'] : ['::before'];
+		for (const pseudoElement of parts) {
+			links[star.rank]?.animate(flicker, { duration: 900, pseudoElement });
+		}
+	}
+
+	/* a streak falls from the top of the sky, bending downward by bend degrees */
+	function shoot(streak: HTMLElement | undefined, { scale = 1, bend = 0 } = {}) {
+		if (!field || !streak) return;
+
+		const { width, height } = field.getBoundingClientRect();
+		const rightward = Math.random() < 0.5;
+		const across = between(0.1, 0.6) * width;
+		const x = rightward ? across : width - across;
+		const y = between(0, 0.25) * height;
+		/* degrees below level */
+		const fall = between(30, 50);
+		const heading = rightward ? fall : 180 - fall;
+		const turn = rightward ? bend : -bend;
+		const distance = 0.2 * scale * width;
+		const pose = (angle: number, along: number, tail: number) =>
+			`translate(${x}px, ${y}px) rotate(${angle}deg) translateX(${along}px) scaleX(${tail})`;
+
+		streak.animate(
+			[
+				{ transform: pose(heading, 0, 0.2), opacity: 0, easing: 'ease-out' },
+				{ opacity: 1, offset: 0.15, easing: 'ease-in' },
+				{ transform: pose(heading + turn, distance, 1), opacity: 0 }
+			],
+			between(700, 1100) * scale
+		);
+	}
+
+	/* a twinkle every second or so, plus bright and faint shooting stars */
+	$effect(() => {
+		if (prefersReducedMotion.current) return;
+
+		const stops = [
+			nowAndThen(twinkle, 0.4, 1.6),
+			nowAndThen(() => shoot(meteor), 5, 15),
+			nowAndThen(() => shoot(faintMeteor, { scale: 0.6, bend: 12 }), 3, 12)
+		];
+		return () => stops.forEach((stop) => stop());
+	});
 </script>
 
 {#snippet glint(star: Star)}
 	<a
 		class="star"
 		class:bright={star.bright}
-		class:twinkle={star.twinkle}
 		href={star.href}
 		rel="external"
 		aria-label="{star.name}, {describe(star)}"
@@ -79,7 +157,6 @@
 		style:--size="{star.size.toFixed(2)}px"
 		style:--c={tone(star)}
 		style:--rank={star.rank}
-		style:--twinkle={star.twinkle && `${star.twinkle.toFixed(1)}s`}
 		bind:this={links[star.rank]}
 		onpointerenter={(event) => show(star, event.currentTarget)}
 		onpointerleave={hide}
@@ -106,14 +183,28 @@
 		<span class="by-year">The x-axis is the year released.</span>
 	</p>
 
-	<div class="field" bind:this={field}>
-		<div
-			class="leo"
-			style:--left="{box.left}%"
-			style:--width="{box.width}%"
-			style:inset-block-start="{box.centre}%"
-			style:aspect-ratio={box.aspect}
-		>
+	<div
+		class="field"
+		bind:this={field}
+		style:--left="{box.left}%"
+		style:--width="{box.width}%"
+		style:--centre="{box.centre}%"
+		style:--aspect={box.aspect}
+	>
+		<div class="night" aria-hidden="true">
+			<div class="leo">
+				<svg class="backdrop" viewBox="0 0 100 100" preserveAspectRatio="none">
+					{#each backdrop as d, i (i)}
+						<path {d} style:opacity={bandOpacity[i]} />
+					{/each}
+				</svg>
+			</div>
+		</div>
+
+		<span class="meteor" aria-hidden="true" bind:this={meteor}></span>
+		<span class="meteor faint" aria-hidden="true" bind:this={faintMeteor}></span>
+
+		<div class="leo">
 			<svg class="lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
 				{#each leoLines as points (points)}
 					<polyline {points} />
@@ -163,8 +254,10 @@
 		--crater: #f2cf73;
 		--edge: max(var(--gutter), calc((100% - var(--width-page)) / 2 + var(--gutter)));
 		--moon-size: clamp(2.25rem, 4.5vw, 3.75rem);
+		--dino: clamp(4.5rem, 9vw, 7.5rem);
 
 		position: relative;
+		overflow: clip;
 		padding-block-start: clamp(2.5rem, 6vw, 4.5rem);
 		view-timeline: --sky;
 		background:
@@ -180,12 +273,15 @@
 
 	.moon {
 		position: absolute;
+		z-index: 1;
 		inset-block-start: clamp(2.5rem, 5vw, 4rem);
 		inset-inline-end: var(--edge);
 		inline-size: var(--moon-size);
 	}
 
 	.caption {
+		position: relative;
+		z-index: 1;
 		max-inline-size: min(80ch, 100% - 2 * var(--edge) - var(--moon-size) - var(--space-md));
 		margin-inline: var(--edge);
 		margin-block-end: var(--space-md);
@@ -218,6 +314,8 @@
 	.leo {
 		position: absolute;
 		inset-inline: 5%;
+		inset-block-start: var(--centre);
+		aspect-ratio: var(--aspect);
 		translate: 0 -50%;
 	}
 
@@ -250,13 +348,30 @@
 		}
 	}
 
+	.night {
+		position: absolute;
+		inset: 0;
+		/* the dino's head, which the sky turns around */
+		transform-origin: calc(var(--dino) * 0.85) calc(100% - var(--dino) * 0.7);
+	}
+
+	.backdrop,
 	.lines {
 		position: absolute;
 		inset: 0;
 		inline-size: 100%;
 		block-size: 100%;
 		overflow: visible;
+	}
 
+	.backdrop path {
+		stroke: var(--star);
+		stroke-width: 1;
+		stroke-linecap: round;
+		vector-effect: non-scaling-stroke;
+	}
+
+	.lines {
 		polyline {
 			fill: none;
 			stroke: oklch(100% 0 0 / 0.3);
@@ -319,6 +434,25 @@
 		pointer-events: none;
 	}
 
+	.meteor {
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-end: 100%;
+		inline-size: clamp(3rem, 7vw, 6rem);
+		block-size: 1.5px;
+		border-radius: var(--radius-full);
+		background: linear-gradient(to right, transparent, var(--star));
+		opacity: 0;
+		transform-origin: right;
+		pointer-events: none;
+	}
+
+	.faint {
+		inline-size: clamp(2rem, 4vw, 3.5rem);
+		block-size: 1px;
+		background: linear-gradient(to right, transparent, oklch(from var(--star) l c h / 0.5));
+	}
+
 	.tip {
 		position: absolute;
 		z-index: 1;
@@ -372,7 +506,7 @@
 		position: absolute;
 		inset-block-end: 0;
 		inset-inline-start: var(--edge);
-		inline-size: clamp(4.5rem, 9vw, 7.5rem);
+		inline-size: var(--dino);
 		block-size: auto;
 	}
 
@@ -380,6 +514,7 @@
 	@supports (animation-timeline: view()) {
 		@media (prefers-reduced-motion: no-preference) {
 			.star,
+			.backdrop,
 			.lines {
 				animation-timing-function: var(--ease-out);
 				animation-fill-mode: backwards;
@@ -392,6 +527,7 @@
 					min(calc(40% + var(--rank) * 0.5%), 95%);
 			}
 
+			.backdrop,
 			.lines {
 				animation-name: fade-in;
 				animation-range: entry 70% entry 100%;
@@ -399,9 +535,22 @@
 		}
 	}
 
+	/* the sky turns slowly, like a night-long time-lapse, then eases back */
 	@media (prefers-reduced-motion: no-preference) {
-		.twinkle::before {
-			animation: twinkle var(--twinkle) ease-in-out infinite;
+		.night {
+			animation: turn 90s ease-in-out infinite alternate;
+			/* start mid-swing, so it's already moving */
+			animation-delay: -45s;
+		}
+	}
+
+	@keyframes turn {
+		from {
+			rotate: -8deg;
+		}
+
+		to {
+			rotate: 8deg;
 		}
 	}
 
@@ -409,16 +558,6 @@
 		from {
 			opacity: 0;
 			scale: 0.2;
-		}
-	}
-
-	@keyframes twinkle {
-		92% {
-			opacity: 1;
-		}
-
-		96% {
-			opacity: 0.45;
 		}
 	}
 

@@ -1,4 +1,5 @@
 import { seeded } from './random';
+import { nearLeo } from './sky-catalogue';
 import type { SkyProject } from './types';
 
 /* Leo's main stars in % of its box, left to right as they sit in the sky */
@@ -25,6 +26,30 @@ const figure: LeoStar[][] = [
 
 export const leoLines = figure.map((path) => path.map((name) => leo[name].join(',')).join(' '));
 
+/* the patch of real sky Leo's box covers, in degrees */
+const leoSky = { left: 177.27, right: 146.46, top: 26.01, bottom: 11.97 };
+
+/* the real stars around Leo as dots in % of its box, one path per brightness */
+function backdrop() {
+	const dot = ([ra, dec]: number[]) => {
+		const x = ((leoSky.left - ra) / (leoSky.left - leoSky.right)) * 100;
+		const y = ((leoSky.top - dec) / (leoSky.top - leoSky.bottom)) * 100;
+		return `M${x.toFixed(1)} ${y.toFixed(1)}h0`;
+	};
+	/* magnitudes, where lower is brighter */
+	const bands = [
+		[-Infinity, 4.5],
+		[4.5, 5.5],
+		[5.5, Infinity]
+	];
+	return bands.map(([from, to]) =>
+		nearLeo
+			.filter(([, , mag]) => mag >= from && mag < to)
+			.map(dot)
+			.join('')
+	);
+}
+
 export type Star = SkyProject & {
 	/* in % of the sky, or of Leo's box for the stars in Leo */
 	x: number;
@@ -35,8 +60,6 @@ export type Star = SkyProject & {
 	rank: number;
 	bright: boolean;
 	leo?: LeoStar;
-	/* seconds between twinkles */
-	twinkle?: number;
 };
 
 /* Leo's true shape, centred this far down the sky */
@@ -180,9 +203,7 @@ export function place(projects: SkyProject[]) {
 			rank,
 			size: sizeFor(project.stars),
 			bright: project.stars >= 10_000,
-			leo: leoOf.get(project),
-			/* about a third twinkle, each every 5 to 14 seconds */
-			twinkle: roll() < 0.3 ? 5 + roll() * 9 : undefined
+			leo: leoOf.get(project)
 		};
 
 		/* within its own year, spilling a little either side, at any height */
@@ -195,7 +216,7 @@ export function place(projects: SkyProject[]) {
 		placed.push({ ...star, x, y });
 	});
 
-	return { stars: placed, box, ticks };
+	return { stars: placed, box, ticks, backdrop: backdrop() };
 }
 
 export type SkyLayout = ReturnType<typeof place>;
