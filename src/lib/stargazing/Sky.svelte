@@ -44,9 +44,9 @@
 </script>
 
 <script lang="ts">
-	import { asset } from '$app/paths';
 	import { tick } from 'svelte';
 	import { prefersReducedMotion } from 'svelte/motion';
+	import Stargazer, { type Mood } from './Stargazer.svelte';
 
 	let { stars, box, ticks, backdrop }: SkyLayout = $props();
 	const uid = $props.id();
@@ -68,6 +68,7 @@
 	let tip = $state<HTMLElement>();
 	let meteor = $state<HTMLElement>();
 	let faintMeteor = $state<HTMLElement>();
+	let stargazer = $state<ReturnType<typeof Stargazer>>();
 	let pointed = $state<Star>();
 	let spot = $state({ left: 0, top: 0 });
 	let current = $state(0);
@@ -90,6 +91,20 @@
 	}
 
 	const hide = () => (pointed = undefined);
+
+	/* the face the moon or the dino asks for while you point at it */
+	let hovered = $state<Mood>();
+	const hover = (mood?: Mood) => () => (hovered = mood);
+
+	/* the dino tips his head toward the pointer as it moves up and down the sky */
+	const watch = (event: PointerEvent & { currentTarget: HTMLElement }) =>
+		stargazer?.lookAt(event.clientY, event.currentTarget.getBoundingClientRect());
+
+	/* the dino's face follows whatever you point at, stars first */
+	let mood = $derived.by((): Mood => {
+		if (!pointed) return hovered ?? 'calm';
+		return pointed.bright ? 'awed' : 'grinning';
+	});
 
 	/* the sky is one tab stop, and arrow keys step through it brightest first */
 	function step(event: KeyboardEvent) {
@@ -135,14 +150,15 @@
 		);
 	}
 
-	/* a twinkle every second or so, plus bright and faint shooting stars */
+	/* a twinkle every second or so, shooting stars, and the dino blinking */
 	$effect(() => {
 		if (prefersReducedMotion.current) return;
 
 		const stops = [
 			nowAndThen(twinkle, 0.4, 1.6),
 			nowAndThen(() => shoot(meteor), 5, 15),
-			nowAndThen(() => shoot(faintMeteor, { scale: 0.6, bend: 12 }), 3, 12)
+			nowAndThen(() => shoot(faintMeteor, { scale: 0.6, bend: 12 }), 3, 12),
+			nowAndThen(() => stargazer?.blink(), 6, 8)
 		];
 		return () => stops.forEach((stop) => stop());
 	});
@@ -173,8 +189,20 @@
 	></a>
 {/snippet}
 
-<section class="sky" aria-labelledby="{uid}-title" style:--moonlight={moon.lit.toFixed(2)}>
-	<svg class="moon" viewBox="0 0 24 24" aria-hidden="true">
+<section
+	class="sky"
+	aria-labelledby="{uid}-title"
+	style:--moonlight={moon.lit.toFixed(2)}
+	onpointermove={watch}
+	onpointerleave={() => stargazer?.lookAhead()}
+>
+	<svg
+		class="moon"
+		viewBox="0 0 24 24"
+		aria-hidden="true"
+		onpointerenter={hover('moonlit')}
+		onpointerleave={hover()}
+	>
 		<circle cx="12" cy="12" r="11" fill="var(--moon)" />
 		{#each Object.entries(maria) as [sea, [cx, cy, rx, ry]] (sea)}
 			<ellipse {cx} {cy} {rx} {ry} fill="var(--maria)" />
@@ -243,7 +271,14 @@
 		</div>
 	</div>
 
-	<img class="dino" src={asset('/dinos/stargazer.svg')} alt="" width="58" height="50" />
+	<div class="dino" aria-hidden="true">
+		<Stargazer
+			{mood}
+			bind:this={stargazer}
+			onpointerenter={hover('content')}
+			onpointerleave={hover()}
+		/>
+	</div>
 </section>
 
 <style>
@@ -261,7 +296,7 @@
 		--moon-shade: oklch(22% 0.1 262 / 0.82);
 		--edge: max(var(--gutter), calc((100% - var(--width-page)) / 2 + var(--gutter)));
 		--moon-size: clamp(2.25rem, 4.5vw, 3.75rem);
-		--dino: clamp(4.5rem, 9vw, 7.5rem);
+		--dino: clamp(5rem, 10vw, 8.25rem);
 
 		position: relative;
 		overflow: clip;
@@ -363,7 +398,7 @@
 		position: absolute;
 		inset: 0;
 		/* the dino's head, which the sky turns around */
-		transform-origin: calc(var(--dino) * 0.85) calc(100% - var(--dino) * 0.7);
+		transform-origin: calc(var(--dino) * 0.86) calc(100% - var(--dino) * 0.63);
 		/* moonlight washes out the faint stars, as it does for real */
 		opacity: calc(1 - var(--moonlight) * 0.3);
 	}
@@ -520,7 +555,7 @@
 		inset-block-end: 0;
 		inset-inline-start: var(--edge);
 		inline-size: var(--dino);
-		block-size: auto;
+		pointer-events: none;
 	}
 
 	/* the stars come out brightest first as the sky scrolls in, like at dusk */

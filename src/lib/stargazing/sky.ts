@@ -96,7 +96,7 @@ function onScreen({ x, y, leo }: Star, box: Box, { w, h, wide }: Screen): Spot {
 /* keeps stars clear of the moon, the dino and the row of years, in px */
 function blocked({ x, y }: Spot, { w, h }: Screen) {
 	const moon = x > w - 40 && y < 40;
-	const dino = x < 76 && y > h - 66;
+	const dino = x < 84 && y > h - 66;
 	const years = y > h - 30;
 	return moon || dino || years;
 }
