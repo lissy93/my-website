@@ -1,4 +1,5 @@
 <script lang="ts" module>
+	import { maria, moonAt } from '$lib/moon';
 	import { leoLines, type SkyLayout, type Star } from '$lib/sky';
 
 	const count = new Intl.NumberFormat('en-GB');
@@ -49,6 +50,9 @@
 
 	let { stars, box, ticks, backdrop }: SkyLayout = $props();
 	const uid = $props.id();
+
+	/* worked out again in the browser, so it's tonight's moon, not the build's */
+	const moon = moonAt(Date.now());
 
 	let leo = $derived(stars.filter((star) => star.leo));
 	let rest = $derived(stars.filter((star) => !star.leo));
@@ -169,12 +173,13 @@
 	></a>
 {/snippet}
 
-<section class="sky" aria-labelledby="{uid}-title">
+<section class="sky" aria-labelledby="{uid}-title" style:--moonlight={moon.lit.toFixed(2)}>
 	<svg class="moon" viewBox="0 0 24 24" aria-hidden="true">
 		<circle cx="12" cy="12" r="11" fill="var(--moon)" />
-		<circle cx="8.5" cy="9" r="2.4" fill="var(--crater)" />
-		<circle cx="15" cy="15.5" r="1.8" fill="var(--crater)" />
-		<circle cx="15.5" cy="7.5" r="1.1" fill="var(--crater)" />
+		{#each Object.entries(maria) as [sea, [cx, cy, rx, ry]] (sea)}
+			<ellipse {cx} {cy} {rx} {ry} fill="var(--maria)" />
+		{/each}
+		<path d={moon.shade} fill="var(--moon-shade)" />
 	</svg>
 
 	<p class="caption">
@@ -251,7 +256,9 @@
 		--star-pink: var(--primary-300);
 		--star-sun: #ffc845;
 		--moon: #ffe6a3;
-		--crater: #f2cf73;
+		--maria: #f2cf73;
+		/* see-through and a little blue, like earthshine on the dark side */
+		--moon-shade: oklch(22% 0.1 262 / 0.82);
 		--edge: max(var(--gutter), calc((100% - var(--width-page)) / 2 + var(--gutter)));
 		--moon-size: clamp(2.25rem, 4.5vw, 3.75rem);
 		--dino: clamp(4.5rem, 9vw, 7.5rem);
@@ -277,6 +284,10 @@
 		inset-block-start: clamp(2.5rem, 5vw, 4rem);
 		inset-inline-end: var(--edge);
 		inline-size: var(--moon-size);
+		/* glows brighter the fuller it gets */
+		filter: drop-shadow(
+			0 0 calc(var(--moon-size) / 3) oklch(from var(--moon) l c h / calc(var(--moonlight) * 0.6))
+		);
 	}
 
 	.caption {
@@ -353,6 +364,8 @@
 		inset: 0;
 		/* the dino's head, which the sky turns around */
 		transform-origin: calc(var(--dino) * 0.85) calc(100% - var(--dino) * 0.7);
+		/* moonlight washes out the faint stars, as it does for real */
+		opacity: calc(1 - var(--moonlight) * 0.3);
 	}
 
 	.backdrop,
