@@ -1,5 +1,5 @@
 import { fail } from '@sveltejs/kit';
-import { reasons } from '$lib/config';
+import { reasons } from '$lib/me/site';
 import { deliver } from '$lib/server/mail';
 import { issueStamp, sendingTooOften, submittedByBot } from '$lib/server/spam';
 import type { ContactFields, ContactResult } from '$lib/types';

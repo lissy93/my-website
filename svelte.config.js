@@ -10,7 +10,6 @@ export default {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter,
-		alias: { $components: 'src/lib/components' },
 		/* prerendered pages get this as a meta tag, so vercel.json sends what a meta tag can't */
 		csp: {
 			directives: {

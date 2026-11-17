@@ -1,4 +1,4 @@
-import { pgp } from '$lib/pgp';
+import { pgp } from '$lib/me/pgp';
 
 export const prerender = true;
 

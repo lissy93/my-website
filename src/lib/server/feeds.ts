@@ -1,4 +1,4 @@
-import { feeds } from '$lib/config';
+import { feeds } from '$lib/me/site';
 import type { Post } from '$lib/types';
 
 const week = 7 * 24 * 60 * 60 * 1000;

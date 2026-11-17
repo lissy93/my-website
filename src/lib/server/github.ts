@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/private';
-import { allProjects } from '$lib/projects';
+import { allProjects } from '$lib/me/projects';
 import type { OwnRepo, Project } from '$lib/types';
 
 type Repo = {

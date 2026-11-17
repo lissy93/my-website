@@ -1,12 +1,12 @@
 <script lang="ts">
-	import Bio from '$components/Bio.svelte';
-	import Landing from '$components/Landing.svelte';
-	import PostList from '$components/PostList.svelte';
-	import ProjectList from '$components/ProjectList.svelte';
-	import Section from '$components/Section.svelte';
-	import Seo from '$components/Seo.svelte';
-	import { socials } from '$lib/config';
-	import { photo } from '$lib/content';
+	import PostList from '$lib/bits-and-bobs/PostList.svelte';
+	import Section from '$lib/bits-and-bobs/Section.svelte';
+	import Seo from '$lib/for-the-robots/Seo.svelte';
+	import Bio from '$lib/front-door/Bio.svelte';
+	import Landing from '$lib/front-door/Landing.svelte';
+	import { photo } from '$lib/me/bio';
+	import { socials } from '$lib/me/site';
+	import ProjectList from '$lib/show-and-tell/ProjectList.svelte';
 
 	let { data } = $props();
 

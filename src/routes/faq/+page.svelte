@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { asset } from '$app/paths';
-	import Numbers from '$components/Numbers.svelte';
-	import PageHeader from '$components/PageHeader.svelte';
-	import Seo from '$components/Seo.svelte';
-	import SmartLink from '$components/SmartLink.svelte';
-	import { interests, jobs, portrait, reserves } from '$lib/about';
-	import { jobSpan } from '$lib/dates';
-	import { questions } from '$lib/faq';
-	import { moonIcon, sunIcon } from '$lib/icons';
+	import Numbers from '$lib/bits-and-bobs/Numbers.svelte';
+	import PageHeader from '$lib/bits-and-bobs/PageHeader.svelte';
+	import SmartLink from '$lib/bits-and-bobs/SmartLink.svelte';
+	import { moonIcon, sunIcon } from '$lib/bits-and-bobs/icons';
+	import { jobSpan } from '$lib/day-and-night/dates';
+	import Seo from '$lib/for-the-robots/Seo.svelte';
+	import { interests, jobs, portrait, reserves } from '$lib/me/about';
+	import { questions } from '$lib/me/faq';
 	import type { Block } from '$lib/types';
 
 	let { data } = $props();

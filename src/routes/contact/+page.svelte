@@ -1,11 +1,11 @@
 <script lang="ts">
-	import ContactDetails from '$components/ContactDetails.svelte';
-	import ContactForm from '$components/ContactForm.svelte';
-	import PageHeader from '$components/PageHeader.svelte';
-	import PgpKey from '$components/PgpKey.svelte';
-	import Section from '$components/Section.svelte';
-	import Seo from '$components/Seo.svelte';
-	import { site } from '$lib/config';
+	import PageHeader from '$lib/bits-and-bobs/PageHeader.svelte';
+	import Section from '$lib/bits-and-bobs/Section.svelte';
+	import Seo from '$lib/for-the-robots/Seo.svelte';
+	import { site } from '$lib/me/site';
+	import ContactDetails from '$lib/say-hello/ContactDetails.svelte';
+	import ContactForm from '$lib/say-hello/ContactForm.svelte';
+	import PgpKey from '$lib/say-hello/PgpKey.svelte';
 
 	let { data, form } = $props();
 

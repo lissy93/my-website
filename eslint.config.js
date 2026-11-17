@@ -18,5 +18,5 @@ export default ts.config(
 		languageOptions: { parserOptions: { parser: ts.parser, svelteConfig } }
 	},
 	// JSON-LD has to be injected raw; the payload is our own, stringified and escaped.
-	{ files: ['src/lib/components/Seo.svelte'], rules: { 'svelte/no-at-html-tags': 'off' } }
+	{ files: ['src/lib/for-the-robots/Seo.svelte'], rules: { 'svelte/no-at-html-tags': 'off' } }
 );

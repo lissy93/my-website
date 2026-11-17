@@ -1,5 +1,5 @@
-import { moments } from '$lib/about';
-import { allProjects, featured, sourceUrl } from '$lib/projects';
+import { moments } from '$lib/me/about';
+import { allProjects, featured, sourceUrl } from '$lib/me/projects';
 import type { Moment, Night, SkyProject } from '$lib/types';
 import { withLiveStats } from './github';
 
@@ -35,8 +35,9 @@ export async function nights(): Promise<Night[]> {
 
 		const project = projects.get(key(moment.repo));
 		if (!project)
-			throw new Error(`${moment.repo} is in src/lib/about.ts but not src/lib/projects.ts`);
-		if (!project.from) throw new Error(`${moment.repo} needs a "from" year in src/lib/projects.ts`);
+			throw new Error(`${moment.repo} is in src/lib/me/about.ts but not src/lib/me/projects.ts`);
+		if (!project.from)
+			throw new Error(`${moment.repo} needs a "from" year in src/lib/me/projects.ts`);
 
 		return {
 			kind: 'launch',

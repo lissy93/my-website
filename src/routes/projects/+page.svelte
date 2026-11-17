@@ -1,13 +1,13 @@
 <script lang="ts">
-	import FeaturedProject from '$components/FeaturedProject.svelte';
-	import PageHeader from '$components/PageHeader.svelte';
-	import ProjectList from '$components/ProjectList.svelte';
-	import Section from '$components/Section.svelte';
-	import Seo from '$components/Seo.svelte';
-	import SmartLink from '$components/SmartLink.svelte';
-	import { forges } from '$lib/config';
-	import { screenUrl } from '$lib/projects';
-	import { collection, sourceCode } from '$lib/schema';
+	import PageHeader from '$lib/bits-and-bobs/PageHeader.svelte';
+	import Section from '$lib/bits-and-bobs/Section.svelte';
+	import SmartLink from '$lib/bits-and-bobs/SmartLink.svelte';
+	import Seo from '$lib/for-the-robots/Seo.svelte';
+	import { collection, sourceCode } from '$lib/for-the-robots/schema';
+	import { screenUrl } from '$lib/me/projects';
+	import { forges } from '$lib/me/site';
+	import FeaturedProject from '$lib/show-and-tell/FeaturedProject.svelte';
+	import ProjectList from '$lib/show-and-tell/ProjectList.svelte';
 	import type { Featured } from '$lib/types';
 
 	let { data } = $props();

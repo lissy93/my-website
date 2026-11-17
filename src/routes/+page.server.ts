@@ -1,4 +1,4 @@
-import { onHome } from '$lib/projects';
+import { onHome } from '$lib/me/projects';
 import { allPosts } from '$lib/server/feeds';
 import { withLiveStats } from '$lib/server/github';
 import type { PageServerLoad } from './$types';

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import DayNight from '$components/DayNight.svelte';
-	import PageHeader from '$components/PageHeader.svelte';
-	import Seo from '$components/Seo.svelte';
+	import PageHeader from '$lib/bits-and-bobs/PageHeader.svelte';
+	import DayNight from '$lib/day-and-night/DayNight.svelte';
+	import Seo from '$lib/for-the-robots/Seo.svelte';
 
 	let { data } = $props();
 </script>

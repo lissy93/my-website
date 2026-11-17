@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { asset } from '$app/paths';
-	import Numbers from '$components/Numbers.svelte';
-	import PageHeader from '$components/PageHeader.svelte';
-	import Section from '$components/Section.svelte';
-	import Seo from '$components/Seo.svelte';
-	import Sky from '$components/Sky.svelte';
-	import { facts, intro, jobs, offTheClock, portrait, values } from '$lib/about';
-	import { site, socials } from '$lib/config';
+	import Numbers from '$lib/bits-and-bobs/Numbers.svelte';
+	import PageHeader from '$lib/bits-and-bobs/PageHeader.svelte';
+	import Section from '$lib/bits-and-bobs/Section.svelte';
+	import Seo from '$lib/for-the-robots/Seo.svelte';
+	import { facts, intro, jobs, offTheClock, portrait, values } from '$lib/me/about';
+	import { site, socials } from '$lib/me/site';
+	import Sky from '$lib/stargazing/Sky.svelte';
 
 	let { data } = $props();
 

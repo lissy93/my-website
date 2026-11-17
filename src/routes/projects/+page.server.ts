@@ -1,4 +1,4 @@
-import { allProjects, featured, groups } from '$lib/projects';
+import { allProjects, featured, groups } from '$lib/me/projects';
 import { totalStars, withLiveStats } from '$lib/server/github';
 import type { PageServerLoad } from './$types';
 
@@ -9,7 +9,7 @@ const keys = [
 	...groups.map(({ title }) => title)
 ];
 const twice = keys.find((key, index) => keys.indexOf(key) !== index);
-if (twice) throw new Error(`"${twice}" is in src/lib/projects.ts twice`);
+if (twice) throw new Error(`"${twice}" is in src/lib/me/projects.ts twice`);
 
 export const load: PageServerLoad = async () => ({
 	stars: await totalStars(),

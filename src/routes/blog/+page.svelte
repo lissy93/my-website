@@ -1,10 +1,10 @@
 <script lang="ts">
-	import PageHeader from '$components/PageHeader.svelte';
-	import PostList from '$components/PostList.svelte';
-	import Section from '$components/Section.svelte';
-	import Seo from '$components/Seo.svelte';
-	import { feeds } from '$lib/config';
-	import { blogPost, collection } from '$lib/schema';
+	import PageHeader from '$lib/bits-and-bobs/PageHeader.svelte';
+	import PostList from '$lib/bits-and-bobs/PostList.svelte';
+	import Section from '$lib/bits-and-bobs/Section.svelte';
+	import Seo from '$lib/for-the-robots/Seo.svelte';
+	import { blogPost, collection } from '$lib/for-the-robots/schema';
+	import { feeds } from '$lib/me/site';
 
 	let { data } = $props();
 

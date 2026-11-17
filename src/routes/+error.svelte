@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import PageHeader from '$components/PageHeader.svelte';
-	import Seo from '$components/Seo.svelte';
+	import PageHeader from '$lib/bits-and-bobs/PageHeader.svelte';
+	import Seo from '$lib/for-the-robots/Seo.svelte';
 
 	let status = $derived(String(page.status));
 	let message = $derived(

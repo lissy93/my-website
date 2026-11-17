@@ -3,11 +3,11 @@
 	import { onNavigate } from '$app/navigation';
 	import archivo from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
 	import figtree from '@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2?url';
-	import Footer from '$components/Footer.svelte';
-	import Header from '$components/Header.svelte';
-	import { analytics } from '$lib/config';
-	import { pageTransition, watchSwipes } from '$lib/page-transition';
-	import { theme } from '$lib/theme.svelte';
+	import Footer from '$lib/furniture/Footer.svelte';
+	import Header from '$lib/furniture/Header.svelte';
+	import { pageTransition, watchSwipes } from '$lib/furniture/page-transition';
+	import { theme } from '$lib/furniture/theme.svelte';
+	import { analytics } from '$lib/me/site';
 
 	let { children } = $props();
 

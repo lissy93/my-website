@@ -1,4 +1,4 @@
-import { site } from '$lib/config';
+import { site } from '$lib/me/site';
 
 export const prerender = true;
 
