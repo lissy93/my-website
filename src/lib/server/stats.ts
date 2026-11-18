@@ -34,11 +34,9 @@ async function dockerHub() {
 }
 
 async function profile() {
-	const { followers, public_repos } = await getJson(`https://api.github.com/users/${user}`, {
-		headers
-	});
+	const { followers } = await getJson(`https://api.github.com/users/${user}`, { headers });
 
-	return { followers: followers as number, repos: public_repos as number };
+	return { followers: followers as number };
 }
 
 /* one alias per year, since GitHub only totals contributions a year at a time */
@@ -99,7 +97,7 @@ async function fetchNumbers(): Promise<Stat[]> {
 			value: stars,
 			label: 'GitHub stars',
 			detail: `across ${repos.length} repos`,
-			href: `${profileUrl}?tab=repositories&sort=stargazers`
+			href: `https://git-star-ranking.com/${user.toLowerCase()}`
 		},
 		docker && {
 			value: docker.pulls,
@@ -118,8 +116,11 @@ async function fetchNumbers(): Promise<Stat[]> {
 			detail: `${graph.sponsorsNow} right now`,
 			href: `https://github.com/sponsors/${user}`
 		},
-		graph && { value: graph.contributions, label: 'contributions', href: profileUrl },
-		github && { value: github.repos, label: 'public repos', href: `${profileUrl}?tab=repositories` }
+		graph && {
+			value: graph.contributions,
+			label: 'contributions',
+			href: `https://gitranks.com/profile/${user.toLowerCase()}/ranks`
+		}
 	];
 
 	return all.filter((stat): stat is Stat => Boolean(stat));

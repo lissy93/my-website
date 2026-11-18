@@ -1,15 +1,16 @@
 <script lang="ts">
-	import { asset } from '$app/paths';
+	import { asset, resolve } from '$app/paths';
+	import type { Pathname } from '$app/types';
 	import NewTab from '$lib/bits-and-bobs/NewTab.svelte';
 	import Numbers from '$lib/bits-and-bobs/Numbers.svelte';
 	import PageHeader from '$lib/bits-and-bobs/PageHeader.svelte';
 	import Section from '$lib/bits-and-bobs/Section.svelte';
 	import SmartLink from '$lib/bits-and-bobs/SmartLink.svelte';
 	import Seo from '$lib/for-the-robots/Seo.svelte';
-	import { jobs, offTheClock, portrait, values } from '$lib/me/about';
+	import { honours, jobs, offTheClock, portrait, values } from '$lib/me/about';
 	import { site, socials } from '$lib/me/site';
 	import Sky from '$lib/stargazing/Sky.svelte';
-	import type { Link } from '$lib/types';
+	import type { Honour, Link } from '$lib/types';
 
 	let { data } = $props();
 
@@ -61,6 +62,12 @@
 	{/snippet}
 </PageHeader>
 
+{#snippet row({ title, detail, years }: Honour)}
+	<span class="title">{title}</span>
+	<span class="years">{years}</span>
+	<span class="blurb">{detail}</span>
+{/snippet}
+
 {#snippet copy(parts: (string | Link)[])}
 	{#each parts as part, i (i)}
 		{#if typeof part === 'string'}{part}{:else}<SmartLink {...part} />{/if}
@@ -68,58 +75,60 @@
 {/snippet}
 
 <div class="wrap page">
-	<div class="story">
-		<p class="lead">{@render copy(lead)}</p>
-		{#each rest as parts, i (i)}
-			<p>{@render copy(parts)}</p>
-		{/each}
+	<div class="column">
+		<div class="story">
+			<p class="lead">{@render copy(lead)}</p>
+			{#each rest as parts, i (i)}
+				<p>{@render copy(parts)}</p>
+			{/each}
+		</div>
+
+		<div class="values">
+			<Section title="What I care about">
+				<ul role="list">
+					{#each values as { title, text } (title)}
+						<li>
+							<h3>{title}</h3>
+							<p>{text}</p>
+						</li>
+					{/each}
+				</ul>
+			</Section>
+		</div>
 	</div>
 
-	<div class="honours">
-		<Section title="Along the way" flush>
-			<ul role="list">
-				{#each data.honours as { title, href, years } (title)}
-					<li>
-						<a class="row" {href} target="_blank" rel="external noopener">
-							<span class="title">{title}</span>
-							<span class="years">{years}</span>
-							<NewTab arrow={false} />
-						</a>
-					</li>
-				{/each}
-			</ul>
-		</Section>
-	</div>
+	<div class="column">
+		<div class="honours">
+			<Section title="Along the way" flush>
+				<ul role="list">
+					{#each honours as honour (honour.title)}
+						<li>
+							{#if honour.href.startsWith('/')}
+								<a class="row" href={resolve(honour.href as Pathname)}>{@render row(honour)}</a>
+							{:else}
+								<a class="row" href={honour.href} target="_blank" rel="external noopener">
+									{@render row(honour)}<NewTab arrow={false} />
+								</a>
+							{/if}
+						</li>
+					{/each}
+				</ul>
+			</Section>
+		</div>
 
-	<div class="values">
-		<Section title="What I care about">
-			<ul role="list">
-				{#each values as { title, text } (title)}
-					<li>
-						<h3>{title}</h3>
-						<p>{text}</p>
-					</li>
-				{/each}
-			</ul>
-		</Section>
-	</div>
-
-	{#if data.numbers.length}
-		<div class="numbers">
+		{#if data.numbers.length}
 			<Section title="In numbers" flush>
 				<Numbers stats={data.numbers} />
 			</Section>
-		</div>
-	{/if}
-
-	<div class="off">
-		<Section title="Off the clock">
-			<div class="nap">
-				<img src={asset('/dinos/nap-time.svg')} alt="" width="64" height="64" />
-				<p>{offTheClock}</p>
-			</div>
-		</Section>
+		{/if}
 	</div>
+
+	<Section title="Off the clock" wide>
+		<div class="nap">
+			<img src={asset('/dinos/nap-time.svg')} alt="" width="64" height="64" />
+			<p>{offTheClock}</p>
+		</div>
+	</Section>
 </div>
 
 <Sky {...data.sky} />
@@ -158,10 +167,14 @@
 	}
 
 	.honours a {
-		display: flex;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
 		align-items: baseline;
-		justify-content: space-between;
-		gap: var(--space-md);
+		column-gap: var(--space-md);
+	}
+
+	.honours .blurb {
+		grid-column: 1 / -1;
 	}
 
 	.years {
@@ -210,28 +223,15 @@
 		}
 	}
 
-	.values,
-	.numbers,
-	.off {
+	.column {
 		display: grid;
-	}
-
-	.honours {
-		align-self: start;
+		align-content: start;
+		gap: var(--space-section);
 	}
 
 	@media (width >= 56rem) {
 		.page {
 			grid-template-columns: 7fr 5fr;
-		}
-
-		.story {
-			align-self: start;
-		}
-
-		.numbers {
-			grid-column: 2;
-			grid-row: span 2;
 		}
 	}
 </style>

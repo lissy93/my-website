@@ -90,6 +90,9 @@ export type Night = {
 	note?: string;
 };
 
+/* one line of the About page's "Along the way" */
+export type Honour = { title: string; detail: string; years: string; href: string };
+
 /* one of the About page's numbers, links to where it can be checked */
 export type Stat = { value: number; label: string; detail?: string; href: string };
 

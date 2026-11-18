@@ -1,4 +1,4 @@
-import type { Job, Moment } from '$lib/types';
+import type { Honour, Job, Moment } from '$lib/types';
 
 const icon = (name: string) => `https://pixelflare.cc/alicia/icons/${name}/w128`;
 
@@ -125,7 +125,7 @@ export const reserves = {
 	logo: icon('british-army')
 };
 
-export const hackathons = 'https://cv.aliciasykes.com/achievements';
+const hackathons = 'https://cv.aliciasykes.com/achievements';
 
 /* in any order, they're sorted by date (and ones in the same year keep this order)
    every featured project in projects.ts is here already, so only list other launches, or a featured one with a note */
@@ -312,6 +312,46 @@ export const moments: Moment[] = [
 	{ kind: 'milestone', when: '2005', title: 'Wrote my first line of code (ActionScript)' }
 ];
 
+/* hand-picked from the moments above, so add a new one here too if it belongs */
+export const honours: Honour[] = [
+	{
+		title: 'OpenUK Honours',
+		detail: 'The UK’s yearly honours list for open source',
+		years: '2024, 2025',
+		href: 'https://openuk.uk/community/openuk-honours-lists/2024-honours-list/'
+	},
+	{
+		title: 'GitHub Accelerator',
+		detail: 'Web Check, one of 11 projects picked that year',
+		years: '2024',
+		href: 'https://github.blog/news-insights/company-news/2024-github-accelerator-meet-the-11-projects-shaping-open-source-ai/#web-check-bringing-security-to-the-web'
+	},
+	{
+		title: 'Hacker News front page',
+		detail: 'Web Check, Dashy and Digital Defense',
+		years: '2022–2024',
+		href: 'https://hn.algolia.com/?dateRange=all&page=0&prefix=false&query=lissy93&sort=byPopularity&type=story'
+	},
+	{
+		title: 'In the press',
+		detail: 'Linux Journal, Help Net Security, MakeUseOf and Changelog',
+		years: '2022–2026',
+		href: '/timeline'
+	},
+	{
+		title: 'Top 100 on GitHub',
+		detail: 'Ranked by stars, out of over 150 million developers',
+		years: '2026',
+		href: 'https://git-star-ranking.com/lissy93'
+	},
+	{
+		title: '10 hackathon wins',
+		detail: 'Including first overall at StartHack Switzerland, twice',
+		years: '2014–2019',
+		href: 'https://notes.aliciasykes.com/p/0s5s3uOtKj'
+	}
+];
+
 export const values = [
 	{
 		title: 'Your data is yours',
@@ -323,11 +363,11 @@ export const values = [
 	},
 	{
 		title: 'Built for everyone',
-		text: 'I led the accessibility work at loveholidays ahead of the European Accessibility Act, and helped six teams fix what our scans found. Pax, one of my hackathon projects, removes flashes from video for photosensitive viewers.'
+		text: 'If someone can’t use it, it isn’t finished. I try to build with screen readers, keyboards and slow connections in mind, and Pax, one of my hackathon projects, strips flashes from video for photosensitive viewers.'
 	},
 	{
-		title: 'Helping people learn',
-		text: 'I’ve mentored teams of up to 12 engineers and hosted a fortnightly engineering guild for 40+. If you’re working on your first open source PR, I’m happy to help.'
+		title: 'It should be fun',
+		text: 'If you’re not having fun, you’re doing it wrong! I’ve made games, toys and plenty of things nobody asked for, and I’d make every one of them again.'
 	}
 ];
 

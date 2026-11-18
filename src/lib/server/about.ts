@@ -1,4 +1,4 @@
-import { hackathons, moments } from '$lib/me/about';
+import { moments } from '$lib/me/about';
 import { allProjects, featured, repoUrl, sourceUrl } from '$lib/me/projects';
 import type { Link, Moment, Night, SkyProject } from '$lib/types';
 import { withLiveStats } from './github';
@@ -67,26 +67,6 @@ export async function skyProjects(): Promise<SkyProject[]> {
 		launch: launched.has(key(project.repo))
 	}));
 }
-
-const year = (when: string) => when.slice(0, 4);
-const dated = moments.filter((moment) => moment.kind !== 'launch');
-const winYears = dated
-	.filter(({ kind }) => kind === 'win')
-	.map(({ when }) => year(when))
-	.sort();
-
-/* awards newest first, then every hackathon win as one line */
-export const honours = [
-	...dated
-		.filter(({ kind }) => kind === 'award')
-		.sort((a, b) => b.when.localeCompare(a.when))
-		.flatMap(({ title, when, href }) => (href ? [{ title, href, years: year(when) }] : [])),
-	{
-		title: `${winYears.length} hackathon wins`,
-		href: hackathons,
-		years: `${winYears[0]}–${winYears.at(-1)}`
-	}
-];
 
 const repoByName = new Map(allProjects().map(({ name, repo }) => [name, repo]));
 
