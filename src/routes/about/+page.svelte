@@ -1,16 +1,19 @@
 <script lang="ts">
 	import { asset } from '$app/paths';
+	import NewTab from '$lib/bits-and-bobs/NewTab.svelte';
 	import Numbers from '$lib/bits-and-bobs/Numbers.svelte';
 	import PageHeader from '$lib/bits-and-bobs/PageHeader.svelte';
 	import Section from '$lib/bits-and-bobs/Section.svelte';
+	import SmartLink from '$lib/bits-and-bobs/SmartLink.svelte';
 	import Seo from '$lib/for-the-robots/Seo.svelte';
-	import { facts, intro, jobs, offTheClock, portrait, values } from '$lib/me/about';
+	import { jobs, offTheClock, portrait, values } from '$lib/me/about';
 	import { site, socials } from '$lib/me/site';
 	import Sky from '$lib/stargazing/Sky.svelte';
+	import type { Link } from '$lib/types';
 
 	let { data } = $props();
 
-	const [lead, ...rest] = intro;
+	let [lead, ...rest] = $derived(data.intro);
 	const links = [
 		{ label: 'Timeline', href: '/timeline' },
 		{ label: 'CV', href: 'https://cv.aliciasykes.com' },
@@ -37,20 +40,6 @@
 			sameAs: socials.map((social) => social.href)
 		}
 	};
-
-	/* set once the page is open, so the prerendered page never shows a stale time */
-	let now = $state<Date>();
-
-	$effect(() => {
-		now = new Date();
-		const timer = setInterval(() => (now = new Date()), 30_000);
-		return () => clearInterval(timer);
-	});
-
-	const clock = (tz: string, at: Date) =>
-		new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: tz }).format(
-			at
-		);
 </script>
 
 <Seo
@@ -72,33 +61,44 @@
 	{/snippet}
 </PageHeader>
 
+{#snippet copy(parts: (string | Link)[])}
+	{#each parts as part, i (i)}
+		{#if typeof part === 'string'}{part}{:else}<SmartLink {...part} />{/if}
+	{/each}
+{/snippet}
+
 <div class="wrap page">
 	<div class="story">
-		<p class="lead">{lead}</p>
-		{#each rest as paragraph (paragraph)}
-			<p>{paragraph}</p>
+		<p class="lead">{@render copy(lead)}</p>
+		{#each rest as parts, i (i)}
+			<p>{@render copy(parts)}</p>
 		{/each}
 	</div>
 
-	<div class="facts">
-		<Section title="Quick facts">
-			<dl>
-				{#each facts as { label, value, tz } (label)}
-					<dt>{label}</dt>
-					<dd>
-						{value}
-						{#if tz && now}<span class="local">{clock(tz, now)} there now</span>{/if}
-					</dd>
+	<div class="honours">
+		<Section title="Along the way" flush>
+			<ul role="list">
+				{#each data.honours as { title, href, years } (title)}
+					<li>
+						<a class="row" {href} target="_blank" rel="external noopener">
+							<span class="title">{title}</span>
+							<span class="years">{years}</span>
+							<NewTab arrow={false} />
+						</a>
+					</li>
 				{/each}
-			</dl>
+			</ul>
 		</Section>
 	</div>
 
 	<div class="values">
 		<Section title="What I care about">
 			<ul role="list">
-				{#each values as value (value)}
-					<li>{value}</li>
+				{#each values as { title, text } (title)}
+					<li>
+						<h3>{title}</h3>
+						<p>{text}</p>
+					</li>
 				{/each}
 			</ul>
 		</Section>
@@ -157,25 +157,16 @@
 		}
 	}
 
-	dl {
-		display: grid;
-		grid-template-columns: auto minmax(0, 1fr);
-		gap: var(--space-xs) var(--space-md);
-		font-size: var(--text-sm);
+	.honours a {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var(--space-md);
 	}
 
-	dt {
+	.years {
 		color: var(--color-text-muted);
-	}
-
-	.local {
-		margin-inline-start: var(--space-xs);
-		border-radius: var(--radius-xs);
-		padding: 0.1rem 0.4rem;
-		background: var(--color-secondary-container);
-		color: var(--color-on-secondary-container);
-		font-size: var(--text-2xs);
-		font-weight: var(--weight-semibold);
+		font-size: var(--text-sm);
 		font-variant-numeric: tabular-nums;
 		white-space: nowrap;
 	}
@@ -186,12 +177,22 @@
 	}
 
 	.values li {
+		display: grid;
+		gap: var(--space-2xs);
 		max-inline-size: 58ch;
 		border-inline-start: var(--border-thin) solid var(--color-border-field);
 		padding-inline-start: var(--space-md);
-		font-size: var(--text-lg);
-		line-height: var(--leading-snug);
-		text-wrap: pretty;
+
+		h3 {
+			font-size: var(--text-lg);
+			font-weight: var(--weight-semibold);
+			line-height: var(--leading-snug);
+		}
+
+		p {
+			color: var(--color-text-muted);
+			text-wrap: pretty;
+		}
 	}
 
 	.nap {
@@ -215,7 +216,7 @@
 		display: grid;
 	}
 
-	.facts {
+	.honours {
 		align-self: start;
 	}
 

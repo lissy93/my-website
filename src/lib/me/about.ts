@@ -9,19 +9,11 @@ export const portrait = {
 	height: 906
 };
 
-/* the first one is the lead */
+/* the first one is the lead, and a [Project name] links to its GitHub */
 export const intro = [
-	'I build privacy-respecting apps, then give them away for free. It’s all open source, because the software you rely on should be something you can actually read.',
-	'From the first time I used a computer (at about 11), I was fascinated by how they worked. School was never my strong point, but something about computers just clicked for me, and I’ve been hooked ever since. This was back in 2005 - the days of dial-up and before computing was taught in schools, so to learn to program I’d get these massive 500-page books from the library, and read them through line-by-line!',
-	'I usually get up quite early, have a nice cuppa tea, and work my way through issues and PRs before heading to work. Then in the evening, that’s when the real coding happens! I probably spend about 4-6 hours most evenings working on various open source projects (including Web-Check, Dashy and some Linux stuff).',
-	'I believe that everyone should have the right to control their own data, and it’s our responsibility as developers to help them do that.'
-];
-
-/* tz gets the live local time beside it */
-export const facts: { label: string; value: string; tz?: string }[] = [
-	{ label: 'Based in', value: 'London', tz: 'Europe/London' },
-	{ label: 'Coding since', value: '2005, at about 11' },
-	{ label: 'Setup', value: 'Arch (btw), Firefox, Neovim, VS Code' }
+	'I’ve been fascinated by how computers work since I first used one. Twenty years later, I’m still not over it.',
+	'What I enjoy most is building things people actually use. Mostly that’s free tools for privacy, security and self-hosting, plus the odd game. Every project started off as a problem of my own that nothing else quite fixed.',
+	'A few of them took off. [Web Check] gets 100,000 visitors daily, [Dashy] has been installed on millions of devices, and [Digital Defense] has over 20k stars on GitHub. But it’s not the numbers I care about. It’s when something finally fixes the problem it was built for, and turns out to help other people too.'
 ];
 
 export const lanes = {
@@ -133,7 +125,7 @@ export const reserves = {
 	logo: icon('british-army')
 };
 
-const hackathons = 'https://cv.aliciasykes.com/achievements';
+export const hackathons = 'https://cv.aliciasykes.com/achievements';
 
 /* in any order, they're sorted by date (and ones in the same year keep this order)
    every featured project in projects.ts is here already, so only list other launches, or a featured one with a note */
@@ -321,19 +313,32 @@ export const moments: Moment[] = [
 ];
 
 export const values = [
-	'Right now, Web-Check is not monetized at all. Actually, none of my projects are.',
-	'I would never implement anything (like certain ads) which compromise the privacy of my end users.',
-	'I receive a small amount of funding from GitHub Sponsors, which is just about enough to cover server costs, and I am super grateful to my sponsors as it’s them who keep apps like this free for everyone else.'
+	{
+		title: 'Your data is yours',
+		text: 'Nothing I make shows ads or tracks you, and the code is always free to run yourself. GitHub Sponsors just about covers the servers, and it’s my sponsors who keep it free for everyone else.'
+	},
+	{
+		title: 'Software you can read',
+		text: 'Everything is open source, so you can check what it does, change it, or host it yourself. I lean on maintainers who build the foundations and rarely get thanked, so I try to give back where I can.'
+	},
+	{
+		title: 'Built for everyone',
+		text: 'I led the accessibility work at loveholidays ahead of the European Accessibility Act, and helped six teams fix what our scans found. Pax, one of my hackathon projects, removes flashes from video for photosensitive viewers.'
+	},
+	{
+		title: 'Helping people learn',
+		text: 'I’ve mentored teams of up to 12 engineers and hosted a fortnightly engineering guild for 40+. If you’re working on your first open source PR, I’m happy to help.'
+	}
 ];
 
 export const offTheClock =
-	'Away from the keyboard, I enjoy sports (I spent 10 years in the British Army reserves), and I also love a good adventure!';
+	'Away from computers, I love astronomy and sport. I spent ten years in the Army Reserves, in signals and intelligence. I go to church, I like chilling at the pub with friends, and if you’re in London, you’ve probably bumped into me at a tech meetup.';
 
 export const interests = [
-	'sports',
 	'astronomy',
+	'sport',
+	'church',
+	'tech meetups',
 	'homelab tinkering',
-	'video games',
-	'a good adventure',
-	'the pub'
+	'the pub with friends'
 ];
