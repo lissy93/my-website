@@ -8,6 +8,7 @@
 	import SmartLink from '$lib/bits-and-bobs/SmartLink.svelte';
 	import Seo from '$lib/for-the-robots/Seo.svelte';
 	import { honours, jobs, offTheClock, portrait, values } from '$lib/me/about';
+	import { pages } from '$lib/me/pages';
 	import { site, socials } from '$lib/me/site';
 	import Sky from '$lib/stargazing/Sky.svelte';
 	import type { Honour, Link } from '$lib/types';
@@ -20,10 +21,6 @@
 		{ label: 'CV', href: 'https://cv.aliciasykes.com' },
 		{ label: 'Sponsor', href: 'https://github.com/sponsors/Lissy93' }
 	];
-
-	const description =
-		'Alicia Sykes, software engineer in London. ' +
-		'Who I am, what I care about, and why it’s all free and open source.';
 
 	/* only claimed while a job is still going */
 	const current = jobs.find((job) => job.from && !job.to);
@@ -47,7 +44,7 @@
 	};
 </script>
 
-<Seo title="About" {description} {schema} />
+<Seo {...pages['/about']} {schema} />
 
 <PageHeader title="About" {links}>
 	{#snippet aside()}

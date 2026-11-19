@@ -4,6 +4,7 @@
 	import SmartLink from '$lib/bits-and-bobs/SmartLink.svelte';
 	import Seo from '$lib/for-the-robots/Seo.svelte';
 	import { collection, sourceCode } from '$lib/for-the-robots/schema';
+	import { pages } from '$lib/me/pages';
 	import { screenUrl } from '$lib/me/projects';
 	import { forges } from '$lib/me/site';
 	import FeaturedProject from '$lib/show-and-tell/FeaturedProject.svelte';
@@ -16,11 +17,11 @@
 
 	/* stars rounded down, so it never claims more than there are */
 	const compact = new Intl.NumberFormat('en', { notation: 'compact', roundingMode: 'floor' });
-	const about =
-		'Open source apps, tools and experiments by Alicia Sykes, ' +
-		'covering security, privacy, self-hosting and web development';
+	const { title, description: about } = pages['/projects'];
 	let description = $derived(
-		data.stars ? `${about}, with ${compact.format(data.stars)} stars on GitHub.` : `${about}.`
+		data.stars
+			? about.replace(/\.$/, `, with ${compact.format(data.stars)} stars on GitHub.`)
+			: about
 	);
 
 	const cover = (project: Featured) => {
@@ -36,7 +37,7 @@
 	);
 </script>
 
-<Seo title="Projects" {description} {schema} />
+<Seo {title} {description} {schema} />
 
 <PageHeader title="Projects">
 	I build privacy, security and self-hosting tools. Everything is free and open source on

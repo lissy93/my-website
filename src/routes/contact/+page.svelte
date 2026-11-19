@@ -2,6 +2,7 @@
 	import PageHeader from '$lib/bits-and-bobs/PageHeader.svelte';
 	import Section from '$lib/bits-and-bobs/Section.svelte';
 	import Seo from '$lib/for-the-robots/Seo.svelte';
+	import { pages } from '$lib/me/pages';
 	import { site } from '$lib/me/site';
 	import ContactDetails from '$lib/say-hello/ContactDetails.svelte';
 	import ContactForm from '$lib/say-hello/ContactForm.svelte';
@@ -9,17 +10,13 @@
 
 	let { data, form } = $props();
 
-	const description =
-		'Get in touch with Alicia Sykes. Send a message, or reach me over email, ' +
-		'Matrix, XMPP or Signal. PGP key included.';
-
 	const schema = {
 		'@type': 'ContactPage',
 		mainEntity: { '@type': 'Person', name: site.name, url: site.url }
 	};
 </script>
 
-<Seo title="Contact" {description} {schema} />
+<Seo {...pages['/contact']} {schema} />
 
 <PageHeader title="Contact">
 	Got a question, an idea, or just want to say hi? Send it over and I’ll get back to you :)

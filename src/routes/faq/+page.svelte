@@ -8,13 +8,10 @@
 	import { slug } from '$lib/bits-and-bobs/slug';
 	import Seo from '$lib/for-the-robots/Seo.svelte';
 	import { avatar, ending, topics } from '$lib/me/faq';
+	import { pages } from '$lib/me/pages';
 	import type { Block, Photo, Question, Topic } from '$lib/types';
 
 	const jump = topics.map(({ title }) => ({ label: title, href: `#${slug(title)}` }));
-
-	const description =
-		'Alicia Sykes on where her project ideas come from, what happened when Web Check took off, ' +
-		'the friends open source brought her, and why there’s a dinosaur.';
 
 	/* the written parts of each answer, for search engines */
 	const plain = (answer: Block[]) =>
@@ -55,7 +52,7 @@
 	}
 </script>
 
-<Seo title="FAQ" {description} {schema} />
+<Seo {...pages['/faq']} {schema} />
 
 <PageHeader title="FAQ" links={jump} />
 

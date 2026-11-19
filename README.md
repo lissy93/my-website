@@ -57,6 +57,8 @@ the intro and values, then the jobs and what happened by night.
 Featured projects show up on the timeline by themselves, any other launch just names its repo,
 and the rest comes from `projects.ts` and GitHub.<br>
 The FAQ's questions and answers are in [`src/lib/me/faq.ts`](src/lib/me/faq.ts).<br>
+Each page's title and description are in [`src/lib/me/pages.ts`](src/lib/me/pages.ts).
+They're used in search results and on the page's share image, which gets drawn at build time.<br>
 Secrets (GitHub token, mail API key) go in `.env`.
 Copy [`.env.example`](.env.example) to get started, each one is explained in there.
 

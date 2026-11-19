@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { hasCard, pages } from '$lib/me/pages';
 	import { site } from '$lib/me/site';
 
 	let {
@@ -10,7 +11,17 @@
 
 	let heading = $derived(title ? `${title} · ${site.name}` : site.name);
 	let url = $derived(new URL(page.url.pathname, site.url).href);
-	const image = new URL(site.image.src, site.url).href;
+
+	/* pages listed in $lib/me/pages get their own share card, the rest use the site's */
+	function cardFor(path: string) {
+		if (!hasCard(path)) return site.image;
+
+		const listed = pages[path];
+		return { src: `/og${path}.png`, alt: `${listed.title}: ${listed.description}` };
+	}
+
+	let card = $derived(cardFor(page.url.pathname));
+	let image = $derived(new URL(card.src, site.url).href);
 
 	let data = $derived({
 		'@context': 'https://schema.org',
@@ -36,7 +47,7 @@
 	<meta property="og:image" content={image} />
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
-	<meta property="og:image:alt" content={site.image.alt} />
+	<meta property="og:image:alt" content={card.alt} />
 	<meta name="twitter:card" content="summary_large_image" />
 	{#if schema}
 		{@html ld}

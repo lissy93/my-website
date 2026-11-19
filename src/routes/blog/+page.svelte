@@ -4,20 +4,17 @@
 	import Section from '$lib/bits-and-bobs/Section.svelte';
 	import Seo from '$lib/for-the-robots/Seo.svelte';
 	import { blogPost, collection } from '$lib/for-the-robots/schema';
+	import { pages } from '$lib/me/pages';
 	import { feeds } from '$lib/me/site';
 
 	let { data } = $props();
 
 	const subscribe = feeds.map(({ source, url }) => ({ label: `${source} RSS`, href: url }));
 
-	const description =
-		'Notes, guides and write-ups on security, privacy, self-hosting, Linux ' +
-		'and web development, by Alicia Sykes.';
-
 	let schema = $derived(collection(data.years.flatMap(([, posts]) => posts.map(blogPost))));
 </script>
 
-<Seo title="Blog" {description} {schema} />
+<Seo {...pages['/blog']} {schema} />
 
 <PageHeader title="Blog" links={subscribe}>
 	Notes, guides and the odd rant. Some of it lands on my blog, some on Dev.to, and this page pulls

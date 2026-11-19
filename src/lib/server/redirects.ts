@@ -70,7 +70,7 @@ const paths: Record<string, string> = {
 	'/feed.rss': `${notes}/feed`,
 	'/manifest.json': '/manifest.webmanifest',
 	'/favicon.png': '/icon-192.png',
-	'/preview.png': '/og.jpg',
+	'/preview.png': '/og.png',
 	'/pwa/android-chrome-192x192.png': '/icon-192.png',
 	'/pwa/android-chrome-512x512.png': '/icon-512.png'
 };

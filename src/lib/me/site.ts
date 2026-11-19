@@ -9,7 +9,7 @@ export const site = {
 	tagline: 'Free, open source apps for privacy, security and self-hosting.',
 	url: 'https://aliciasykes.com',
 	image: {
-		src: '/og.jpg',
+		src: '/og.png',
 		alt: 'Alicia Sykes, open source apps for privacy, security and self-hosting'
 	},
 	locale: 'en'
