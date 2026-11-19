@@ -12,6 +12,10 @@
 
 	const jump = topics.map(({ title }) => ({ label: title, href: `#${slug(title)}` }));
 
+	const description =
+		'Alicia Sykes on where her project ideas come from, what happened when Web Check took off, ' +
+		'the friends open source brought her, and why there’s a dinosaur.';
+
 	/* the written parts of each answer, for search engines */
 	const plain = (answer: Block[]) =>
 		answer
@@ -51,11 +55,7 @@
 	}
 </script>
 
-<Seo
-	title="FAQ"
-	description="Alicia Sykes on where her project ideas come from, what happened when Web Check took off, the friends open source brought her, and why there’s a dinosaur."
-	{schema}
-/>
+<Seo title="FAQ" {description} {schema} />
 
 <PageHeader title="FAQ" links={jump} />
 

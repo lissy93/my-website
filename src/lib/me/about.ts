@@ -11,15 +11,26 @@ export const portrait = {
 
 /* the first one is the lead, and a [Project name] links to its GitHub */
 export const intro = [
-	'I’ve been fascinated by how computers work since I first used one. Twenty years later, I’m still not over it.',
-	'What I enjoy most is building things people actually use. Mostly that’s free tools for privacy, security and self-hosting, plus the odd game. Every project started off as a problem of my own that nothing else quite fixed.',
-	'A few of them took off. [Web Check] gets 100,000 visitors daily, [Dashy] has been installed on millions of devices, and [Digital Defense] has over 20k stars on GitHub. But it’s not the numbers I care about. It’s when something finally fixes the problem it was built for, and turns out to help other people too.'
+	'I’ve been fascinated by how computers work since I first used one. ' +
+		'Twenty years later, I’m still not over it.',
+	'What I enjoy most is building things people actually use. ' +
+		'Mostly that’s free tools for privacy, security and self-hosting, plus the odd game. ' +
+		'Every project started off as a problem of my own that nothing else quite fixed.',
+	'A few of them took off. [Web Check] gets 100,000 visitors daily, ' +
+		'[Dashy] has been installed on millions of devices, ' +
+		'and [Digital Defense] has over 20k stars on GitHub. ' +
+		'But it’s not the numbers I care about. ' +
+		'It’s when something finally fixes the problem it was built for, ' +
+		'and turns out to help other people too.'
 ];
 
 export const lanes = {
-	day: 'I wear many hats: architect, engineer, mentor, product-thinker and occasional DevRel. Above all, I love building great things with kind, curious people.',
+	day:
+		'I wear many hats: architect, engineer, mentor, product-thinker and occasional DevRel. ' +
+		'Above all, I love building great things with kind, curious people.',
 	night:
-		'But what I really love, is the world of open source. I’ve published 100+ production grade tools/applications, and have contributed to many, many more.'
+		'But what I really love, is the world of open source. ' +
+		'I’ve published 100+ production grade tools/applications, and have contributed to many, many more.'
 };
 
 /* newest start first, each one starts a row, and whatever happened by night meanwhile sits beside it */
@@ -31,9 +42,13 @@ export const jobs: Job[] = [
 		to: '2025-12',
 		logo: icon('loveholidays'),
 		highlights: [
-			'Spearheaded accessibility strategy ahead of European Accessibility Act, building site-wide scanning and reporting platform, and then coordinating remediation across 6 teams.',
-			'Strengthened infrastructure and reliability through Kubernetes/Terraform and vendor collaboration (Fastly, DataDome).',
-			'Served as learning champion, establishing resources, learning pathways and fostering continuous upskilling and mentorship across the engineering department.'
+			'Spearheaded accessibility strategy ahead of European Accessibility Act, ' +
+				'building site-wide scanning and reporting platform, ' +
+				'and then coordinating remediation across 6 teams.',
+			'Strengthened infrastructure and reliability through Kubernetes/Terraform ' +
+				'and vendor collaboration (Fastly, DataDome).',
+			'Served as learning champion, establishing resources, learning pathways ' +
+				'and fostering continuous upskilling and mentorship across the engineering department.'
 		]
 	},
 	{
@@ -43,10 +58,16 @@ export const jobs: Job[] = [
 		to: '2024-10',
 		logo: icon('and-digital'),
 		highlights: [
-			'Led architecture and development for a high-scale white-labelled mobile app for Frasers Group, achieving 1M+ downloads and a 4.8/5 rating on app stores (React Native).',
-			'Delivered strategic technical leadership across multiple client projects including Lloyds Bank and International SOS, driving large-scale migrations to modern, maintainable stacks.',
-			'Mentored and upskilled a team of 8–12 engineers through structured mini-projects, paired programming, and technical coaching, fostering a high-growth culture.',
-			'Established and hosted a bi-weekly engineering guild attended by 40+ engineers, sharing best practices in performance, accessibility, testing, and architecture.'
+			'Led architecture and development for a high-scale white-labelled mobile app ' +
+				'for Frasers Group, ' +
+				'achieving 1M+ downloads and a 4.8/5 rating on app stores (React Native).',
+			'Delivered strategic technical leadership across multiple client projects ' +
+				'including Lloyds Bank and International SOS, ' +
+				'driving large-scale migrations to modern, maintainable stacks.',
+			'Mentored and upskilled a team of 8–12 engineers through structured mini-projects, ' +
+				'paired programming, and technical coaching, fostering a high-growth culture.',
+			'Established and hosted a bi-weekly engineering guild attended by 40+ engineers, ' +
+				'sharing best practices in performance, accessibility, testing, and architecture.'
 		]
 	},
 	{
@@ -57,9 +78,12 @@ export const jobs: Job[] = [
 		logo: 'https://i.ibb.co/fX2rF84/galaxy-digital.png',
 		tile: '#111111',
 		highlights: [
-			'Directed frontend engineering for Galaxy’s flagship OTC trading platform, enabling over $1B in trading volume with enterprise-grade performance and reliability.',
-			'Architected and led a full-stack modernization of legacy codebases, improving app load times by 50% and significantly reducing tech debt.',
-			'Oversaw and scaled frontend engineering strategy, standards, and execution across multiple teams, including hiring, mentoring, and tech governance.'
+			'Directed frontend engineering for Galaxy’s flagship OTC trading platform, ' +
+				'enabling over $1B in trading volume with enterprise-grade performance and reliability.',
+			'Architected and led a full-stack modernization of legacy codebases, ' +
+				'improving app load times by 50% and significantly reducing tech debt.',
+			'Oversaw and scaled frontend engineering strategy, standards, and execution ' +
+				'across multiple teams, including hiring, mentoring, and tech governance.'
 		]
 	},
 	{
@@ -68,9 +92,13 @@ export const jobs: Job[] = [
 		from: '2018-01',
 		to: '2020-06',
 		highlights: [
-			'Acted as engineering lead on high-impact React Native projects including Shell Recharge, driving delivery from design to deployment across platforms.',
-			'Built a performant, scalable component library from scratch for a UK fintech startup, establishing strong frontend architecture and design consistency.',
-			'Delivered a full-stack IoT dashboard for Machine Max, visualizing real-time CO2 and idling metrics from edge devices (Raspberry Pi + cloud stack).'
+			'Acted as engineering lead on high-impact React Native projects including Shell Recharge, ' +
+				'driving delivery from design to deployment across platforms.',
+			'Built a performant, scalable component library from scratch for a UK fintech startup, ' +
+				'establishing strong frontend architecture and design consistency.',
+			'Delivered a full-stack IoT dashboard for Machine Max, ' +
+				'visualizing real-time CO2 and idling metrics from edge devices ' +
+				'(Raspberry Pi + cloud stack).'
 		]
 	},
 	{
@@ -81,9 +109,12 @@ export const jobs: Job[] = [
 		logo: icon('accenture'),
 		highlights: [
 			'Took lead on the 3D/AR work for the B&Q bathroom planner (Angular, A-Frame)',
-			'Led a team of apprentices on the Accenture UKI Innovation Programme (Google Glass, React, D3.js)',
+			'Led a team of apprentices on the Accenture UKI Innovation Programme ' +
+				'(Google Glass, React, D3.js)',
 			'Headed up the pair programming initiative within Accenture Digital and their clients',
-			'Also supported with the roll-out of Universal Credit (Java), Boots NHS Prescriptions integration (Node.js), E.ON Next Smart Meter portal (React) and the Post Office Kiosk Terminal'
+			'Also supported with the roll-out of Universal Credit (Java), ' +
+				'Boots NHS Prescriptions integration (Node.js), ' +
+				'E.ON Next Smart Meter portal (React) and the Post Office Kiosk Terminal'
 		]
 	},
 	{
@@ -93,8 +124,11 @@ export const jobs: Job[] = [
 		to: '2013-09',
 		logo: icon('university-of-oxford'),
 		highlights: [
-			'Worked on developing a Java application which would calculate the most effective mg of antimalarial drug, per kg of patient body weight, to prevent vaccine resistance building up.',
-			'Involved dealing with millions of patient records, which were often in varying formats and units.'
+			'Worked on developing a Java application ' +
+				'which would calculate the most effective mg of antimalarial drug, ' +
+				'per kg of patient body weight, to prevent vaccine resistance building up.',
+			'Involved dealing with millions of patient records, ' +
+				'which were often in varying formats and units.'
 		]
 	},
 	{
@@ -121,7 +155,9 @@ export const reserves = {
 	/* the first is shown, and the rest are counted */
 	units: ['Intelligence Corps', 'Royal Corps of Signals', 'Oxford University OTC'],
 	description:
-		'I served in the Army Reserves. My expertise lies in signals, intelligence and comms. In the Oxford University OTC, I also learnt leadership skills and earned a Level 3 Certificate in Leadership and Management.',
+		'I served in the Army Reserves. My expertise lies in signals, intelligence and comms. ' +
+		'In the Oxford University OTC, I also learnt leadership skills ' +
+		'and earned a Level 3 Certificate in Leadership and Management.',
 	logo: icon('british-army')
 };
 
@@ -162,7 +198,7 @@ export const moments: Moment[] = [
 		kind: 'award',
 		when: '2024-05',
 		title: 'GitHub Accelerator, for Web Check',
-		href: 'https://github.blog/2024-05-23-2024-github-accelerator-meet-the-11-projects-shaping-open-source-ai/'
+		href: 'https://github.blog/news-insights/company-news/2024-github-accelerator-meet-the-11-projects-shaping-open-source-ai/'
 	},
 	{
 		kind: 'milestone',
@@ -355,21 +391,36 @@ export const honours: Honour[] = [
 export const values = [
 	{
 		title: 'Your data is yours',
-		text: 'Nothing I make shows ads or tracks you, and the code is always free to run yourself. GitHub Sponsors just about covers the servers, and it’s my sponsors who keep it free for everyone else.'
+		text:
+			'Nothing I make shows ads or tracks you, and the code is always free to run yourself. ' +
+			'GitHub Sponsors just about covers the servers, ' +
+			'and it’s my sponsors who keep it free for everyone else.'
 	},
 	{
 		title: 'Software you can read',
-		text: 'Everything is open source, so you can check what it does, change it, or host it yourself. I lean on maintainers who build the foundations and rarely get thanked, so I try to give back where I can.'
+		text:
+			'Everything is open source, so you can check what it does, change it, or host it yourself. ' +
+			'I lean on maintainers who build the foundations and rarely get thanked, ' +
+			'so I try to give back where I can.'
 	},
 	{
 		title: 'Built for everyone',
-		text: 'If someone can’t use it, it isn’t finished. I try to build with screen readers, keyboards and slow connections in mind, and Pax, one of my hackathon projects, strips flashes from video for photosensitive viewers.'
+		text:
+			'If someone can’t use it, it isn’t finished. ' +
+			'I try to build with screen readers, keyboards and slow connections in mind, ' +
+			'and Pax, one of my hackathon projects, strips flashes from video for photosensitive viewers.'
 	},
 	{
 		title: 'It should be fun',
-		text: 'If you’re not having fun, you’re doing it wrong! I’ve made games, toys and plenty of things nobody asked for, and I’d make every one of them again.'
+		text:
+			'If you’re not having fun, you’re doing it wrong! ' +
+			'I’ve made games, toys and plenty of things nobody asked for, ' +
+			'and I’d make every one of them again.'
 	}
 ];
 
 export const offTheClock =
-	'Away from computers, I love astronomy and sport. I spent ten years in the Army Reserves, in signals and intelligence. I go to church, I like chilling at the pub with friends, and if you’re in London, you’ve probably bumped into me at a tech meetup.';
+	'Away from computers, I love astronomy and sport. ' +
+	'I spent ten years in the Army Reserves, in signals and intelligence. ' +
+	'I go to church, I like chilling at the pub with friends, ' +
+	'and if you’re in London, you’ve probably bumped into me at a tech meetup.';

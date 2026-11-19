@@ -46,12 +46,19 @@ npm run dev
 
 Site info, socials, RSS feeds and contact options are in [`src/lib/me/site.ts`](src/lib/me/site.ts).<br>
 Bio and photo are in [`src/lib/me/bio.ts`](src/lib/me/bio.ts).<br>
-Projects are in [`src/lib/me/projects.ts`](src/lib/me/projects.ts), in the order they're shown. Only what's listed there appears, and GitHub fills in stars, years and licences at build time.<br>
-Screenshots are ids from the `project-screens` album on Pixelflare. A screenshot with no id is a placeholder, and stays hidden until you add one.<br>
-Logos are a path in [`static/logos`](static/logos), or `logoUrl('id')` for one in the `logo` album on Pixelflare.<br>
-The About page and the timeline are in [`src/lib/me/about.ts`](src/lib/me/about.ts): the intro and values, then the jobs and what happened by night. Featured projects show up on the timeline by themselves, any other launch just names its repo, and the rest comes from `projects.ts` and GitHub.<br>
+Projects are in [`src/lib/me/projects.ts`](src/lib/me/projects.ts), in the order they're shown.
+Only what's listed there appears, and GitHub fills in stars, years and licences at build time.<br>
+Screenshots are ids from the `project-screens` album on Pixelflare.
+A screenshot with no id is a placeholder, and stays hidden until you add one.<br>
+Logos are a path in [`static/logos`](static/logos),
+or `logoUrl('id')` for one in the `logo` album on Pixelflare.<br>
+The About page and the timeline are in [`src/lib/me/about.ts`](src/lib/me/about.ts):
+the intro and values, then the jobs and what happened by night.
+Featured projects show up on the timeline by themselves, any other launch just names its repo,
+and the rest comes from `projects.ts` and GitHub.<br>
 The FAQ's questions and answers are in [`src/lib/me/faq.ts`](src/lib/me/faq.ts).<br>
-Secrets (GitHub token, mail API key) go in `.env`. Copy [`.env.example`](.env.example) to get started, each one is explained in there.
+Secrets (GitHub token, mail API key) go in `.env`.
+Copy [`.env.example`](.env.example) to get started, each one is explained in there.
 
 ---
 
@@ -64,7 +71,8 @@ Fork the repo, and import it into Vercel or Netlify. The right adapter gets pick
 #### Option 2 - Docker
 
 Run `docker compose up --build`<br>
-Or build the image with `docker build -t my-website .`, then start it with `docker run -p 3000:3000 -e ORIGIN=http://localhost:3000 my-website`
+Or build the image with `docker build -t my-website .`,
+then start it with `docker run -p 3000:3000 -e ORIGIN=http://localhost:3000 my-website`
 
 #### Option 3 - Node
 

@@ -46,7 +46,8 @@ function yearlyContributions() {
 	return years
 		.map(
 			(year) =>
-				`y${year}: contributionsCollection(from: "${year}-01-01T00:00:00Z", to: "${year}-12-31T23:59:59Z") { contributionCalendar { totalContributions } }`
+				`y${year}: contributionsCollection(from: "${year}-01-01T00:00:00Z", ` +
+				`to: "${year}-12-31T23:59:59Z") { contributionCalendar { totalContributions } }`
 		)
 		.join('\n');
 }

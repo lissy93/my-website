@@ -4,7 +4,8 @@ import type { Link } from '$lib/types';
 export const site = {
 	name: 'Alicia Sykes',
 	description:
-		'Alicia Sykes, software engineer in London. I build free, open source apps for privacy, security and self-hosting, like Web Check and Dashy.',
+		'Alicia Sykes, software engineer in London. ' +
+		'I build free, open source apps for privacy, security and self-hosting, like Web Check and Dashy.',
 	tagline: 'Free, open source apps for privacy, security and self-hosting.',
 	url: 'https://aliciasykes.com',
 	image: {
@@ -56,17 +57,23 @@ export const reasons: {
 		value: 'security',
 		label: 'Security issue',
 		hint:
-			'You can find specific security contacts in the security.txt for each of my websites, or the security.md in each repo. ' +
-			'You can securely report these via GitHub Advisories, or by emailing me at: security at as93 dot net. ' +
-			'Please include the app, version, and how to reproduce the issue. I’ll aim to respond within 48 hours. ' +
-			'Don’t open a public issue for anything exploitable (without first giving me at least 30 days notice). ' +
+			'You can find specific security contacts in the security.txt for each of my websites, ' +
+			'or the security.md in each repo. ' +
+			'You can securely report these via GitHub Advisories, ' +
+			'or by emailing me at: security at as93 dot net. ' +
+			'Please include the app, version, and how to reproduce the issue. ' +
+			'I’ll aim to respond within 48 hours. ' +
+			'Don’t open a public issue for anything exploitable ' +
+			'(without first giving me at least 30 days notice). ' +
 			'If you would like to encrypt or sign your message, you can do so with PGP.',
 		link: { href: '#keys', label: 'Grab my PGP key' }
 	},
 	{
 		value: 'support',
 		label: 'Support (for sponsors)',
-		hint: 'Sponsors get support on any of my apps. Let me know which app, what you’re trying to do, and your GitHub username so I can check.',
+		hint:
+			'Sponsors get support on any of my apps. ' +
+			'Let me know which app, what you’re trying to do, and your GitHub username so I can check.',
 		link: { href: 'https://github.com/sponsors/Lissy93', label: 'Become a sponsor' }
 	},
 	{

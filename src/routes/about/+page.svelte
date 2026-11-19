@@ -21,6 +21,10 @@
 		{ label: 'Sponsor', href: 'https://github.com/sponsors/Lissy93' }
 	];
 
+	const description =
+		'Alicia Sykes, software engineer in London. ' +
+		'Who I am, what I care about, and why it’s all free and open source.';
+
 	/* only claimed while a job is still going */
 	const current = jobs.find((job) => job.from && !job.to);
 
@@ -43,11 +47,7 @@
 	};
 </script>
 
-<Seo
-	title="About"
-	description="Alicia Sykes, software engineer in London. Who I am, what I care about, and why it’s all free and open source."
-	{schema}
-/>
+<Seo title="About" {description} {schema} />
 
 <PageHeader title="About" {links}>
 	{#snippet aside()}
