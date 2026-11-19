@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><clipPath id="tile"><rect width="64" height="64" rx="15"/></clipPath></defs>
+<rect width="64" height="64" rx="15" fill="#fbd0df"/>
+<g clip-path="url(#tile)"><path fill="#e03284" d="M6 66c0-10 10-15 26-15s26 5 26 15Z"/>
+<g transform="translate(32 36) scale(1.25) translate(-32 -38)">
+<g fill="#a3134f" stroke="#a3134f" stroke-width="3.4" stroke-linejoin="round"><path d="m22 27.5 1-7.5 5.5 4Z"/><path d="m28.5 24 3.5-7 3.5 7Z"/><path d="m42 27.5-1-7.5-5.5 4Z"/></g>
+<ellipse cx="32" cy="38" rx="14.5" ry="13.5" fill="#e03284"/>
+<ellipse cx="32" cy="46" rx="10.5" ry="7" fill="#ea5a9a"/>
+<path d="M26 29.7L27.23 32.8L30.57 33.02L28 35.15L28.82 38.38L26 36.6L23.18 38.38L24 35.15L21.43 33.02L24.77 32.8Z" fill="#ffcf40" stroke="#a3134f" stroke-width=".8" stroke-linejoin="round"/><path d="M38 29.7L39.23 32.8L42.57 33.02L40 35.15L40.82 38.38L38 36.6L35.18 38.38L36 35.15L33.43 33.02L36.77 32.8Z" fill="#ffcf40" stroke="#a3134f" stroke-width=".8" stroke-linejoin="round"/>
+<g fill="#a3134f"><ellipse cx="29.5" cy="44" rx="1.1" ry=".8"/><ellipse cx="34.5" cy="44" rx="1.1" ry=".8"/></g>
+<path d="M27.6 47.6q4.4 5 8.8 0Z" fill="#5c0a2e"/>
+</g></g></svg>

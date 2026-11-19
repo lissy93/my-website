@@ -1,165 +1,234 @@
 <script lang="ts">
-  import Heading from '$src/components/Heading.svelte';
-  import TechStack from '$src/components/TechStack.svelte';
-  import WorkExperience from '$src/components/WorkExperience.svelte';
-  import Resume from '$src/components/Resume.svelte';
-  import { t } from '$src/store/Language';
+	import { asset, resolve } from '$app/paths';
+	import type { Pathname } from '$app/types';
+	import NewTab from '$lib/bits-and-bobs/NewTab.svelte';
+	import Numbers from '$lib/bits-and-bobs/Numbers.svelte';
+	import PageHeader from '$lib/bits-and-bobs/PageHeader.svelte';
+	import Section from '$lib/bits-and-bobs/Section.svelte';
+	import SmartLink from '$lib/bits-and-bobs/SmartLink.svelte';
+	import Seo from '$lib/for-the-robots/Seo.svelte';
+	import { honours, jobs, offTheClock, portrait, values } from '$lib/me/about';
+	import { pages } from '$lib/me/pages';
+	import { site, socials } from '$lib/me/site';
+	import Sky from '$lib/stargazing/Sky.svelte';
+	import type { Honour, Link } from '$lib/types';
 
-  import config from '$src/helpers/config';
+	let { data } = $props();
 
-  const { intro, bio, picture } = config.about;
+	let [lead, ...rest] = $derived(data.intro);
+	const links = [
+		{ label: 'Timeline', href: '/timeline' },
+		{ label: 'CV', href: 'https://cv.aliciasykes.com' },
+		{ label: 'Sponsor', href: 'https://github.com/sponsors/Lissy93' }
+	];
 
-  const morePages = config.routeLinks.filter(
-    (link) => !['/about', '/'].includes(link.route)
-  );
+	/* only claimed while a job is still going */
+	const current = jobs.find((job) => job.from && !job.to);
+
+	const schema = {
+		'@type': 'ProfilePage',
+		mainEntity: {
+			'@type': 'Person',
+			name: site.name,
+			alternateName: 'Lissy93',
+			url: site.url,
+			image: portrait.src,
+			...(current && {
+				jobTitle: current.role,
+				worksFor: { '@type': 'Organization', name: current.org }
+			}),
+			alumniOf: { '@type': 'CollegeOrUniversity', name: 'Oxford Brookes University' },
+			address: { '@type': 'PostalAddress', addressLocality: 'London', addressCountry: 'GB' },
+			sameAs: socials.map((social) => social.href)
+		}
+	};
 </script>
 
-<!-- Page title -->
-<div class="heading">
-  <Heading level="h2" size="2.5rem">{$t('pages.about')}</Heading>
+<Seo {...pages['/about']} {schema} />
+
+<PageHeader title="About" {links}>
+	{#snippet aside()}
+		<img
+			class="portrait"
+			src={portrait.src}
+			alt={portrait.alt}
+			width={portrait.width}
+			height={portrait.height}
+			fetchpriority="high"
+		/>
+	{/snippet}
+</PageHeader>
+
+{#snippet row({ title, detail, years }: Honour)}
+	<span class="title">{title}</span>
+	<span class="years">{years}</span>
+	<span class="blurb">{detail}</span>
+{/snippet}
+
+{#snippet copy(parts: (string | Link)[])}
+	{#each parts as part, i (i)}
+		{#if typeof part === 'string'}{part}{:else}<SmartLink {...part} />{/if}
+	{/each}
+{/snippet}
+
+<div class="wrap page">
+	<div class="column">
+		<div class="story">
+			<p class="lead">{@render copy(lead)}</p>
+			{#each rest as parts, i (i)}
+				<p>{@render copy(parts)}</p>
+			{/each}
+		</div>
+
+		<div class="values">
+			<Section title="What I care about">
+				<ul role="list">
+					{#each values as { title, text } (title)}
+						<li>
+							<h3>{title}</h3>
+							<p>{text}</p>
+						</li>
+					{/each}
+				</ul>
+			</Section>
+		</div>
+	</div>
+
+	<div class="column">
+		<div class="honours">
+			<Section title="Along the way" flush>
+				<ul role="list">
+					{#each honours as honour (honour.title)}
+						<li>
+							{#if honour.href.startsWith('/')}
+								<a class="row" href={resolve(honour.href as Pathname)}>{@render row(honour)}</a>
+							{:else}
+								<a class="row" href={honour.href} target="_blank" rel="external noopener">
+									{@render row(honour)}<NewTab arrow={false} />
+								</a>
+							{/if}
+						</li>
+					{/each}
+				</ul>
+			</Section>
+		</div>
+
+		{#if data.numbers.length}
+			<Section title="In numbers" flush>
+				<Numbers stats={data.numbers} />
+			</Section>
+		{/if}
+	</div>
+
+	<Section title="Off the clock" wide>
+		<div class="nap">
+			<img src={asset('/dinos/nap-time.svg')} alt="" width="64" height="64" />
+			<p>{offTheClock}</p>
+		</div>
+	</Section>
 </div>
 
-<!-- Bio paragraphs -->
-<div class="content">
-  <section class="intro">
-    <i>{intro}</i>
-    {#each bio as bioLine}
-      <p class="bio-line">{@html bioLine}</p>
-    {/each}
-  </section>
+<Sky {...data.sky} />
 
-  <!-- Profile picture (and links to other pages) -->
-  <section class="ugly-picture">
-    <img src={picture} alt="Users profile" />
-    <div class="pages">
-      {#each morePages as page}
-        <a href={page.route} style={`--page-color: ${page.color};`}>{page.label}</a>
-      {/each}
-    </div>
-  </section>
+<style>
+	.portrait {
+		--size: clamp(6.5rem, 22vw, 15rem);
 
-  <!-- Work Experience -->
-  <section class="experience">
-    <WorkExperience />
-  </section>
+		inline-size: var(--size);
+		aspect-ratio: 4 / 5;
+		border: 0.4rem solid var(--color-on-primary);
+		border-radius: calc(var(--size) * 0.17);
+		background: var(--color-on-primary);
+		object-fit: cover;
+		object-position: 50% 25%;
+	}
 
-  <!-- Technology Stack -->
-  <section class="stack">
-    <TechStack/>
-  </section>
+	.story {
+		display: grid;
+		align-content: start;
+		gap: var(--space-lg);
 
-  <!-- Social links -->
-  <!-- <section class="soclials"></section> -->
-  
-  <!-- CV -->
-  <section class="resume">
-    <Resume />
-  </section>
+		p {
+			max-inline-size: 62ch;
+			color: var(--color-text-muted);
+			text-wrap: pretty;
+		}
 
-</div>
+		.lead {
+			max-inline-size: 38ch;
+			color: var(--color-text);
+			font-size: var(--text-intro);
+			font-weight: var(--weight-medium);
+			line-height: var(--leading-snug);
+		}
+	}
 
-<style lang="scss">
-  @import '$src/styles/media-queries.scss';
+	.honours a {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: baseline;
+		column-gap: var(--space-md);
+	}
 
-  .heading {
-    margin: 1rem calc(5vw + 1rem) 0;
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-  }
+	.honours .blurb {
+		grid-column: 1 / -1;
+	}
 
-  .content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-    max-width: 1200px;
-    @include laptop-up {
-      // There's probably a better way to scale this grid, bit idk how
-      grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
-    }
-    grid-column-gap: 1rem;
-    grid-row-gap: 1rem;
-    padding: 1rem;
-    width: 95vw;
-    margin: 0 auto;
-  }
+	.years {
+		color: var(--color-text-muted);
+		font-size: var(--text-sm);
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
+	}
 
-  section {
-    padding: 1rem;
-    border-radius: var(--curve-factor);
-    background: var(--card-background);
-    // Intro / bio Section
-    &.intro {
-      grid-column-start: span 2;
-      i {
-        opacity: 0.8;
-      }
-      :global(p) {
-        margin: 1rem 0;
-        font-size: 1.25rem;
-        line-height: 1.8rem;
-        font-family: RedHatText;
-      }
-      :global(a) {
-        color: var(--accent);
-        text-decoration: none;
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
-    // Profile pic + link list section
-    &.ugly-picture {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      img {
-        width: 100%;
-        max-width: 300px;
-        margin: 0 auto;
-        border-radius: var(--curve-factor);
-      }
-      .pages {
-        opacity: 0.9;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        &:hover {
-          opacity: 1;
-        }
-        a {
-          color: var(--page-color, var(--accent));
-          border-radius: var(--curve-factor);
-          padding: 0.25rem 0.5rem;
-          margin: 0.5rem;
-          font-weight: bold;
-          text-decoration: none;
-          transition: all ease-in-out 0.2s;
-          min-width: 5rem;
-          text-align: center;
-          border: 1px solid var(--page-color, var(--accent));
-          &:hover {
-            color: var(--background);
-            background: var(--page-color, var(--accent));
-          }
-        }
-      }
-    }
-    // Work experience section
-    &.experience {
-      grid-column-start: span 2;
-    }
-    // Tech stack section
-    &.stack {
-      grid-row-start: span 3;
-    }
+	.values ul {
+		display: grid;
+		gap: var(--space-lg);
+	}
 
-    // Social links section
-    &.soclials {
-      grid-column-start: span 2;
-    }
-    &.resume {
-      grid-column-start: span 2;
-    }
-  }
+	.values li {
+		display: grid;
+		gap: var(--space-2xs);
+		max-inline-size: 58ch;
+		border-inline-start: var(--border-thin) solid var(--color-border-field);
+		padding-inline-start: var(--space-md);
 
+		h3 {
+			font-size: var(--text-lg);
+			font-weight: var(--weight-semibold);
+			line-height: var(--leading-snug);
+		}
+
+		p {
+			color: var(--color-text-muted);
+			text-wrap: pretty;
+		}
+	}
+
+	.nap {
+		display: grid;
+		grid-template-columns: 5rem minmax(0, 1fr);
+		align-items: center;
+		gap: var(--space-lg);
+
+		img {
+			inline-size: 5rem;
+		}
+
+		p {
+			text-wrap: pretty;
+		}
+	}
+
+	.column {
+		display: grid;
+		align-content: start;
+		gap: var(--space-section);
+	}
+
+	@media (width >= 56rem) {
+		.page {
+			grid-template-columns: 7fr 5fr;
+		}
+	}
 </style>

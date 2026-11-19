@@ -1,0 +1,256 @@
+# Publishes the amd64 + arm64 image to GHCR, and Docker Hub if DOCKERHUB_PASSWORD is set
+name: 🐳 Publish Docker Image
+
+on:
+  push:
+    # loose, so a tag that isn't X.Y.Z fails loudly instead of never running
+    tags: ['*.*.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to republish (empty = this branch as :latest)
+        required: false
+        default: ''
+  schedule:
+    - cron: '0 4 * * 0'
+
+# per ref, so back-to-back releases each still get published
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.tag }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  GH_IMAGE: ghcr.io/${{ github.repository }}
+  DH_IMAGE: docker.io/${{ vars.DOCKER_REPO || 'lissy93/my-website' }}
+  SEMVER: '^[0-9]+\.[0-9]+\.[0-9]+$'
+
+jobs:
+  plan:
+    name: 🔢 Pick the version
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      ref: ${{ steps.plan.outputs.ref }}
+      tag: ${{ steps.plan.outputs.tag }}
+      versions: ${{ steps.plan.outputs.versions }}
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: 🔢 Work out what to publish
+        id: plan
+        env:
+          EVENT: ${{ github.event_name }}
+          INPUT_TAG: ${{ inputs.tag }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          fail() { echo "::error::$1"; exit 1; }
+          newest=$(git tag -l --sort=-v:refname | grep -Em1 "$SEMVER" || true)
+          case "$EVENT" in
+            push) tag=$REF_NAME ;;
+            schedule) tag=$newest ;;
+            *) tag=$INPUT_TAG ;;
+          esac
+
+          if [ "$EVENT" = schedule ] && [ -z "$tag" ]; then
+            echo "::notice::No release yet, so nothing to rebuild"
+            exit 0
+          fi
+          ref=$GITHUB_REF
+          if [ -n "$tag" ]; then
+            grep -qE "$SEMVER" <<< "$tag" || fail "'$tag' isn't like 1.2.3"
+            git rev-parse -q --verify "refs/tags/$tag" >/dev/null \
+              || fail "There's no tag '$tag'"
+            ref=refs/tags/$tag
+          fi
+
+          # a weekly rebuild refreshes :latest, but leaves X.Y.Z as released
+          versions=true
+          if [ -z "$tag" ] || [ "$EVENT" = schedule ]; then versions=false; fi
+          echo "Publishing $ref (versions=$versions)"
+          {
+            echo "ref=$ref"
+            echo "tag=$tag"
+            echo "versions=$versions"
+          } >> "$GITHUB_OUTPUT"
+
+  publish:
+    name: 🚀 Build and publish
+    needs: plan
+    if: needs.plan.outputs.ref != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    env:
+      HAS_DH: ${{ secrets.DOCKERHUB_PASSWORD != '' }}
+      VERSIONS: ${{ needs.plan.outputs.versions }}
+      DOCKER_BUILD_SUMMARY: 'false'
+      DOCKER_BUILD_RECORD_UPLOAD: 'false'
+      DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.plan.outputs.ref }}
+          persist-credentials: false
+
+      # no QEMU needed, the final Dockerfile stage is COPY only
+      - name: 🔧 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      # the docker exporter can't carry attestations, the push adds them
+      - name: 🔨 Build amd64 locally to scan
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: linux/amd64
+          load: true
+          tags: my-website:scan
+          provenance: false
+
+      # advisory, since failing would leave the older, less patched image live
+      - name: 🛡️ Scan the image for known vulnerabilities
+        uses: aquasecurity/trivy-action@v0.36.0
+        continue-on-error: true
+        with:
+          image-ref: my-website:scan
+          scanners: vuln
+          ignore-unfixed: true
+          format: sarif
+          output: trivy.sarif
+
+      - name: 📤 Send the scan to code scanning
+        if: hashFiles('trivy.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
+        continue-on-error: true
+        with:
+          sarif_file: trivy.sarif
+          category: trivy
+
+      # checked just before the push, so an older, slower run can't win
+      - name: 🕓 Check :latest only moves forward
+        id: guard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ needs.plan.outputs.tag }}
+        run: |
+          set -euo pipefail
+          latest=true
+          if [ -n "$TAG" ]; then
+            newest=$(gh api --paginate -q '.[].name' "repos/$GH_REPO/tags" \
+              | grep -E "$SEMVER" | sort -V | tail -n1)
+            [ "$TAG" = "$newest" ] || latest=false
+          fi
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+
+      - name: 🗂️ Generate tags, labels and annotations
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          context: git
+          images: ${{ env.GH_IMAGE }}
+          flavor: latest=false
+          tags: |
+            type=raw,value=latest,enable=${{ steps.guard.outputs.latest }}
+            type=semver,pattern={{version}},value=${{ needs.plan.outputs.tag }},enable=${{ env.VERSIONS }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ needs.plan.outputs.tag }},enable=${{ env.VERSIONS }}
+            type=semver,pattern={{major}}.x,value=${{ needs.plan.outputs.tag }},enable=${{ env.VERSIONS }}
+
+      - name: 🔑 Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # no shared cache, so a release never builds on what a branch run left
+      - name: ⚒️ Build both arches and push to GHCR
+        id: push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+          provenance: mode=max
+          sbom: true
+
+      - name: 🪪 Sign the provenance (GHCR)
+        uses: actions/attest@v4
+        continue-on-error: true
+        with:
+          subject-name: ${{ env.GH_IMAGE }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+
+      # Docker Hub is a mirror, so it never blocks or undoes the GHCR release
+      - name: 🔑 Log in to Docker Hub
+        if: env.HAS_DH == 'true'
+        continue-on-error: true
+        uses: docker/login-action@v4
+        with:
+          username: ${{ vars.DOCKER_USERNAME || 'lissy93' }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      # one source keeps the index byte for byte, so the digest matches GHCR
+      - name: 🧩 Copy to Docker Hub
+        id: dh
+        if: env.HAS_DH == 'true'
+        continue-on-error: true
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+          DIGEST: ${{ steps.push.outputs.digest }}
+        run: |
+          set -euo pipefail
+          args=()
+          while read -r tag; do
+            args+=(-t "$DH_IMAGE:${tag##*:}")
+          done <<< "$TAGS"
+          docker buildx imagetools create "${args[@]}" "$GH_IMAGE@$DIGEST"
+
+      - name: 🪪 Sign the provenance (Docker Hub)
+        if: steps.dh.outcome == 'success'
+        uses: actions/attest@v4
+        continue-on-error: true
+        with:
+          subject-name: ${{ env.DH_IMAGE }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+
+      - name: 📋 Write the summary
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+          DIGEST: ${{ steps.push.outputs.digest }}
+          DH: ${{ steps.dh.outcome }}
+        run: |
+          {
+            echo "## 🐳 Published \`$DIGEST\`"
+            echo
+            echo '```'
+            echo "$TAGS"
+            echo '```'
+            echo
+            echo "Docker Hub ($DH_IMAGE, same tags): $DH"
+            echo
+            echo "Verify it with:"
+            echo '```bash'
+            echo "gh attestation verify oci://$GH_IMAGE@$DIGEST \\"
+            echo "  --repo $GITHUB_REPOSITORY"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

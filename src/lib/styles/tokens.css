@@ -1,0 +1,179 @@
+/* --hue is the pink (1.4 is #f04c8a), --hue-ink the navy, --hue-grey tints light mode's greys */
+:root {
+	--hue: 1.4;
+	--hue-ink: 276;
+	--hue-grey: 265;
+
+	--primary-300: oklch(81.1% 0.115 var(--hue));
+	--primary-500: oklch(66.1% 0.205 var(--hue));
+	--primary-900: oklch(24.7% 0.1 var(--hue));
+	/* a deeper, cooler pink for dark mode's band, so white text on it stays readable */
+	--primary-dark-600: oklch(59.5% 0.225 351.1);
+
+	/* navy ink, the second brand colour, which also carries the text on the pink band */
+	--ink-100: oklch(92% 0.03 var(--hue-ink));
+	--ink-500: oklch(42% 0.15 var(--hue-ink));
+	--ink-600: oklch(36% 0.11 var(--hue-ink));
+	--ink-900: oklch(22.6% 0.08 var(--hue-ink));
+
+	--neutral-0: oklch(100% 0 0);
+	--neutral-25: oklch(98.2% 0.008 var(--hue-grey));
+	--neutral-50: oklch(96.6% 0.011 var(--hue-grey));
+	--neutral-100: oklch(93.3% 0.019 var(--hue-grey));
+	--neutral-500: oklch(60.4% 0.03 var(--hue-grey));
+	--neutral-600: oklch(45.4% 0.026 var(--hue-grey));
+	--neutral-900: oklch(22.8% 0.021 var(--hue-grey));
+
+	/* dark mode is navy rather than slate */
+	--neutral-dark-100: oklch(95% 0.015 var(--hue-ink));
+	--neutral-dark-300: oklch(78% 0.04 var(--hue-ink));
+	--neutral-dark-500: oklch(56% 0.06 var(--hue-ink));
+	--neutral-dark-700: oklch(32% 0.07 var(--hue-ink));
+	--neutral-dark-800: oklch(21% 0.06 var(--hue-ink));
+	--neutral-dark-850: oklch(18.5% 0.055 var(--hue-ink));
+	--neutral-dark-900: oklch(16% 0.05 var(--hue-ink));
+
+	/* light-dark(light value, dark value) follows the system setting, unless a theme is picked */
+	color-scheme: light dark;
+	/* 1 in dark mode, for the few things that switch by more than colour */
+	--dark: 0;
+
+	--color-primary: light-dark(var(--primary-500), var(--primary-dark-600));
+	--color-on-primary: light-dark(var(--ink-900), var(--neutral-0));
+	--color-primary-text: light-dark(var(--ink-500), var(--primary-300));
+	--color-secondary-container: light-dark(var(--ink-100), var(--ink-600));
+	--color-on-secondary-container: light-dark(var(--ink-900), var(--neutral-0));
+	--color-action: light-dark(var(--ink-500), var(--primary-300));
+	--color-on-action: light-dark(var(--neutral-0), var(--primary-900));
+
+	--color-bg: light-dark(var(--neutral-25), var(--neutral-dark-900));
+	--color-surface: light-dark(var(--neutral-0), var(--neutral-dark-800));
+	--color-surface-sunken: light-dark(var(--neutral-50), var(--neutral-dark-850));
+	--color-text: light-dark(var(--neutral-900), var(--neutral-dark-100));
+	--color-text-muted: light-dark(var(--neutral-600), var(--neutral-dark-300));
+	--color-border: light-dark(var(--neutral-100), var(--neutral-dark-700));
+	--color-border-field: light-dark(var(--neutral-500), var(--neutral-dark-500));
+	--color-danger: light-dark(oklch(50% 0.19 27), oklch(80% 0.11 27));
+	--color-focus: var(--color-primary-text);
+	--color-selection: oklch(from var(--primary-500) l c h / 0.25);
+	--color-dot: light-dark(
+		oklch(from var(--neutral-900) l c h / 0.11),
+		oklch(from var(--neutral-dark-100) l c h / 0.14)
+	);
+
+	--state-hover: oklch(from var(--primary-500) l c h / 0.07);
+	--state-press: oklch(from var(--primary-500) l c h / 0.13);
+
+	--shadow-key: light-dark(oklch(from var(--ink-900) l c h / 0.12), oklch(0% 0 0 / 0.5));
+	--shadow-ambient: light-dark(oklch(from var(--ink-900) l c h / 0.07), oklch(0% 0 0 / 0.3));
+	--shadow-1: 0 1px 2px var(--shadow-key), 0 1px 3px 1px var(--shadow-ambient);
+	--shadow-2: 0 1px 2px var(--shadow-key), 0 4px 10px 3px var(--shadow-ambient);
+
+	--font-sans: 'Figtree Variable', ui-sans-serif, system-ui, sans-serif;
+	--font-display: 'Archivo Variable', var(--font-sans);
+	--font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	--stretch-display: 118%;
+	--stretch-heading: 112%;
+
+	--text-2xs: 0.75rem;
+	--text-xs: 0.8125rem;
+	--text-sm: 0.875rem;
+	--text-md: 1rem;
+	--text-lg: 1.0625rem;
+	--text-xl: 1.25rem;
+	--text-2xl: 1.5rem;
+	--text-lede: clamp(1.5rem, 1.2rem + 1vw, 1.75rem);
+	--text-intro: clamp(1.25rem, 1rem + 1.2vw, 1.875rem);
+	--text-headline: clamp(1.75rem, 1.3rem + 1.4vw, 2.5rem);
+	--text-title: clamp(3rem, 1.5rem + 7vw, 6.5rem);
+	--text-hero: clamp(3.6rem, 1rem + 12vw, 10.5rem);
+
+	--leading-display: 0.86;
+	--leading-tight: 1.15;
+	--leading-snug: 1.35;
+	--leading-normal: 1.6;
+
+	--tracking-display: -0.035em;
+	--tracking-tight: -0.02em;
+
+	--weight-medium: 500;
+	--weight-semibold: 600;
+	--weight-heavy: 800;
+	--weight-black: 900;
+
+	--space-3xs: 0.125rem;
+	--space-2xs: 0.25rem;
+	--space-xs: 0.5rem;
+	--space-sm: 0.75rem;
+	--space-md: 1rem;
+	--space-lg: 1.5rem;
+	--space-xl: 2rem;
+	--space-2xl: 3rem;
+	--space-3xl: 4.5rem;
+	--space-section: clamp(1rem, 0.5rem + 1.6vw, 1.75rem);
+
+	--radius-xs: 0.1875rem;
+	--radius-sm: 0.5rem;
+	--radius-md: 0.75rem;
+	--radius-lg: 1rem;
+	--radius-full: 9999px;
+
+	--border-thin: 1px;
+	--focus-ring: 3px;
+
+	--width-page: 80rem;
+	--gutter: clamp(1rem, 4vw, 2.75rem);
+	/* where a page's content starts, for things placed against a full-width box */
+	--edge: max(var(--gutter), calc((100% - var(--width-page)) / 2 + var(--gutter)));
+	--card-padding: 1.25rem;
+	--bar-height: 3.75rem;
+
+	/* ease-out for feedback, ease-in-out for crossing the screen, settle for scrolling into place */
+	--ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+	--ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+	--ease-settle: cubic-bezier(0.61, 1, 0.88, 1);
+	--ease-spring: linear(0, 0.21, 0.54, 0.79, 0.93, 0.99, 1.013, 1.014, 1.01, 1.005, 1);
+	--duration-press: 100ms;
+	--duration-fast: 150ms;
+	--duration-base: 220ms;
+	--duration-release: 380ms;
+	--duration-page: 280ms;
+	--spring-back: scale var(--duration-release) var(--ease-spring);
+
+	--layer-fade: 1;
+	--layer-bar: 2;
+	--layer-hero: 3;
+	--layer-skip: 4;
+
+	/* how far things move, all zeroed for reduced motion */
+	--press-scale: 0.97;
+	--grow-scale: 1.05;
+	--lift: 2px;
+	--rise: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--dark: 1;
+	}
+}
+
+/* a theme picked with the toggle beats the system's */
+:root[data-theme='light'] {
+	color-scheme: light;
+	--dark: 0;
+}
+
+:root[data-theme='dark'] {
+	color-scheme: dark;
+	--dark: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:root {
+		--press-scale: 1;
+		--grow-scale: 1;
+		--lift: 0;
+		--rise: 0;
+	}
+}

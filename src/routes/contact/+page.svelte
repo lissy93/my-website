@@ -1,99 +1,64 @@
 <script lang="ts">
-  import type { SupportedSocials, UserSocial } from '$src/types/Socials';
-  import { socialNetworks } from '$src/helpers/constants';
-  import config from '$src/helpers/config';
+	import PageHeader from '$lib/bits-and-bobs/PageHeader.svelte';
+	import Section from '$lib/bits-and-bobs/Section.svelte';
+	import Seo from '$lib/for-the-robots/Seo.svelte';
+	import { pages } from '$lib/me/pages';
+	import { site } from '$lib/me/site';
+	import ContactDetails from '$lib/say-hello/ContactDetails.svelte';
+	import ContactForm from '$lib/say-hello/ContactForm.svelte';
+	import PgpKey from '$lib/say-hello/PgpKey.svelte';
 
-  import SocialLink from '$src/components/SocialLink.svelte';
-  import Heading from '$src/components/Heading.svelte';
-  import EmailForm from './EmailForm.svelte';
-  import PGPKeys from './PgpKeys.svelte';
+	let { data, form } = $props();
 
-  // Static config for contact page
-  const { contact } = config;
-
-  // Dynamically fetched data (social metrics)
-  export let data;
-
-  // Append usernames, and (if available) metrics to available socials
-  let socials: UserSocial[] = socialNetworks.map((social, index) => {
-    const network: typeof SupportedSocials[number] = social.name;
-    const metrics =
-      data?.props[social.name.toLowerCase().replace(/\W/g, '')] || [];
-    return { ...social, user: contact.socials[network], metrics };
-  });
-
-  // Limit number of socials to display
-  let numSocialsToDisplay = contact.socialButtonLimit || 6;
-
-  // Show / hide more socials
-  const toggleSocialLimit = () => {
-    const defLimit = contact.socialButtonLimit;
-    numSocialsToDisplay =
-      numSocialsToDisplay === defLimit ? socials.length : defLimit;
-  };
+	const schema = {
+		'@type': 'ContactPage',
+		mainEntity: { '@type': 'Person', name: site.name, url: site.url }
+	};
 </script>
 
-<section class="main">
-  <div class="social-wrapper">
-    <Heading level="h2" color="var(--accent)">lets_connect</Heading>
-    <!-- Links to social media profiles -->
-    <div class="social-buttons">
-      {#each socials.slice(0, numSocialsToDisplay) as social}
-        <SocialLink {...social} />
-      {/each}
-    </div>
-    <!-- Show more/ less button -->
-    {#if socials.length > contact.socialButtonLimit}
-      <button class="toggle-limit" on:click={toggleSocialLimit}>
-        {numSocialsToDisplay > contact.socialButtonLimit
-          ? 'Show Less'
-          : 'Show More'}
-      </button>
-    {/if}
-  </div>
-  <EmailForm />
-  <PGPKeys />
-</section>
+<Seo {...pages['/contact']} {schema} />
 
-<style lang="scss">
-  section.main {
-    width: 90vw;
-    margin: 2rem auto 1rem auto;
-    text-align: left;
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-    h2 {
-      font-size: 2rem;
-      margin: 1rem 0;
-      color: var(--accent);
-    }
-    .social-wrapper {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      min-width: 500px;
-    }
-    .social-buttons {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      transition: all ease-in-out 0.25s;
-    }
-    button.toggle-limit {
-      background: none;
-      border: none;
-      border-radius: var(--curve-factor);
-      color: var(--foreground);
-      font-family: FiraCode, monospace;
-      width: fit-content;
-      cursor: pointer;
-      opacity: 0.5;
-      transition: all ease-in-out 0.1s;
-      &:hover {
-        color: var(--accent);
-      }
-    }
-  }
+<PageHeader title="Contact">
+	Got a question, an idea, or just want to say hi? Send it over and I’ll get back to you :)
+</PageHeader>
+
+<div class="wrap page">
+	<Section title="Send a message">
+		<ContactForm result={form} stamp={data.stamp} />
+	</Section>
+
+	<div class="side">
+		<Section title="Other ways">
+			<ContactDetails />
+		</Section>
+
+		<Section title="Keys">
+			<p class="note">If it’s sensitive, encrypt it with this key.</p>
+			<PgpKey />
+		</Section>
+	</div>
+</div>
+
+<style>
+	.side {
+		display: grid;
+		gap: var(--space-section);
+	}
+
+	.note {
+		margin-block-end: var(--space-md);
+		color: var(--color-text-muted);
+	}
+
+	@media (width >= 56rem) {
+		.page {
+			grid-template-columns: minmax(0, 1fr) 24rem;
+			align-items: start;
+		}
+
+		.side {
+			align-self: stretch;
+			grid-template-rows: auto 1fr;
+		}
+	}
 </style>

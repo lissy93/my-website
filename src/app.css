@@ -1,0 +1,6 @@
+@import '@fontsource-variable/archivo/wdth.css';
+@import '@fontsource-variable/figtree/wght.css';
+@import './lib/styles/tokens.css';
+@import './lib/styles/reset.css';
+@import './lib/styles/base.css';
+@import './lib/styles/transitions.css';

@@ -1,17 +1,6 @@
-# Confliguration file for deploying Devolio to Netlify
-# Without the need to set anything in through the UI
-# Docs: https://netlify.com/docs/netlify-toml-reference/
-
-# Main site config
 [build]
-  base = "/"
   command = "npm run build"
-  publish = "build/"
-  functions = "functions/"
+  publish = "build"
 
-# Set any security headers here
-[[headers]]
-  for = "/*"
-  [headers.values]
-  # Uncomment to enable Netlify user control. Requires premium plan.
-  # Basic-Auth = "someuser:somepassword anotheruser:anotherpassword"
+[build.environment]
+  NODE_VERSION = "24"

@@ -1,0 +1,294 @@
+html {
+	overflow-x: clip;
+	scrollbar-gutter: stable;
+	scrollbar-color: var(--color-border-field) transparent;
+	scroll-padding-block-start: calc(var(--bar-height) + var(--space-lg));
+	interpolate-size: allow-keywords;
+	/* we have our own press states, so drop mobile's blue tap flash */
+	-webkit-tap-highlight-color: transparent;
+
+	@media (prefers-reduced-motion: no-preference) {
+		scroll-behavior: smooth;
+	}
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	background-color: var(--color-bg);
+	/* a faint dot grid, like notebook paper */
+	background-image: radial-gradient(var(--color-dot) 1px, transparent 1.5px);
+	background-size: 1.25rem 1.25rem;
+	color: var(--color-text);
+	font-family: var(--font-sans);
+	font-size: var(--text-md);
+	line-height: var(--leading-normal);
+	timeline-scope: --band, --landing;
+}
+
+::selection {
+	background: var(--color-selection);
+}
+
+:focus-visible {
+	outline: var(--focus-ring) solid var(--color-focus);
+	outline-offset: 2px;
+	border-radius: var(--radius-sm);
+}
+
+h1,
+h2,
+h3 {
+	font-family: var(--font-display);
+	line-height: var(--leading-tight);
+}
+
+h1 {
+	font-weight: var(--weight-black);
+	font-stretch: var(--stretch-display);
+	letter-spacing: var(--tracking-display);
+	line-height: var(--leading-display);
+}
+
+h2,
+h3 {
+	font-weight: var(--weight-heavy);
+	font-stretch: var(--stretch-heading);
+	letter-spacing: var(--tracking-tight);
+}
+
+h2 {
+	font-size: var(--text-2xl);
+}
+
+h3 {
+	font-size: var(--text-xl);
+}
+
+a {
+	color: var(--color-primary-text);
+	text-decoration-color: color-mix(in oklch, currentcolor 40%, transparent);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.2em;
+	transition:
+		color var(--duration-fast) var(--ease-out),
+		text-decoration-color var(--duration-fast) var(--ease-out);
+
+	@media (hover: hover) {
+		&:hover {
+			text-decoration-color: currentcolor;
+		}
+	}
+}
+
+input,
+textarea {
+	caret-color: var(--color-primary-text);
+}
+
+code,
+pre {
+	font-family: var(--font-mono);
+	font-size: 0.9em;
+}
+
+/* the pink band behind the header and each page's title */
+.band {
+	background: var(--color-primary);
+	color: var(--color-on-primary);
+
+	:focus-visible {
+		outline-color: var(--color-on-primary);
+	}
+
+	::selection {
+		background: var(--color-surface);
+		color: var(--color-primary-text);
+	}
+}
+
+.wrap {
+	width: 100%;
+	max-width: var(--width-page);
+	margin-inline: auto;
+	padding-inline: var(--gutter);
+}
+
+/* each page's top band, which the bar and homepage watch as you scroll */
+.masthead {
+	padding-block-end: clamp(2rem, 5vw, 4rem);
+	view-timeline: --band;
+	view-timeline-inset: var(--bar-height) 0;
+
+	/* sticks under the bar, so text fades away into it as you scroll */
+	&::before {
+		content: '';
+		position: sticky;
+		inset-block-start: var(--bar-height);
+		z-index: var(--layer-fade);
+		display: block;
+		block-size: clamp(1.5rem, 5vw, 3.5rem);
+		background: linear-gradient(var(--color-primary), transparent);
+		pointer-events: none;
+	}
+}
+
+/* as wide as its content, since it's scaled to its twin's width */
+.dock {
+	inline-size: fit-content;
+}
+
+/* on the homepage, the name and nav ease into their twins in the bar as you scroll */
+@supports (animation-timeline: view()) and (timeline-scope: --band) {
+	@media (prefers-reduced-motion: no-preference) and (width >= 40rem) {
+		.dock {
+			position: relative;
+			z-index: var(--layer-hero);
+			transform-origin: 0 0;
+			animation-name: pin, dock, hand-over;
+			animation-timing-function: linear, var(--ease-settle), step-end;
+			animation-fill-mode: both;
+			animation-timeline: --band;
+			animation-range: exit-crossing;
+		}
+	}
+}
+
+/* holds it still on screen while the page scrolls on underneath */
+@keyframes pin {
+	to {
+		translate: 0 var(--dock-pin, 0);
+	}
+}
+
+@keyframes dock {
+	to {
+		transform: translate(var(--dock-x, 0), var(--dock-y, 0)) scale(var(--dock-scale, 1));
+	}
+}
+
+/* --landed: hidden also takes it out of the tab order once its twin shows */
+@keyframes hand-over {
+	to {
+		opacity: 0;
+		visibility: var(--landed, visible);
+	}
+}
+
+/* the content column under each page's band */
+.page {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--space-section);
+	padding-block: clamp(2rem, 5vw, 3.5rem) var(--space-3xl);
+}
+
+/* the raised panel behind sections and featured projects */
+.card {
+	border-radius: var(--radius-lg);
+	overflow: clip;
+	background: var(--color-surface);
+	box-shadow: var(--shadow-1);
+}
+
+/* a whole-row link in the post and project lists */
+.row {
+	padding: var(--space-sm) var(--card-padding);
+	color: inherit;
+	text-decoration: none;
+	transition: background-color var(--duration-fast) var(--ease-out);
+
+	@media (hover: hover) {
+		&:hover {
+			background: var(--state-hover);
+		}
+	}
+
+	&:active {
+		background: var(--state-press);
+	}
+
+	&:focus-visible {
+		outline-offset: calc(var(--focus-ring) * -1);
+	}
+
+	.title {
+		font-size: var(--text-lg);
+		font-weight: var(--weight-semibold);
+		line-height: var(--leading-snug);
+	}
+
+	.blurb {
+		color: var(--color-text-muted);
+		font-size: var(--text-md);
+		line-height: var(--leading-snug);
+	}
+}
+
+/* small tonal button, used for nav and "view all" links */
+.chip {
+	--chip-bg: var(--color-surface);
+	display: inline-block;
+	flex: none;
+	border-radius: var(--radius-sm);
+	padding: 0.4rem 0.85rem;
+	background: var(--chip-bg);
+	color: var(--color-on-secondary-container);
+	font-size: var(--text-sm);
+	font-weight: var(--weight-semibold);
+	line-height: var(--leading-snug);
+	text-decoration: none;
+	white-space: nowrap;
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		box-shadow var(--duration-fast) var(--ease-out),
+		color var(--duration-fast) var(--ease-out),
+		var(--spring-back);
+
+	&::selection,
+	& ::selection {
+		background: var(--color-selection);
+	}
+
+	/* a thin ring, since a soft shadow looks muddy on pink */
+	@media (hover: hover) {
+		&:hover {
+			background: color-mix(in oklch, var(--chip-bg), var(--color-primary) 12%);
+			box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-primary) 45%, transparent);
+		}
+	}
+}
+
+/* sinks a touch while pressed, then springs back */
+.press {
+	transition: var(--spring-back);
+}
+
+:is(.chip, .press):active {
+	scale: var(--press-scale);
+	transition-duration: var(--duration-press);
+	transition-timing-function: var(--ease-out);
+}
+
+/* new messages fade up into place */
+.arrive {
+	display: block;
+	transition:
+		opacity var(--duration-base) var(--ease-out),
+		translate var(--duration-base) var(--ease-out);
+
+	@starting-style {
+		opacity: 0;
+		translate: 0 var(--rise);
+	}
+}
+
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}

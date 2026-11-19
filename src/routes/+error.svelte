@@ -1,46 +1,16 @@
-<script>
-  import { page } from '$app/stores';
-  import LinkButton from '$src/components/LinkButton.svelte';
+<script lang="ts">
+	import { page } from '$app/state';
+	import PageHeader from '$lib/bits-and-bobs/PageHeader.svelte';
+	import Seo from '$lib/for-the-robots/Seo.svelte';
 
-  const emojis = {
-    // TODO add the rest!
-    401: '🔒',
-    403: '🚫',
-    404: '🧱',
-    420: '🫠',
-    500: '💥',
-    501: '🚧',
-  };
+	let status = $derived(String(page.status));
+	let message = $derived(
+		page.status === 404 ? 'This page doesn’t exist, or it’s moved.' : page.error?.message
+	);
+	const home = [{ label: 'Go to the homepage', href: '/' }];
 </script>
 
-<div class="errors-as-far-as-the-eye-can-see">
-<h1>
-  <span>{$page.status}</span>
-  <br>
-  {$page.error.message}
-</h1>
-<p>This is sad :'(</p>
-<span style="font-size: 10em">
-  {emojis[$page.status] ?? emojis[500]}
-</span>
-<LinkButton to="/">Back Home</LinkButton>
-</div>
+<Seo title={status} />
+<svelte:head><meta name="robots" content="noindex" /></svelte:head>
 
-<style lang="scss">
-.errors-as-far-as-the-eye-can-see {
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  h1 {
-    text-align: center;
-    font-size: 3rem;
-    font-weight: 500;
-    span { font-size: 5rem; }
-  }
-  p {
-    margin: 0.5rem 0;
-    color: var(--dimmed-text);
-  }
-}
-</style>
+<PageHeader title={status} links={home}>{message}</PageHeader>
