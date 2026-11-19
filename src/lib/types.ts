@@ -110,12 +110,14 @@ export type SkyProject = {
 	launch: boolean;
 };
 
-/* a paragraph, a pull quote, the morning and evening pair, some links, or one of the page's lists */
-export type Block =
-	| string
-	| { pull: string }
-	| { day: string; night: string }
-	| { links: Link[] }
-	| { show: 'projects' | 'work' | 'numbers' | 'interests' };
+export type Photo = { src: string; alt: string; width: number; height: number };
 
-export type Question = { id: string; question: string; answer: Block[] };
+/* one message, or a few photos sent together */
+export type Block = string | { photos: Photo[] };
+
+/* the dino's expression, one of static/dinos/faces */
+export type Face = 'hello' | 'grin' | 'love' | 'ooh' | 'wince' | 'worried' | 'wink' | 'starry';
+
+export type Question = { id: string; question: string; face?: Face; answer: Block[] };
+
+export type Topic = { title: string; quick?: boolean; questions: Question[] };

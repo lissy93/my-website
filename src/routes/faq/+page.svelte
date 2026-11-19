@@ -1,37 +1,28 @@
 <script lang="ts">
 	import { asset } from '$app/paths';
-	import Numbers from '$lib/bits-and-bobs/Numbers.svelte';
+	import { SvelteSet } from 'svelte/reactivity';
+	import NewTab from '$lib/bits-and-bobs/NewTab.svelte';
 	import PageHeader from '$lib/bits-and-bobs/PageHeader.svelte';
 	import SmartLink from '$lib/bits-and-bobs/SmartLink.svelte';
-	import { moonIcon, sunIcon } from '$lib/bits-and-bobs/icons';
-	import { jobSpan } from '$lib/day-and-night/dates';
+	import { pieces, unlinked } from '$lib/bits-and-bobs/inline-links';
+	import { slug } from '$lib/bits-and-bobs/slug';
 	import Seo from '$lib/for-the-robots/Seo.svelte';
-	import { interests, jobs, portrait, reserves } from '$lib/me/about';
-	import { questions } from '$lib/me/faq';
-	import type { Block } from '$lib/types';
+	import { avatar, ending, topics } from '$lib/me/faq';
+	import type { Block, Photo, Question, Topic } from '$lib/types';
 
-	let { data } = $props();
-
-	/* an answer that's only links doesn't need a chip of its own */
-	const onlyLinks = (answer: Block[]) =>
-		answer.every((block) => typeof block === 'object' && 'links' in block);
-
-	const jump = questions
-		.filter(({ answer }) => !onlyLinks(answer))
-		.map(({ id, question }) => ({ label: question, href: `#${id}` }));
-
-	function written(block: Block) {
-		if (typeof block === 'string') return block;
-		return 'pull' in block ? block.pull : '';
-	}
+	const jump = topics.map(({ title }) => ({ label: title, href: `#${slug(title)}` }));
 
 	/* the written parts of each answer, for search engines */
-	const plain = (answer: Block[]) => answer.map(written).filter(Boolean).join(' ');
+	const plain = (answer: Block[]) =>
+		answer
+			.filter((block) => typeof block === 'string')
+			.map(unlinked)
+			.join(' ');
 
 	const schema = {
 		'@type': 'FAQPage',
-		mainEntity: questions
-			.filter(({ answer }) => plain(answer))
+		mainEntity: topics
+			.flatMap(({ questions }) => questions)
 			.map(({ question, answer }) => ({
 				'@type': 'Question',
 				name: question,
@@ -39,355 +30,328 @@
 			}))
 	};
 
-	/* an answer that opens with a paragraph leads with it, one that opens with anything else doesn't */
-	const leads = (answer: Block[]) => typeof answer[0] === 'string';
+	const srcset = (src: string) => [256, 512, 1024].map((w) => `${src}/w${w} ${w}w`).join(', ');
+
+	const stuck = new SvelteSet<string>();
+
+	/* tracks which questions are pinned, so the answer under them can fade */
+	function pin(id: string) {
+		return (node: HTMLElement) => {
+			const top = parseFloat(getComputedStyle(node).top);
+			const observer = new IntersectionObserver(
+				([{ intersectionRatio, boundingClientRect }]) => {
+					if (intersectionRatio < 1 && boundingClientRect.top <= top + 1) stuck.add(id);
+					else stuck.delete(id);
+				},
+				{ rootMargin: `${-top - 1}px 0px 0px`, threshold: 1 }
+			);
+			observer.observe(node);
+			return () => observer.disconnect();
+		};
+	}
 </script>
 
 <Seo
 	title="FAQ"
-	description="How Alicia Sykes got into coding, why her apps are free, where she’s worked, and what she gets up to away from the keyboard."
+	description="Alicia Sykes on where her project ideas come from, what happened when Web Check took off, the friends open source brought her, and why there’s a dinosaur."
 	{schema}
 />
 
 <PageHeader title="FAQ" links={jump} />
 
-{#snippet icon(path: string)}
-	<svg viewBox="0 0 24 24" aria-hidden="true"><path d={path} /></svg>
+{#snippet message(text: string)}
+	<p>
+		{#each pieces(text) as piece, i (i)}
+			{#if typeof piece === 'string'}{piece}{:else}<SmartLink {...piece} />{/if}
+		{/each}
+	</p>
 {/snippet}
 
-{#snippet list(name: 'projects' | 'work' | 'numbers' | 'interests')}
-	{#if name === 'projects'}
-		<ul role="list" class="made">
-			{#each data.projects as project (project.title)}
-				<li>
-					<a href={project.href} target="_blank" rel="external noopener">
-						{#if project.logo}<img
-								src={project.logo}
-								alt=""
-								width="28"
-								height="28"
-								loading="lazy"
-							/>{/if}
-						{project.title}<span class="visually-hidden">, opens in a new tab</span>
-					</a>
-				</li>
-			{/each}
-		</ul>
-	{:else if name === 'work'}
-		<ol role="list" class="jobs">
-			{#each jobs as job (job.org)}
-				<li>
-					{#if job.logo}
-						<img src={job.logo} alt="" width="40" height="40" style:background={job.tile} />
-					{:else}
-						<span class="blank" aria-hidden="true">{job.org[0]}</span>
-					{/if}
-					<span class="role">{job.role}, {job.org}</span>
-					<span class="span">{jobSpan(job)}</span>
-				</li>
-			{/each}
+{#snippet photos(shots: Photo[])}
+	{@const album = shots.length > 1}
+	<ul role="list" class="photos" class:album>
+		{#each shots as shot (shot.src)}
 			<li>
-				<img src={reserves.logo} alt="" width="40" height="40" />
-				<span class="role">{reserves.org}</span>
-				<span class="span"
-					>{jobSpan(reserves)} · {reserves.units[0]} +{reserves.units.length - 1} more</span
-				>
+				<a href={shot.src} target="_blank" rel="external noopener">
+					<img
+						src="{shot.src}/w1024"
+						srcset={srcset(shot.src)}
+						sizes={album ? '(width >= 40rem) 8rem, 22vw' : '(width >= 40rem) 26rem, 90vw'}
+						alt={shot.alt}
+						width={shot.width}
+						height={shot.height}
+						loading="lazy"
+					/><NewTab arrow={false} />
+				</a>
 			</li>
-		</ol>
-	{:else if name === 'numbers'}
-		<div class="tally"><Numbers stats={data.numbers} /></div>
-	{:else}
-		<ul role="list" class="likes" aria-label="Interests">
-			{#each interests as interest (interest)}
-				<li>{interest}</li>
-			{/each}
-		</ul>
-	{/if}
+		{/each}
+	</ul>
+{/snippet}
+
+{#snippet exchange({ id, question, face = 'hello', answer }: Question, topic?: Topic)}
+	{@const quick = topic?.quick}
+	<div class="qa" {id}>
+		<div class="pin" class:stuck={stuck.has(id)} {@attach pin(id)}>
+			<div class="asked">
+				{#if !quick}
+					<img class="dino" src={asset(`/dinos/faces/${face}.svg`)} alt="" width="40" height="40" />
+				{/if}
+				<svelte:element this={topic ? 'h3' : 'h2'} class="question">{question}</svelte:element>
+			</div>
+		</div>
+		<div class="said">
+			<div class="run">
+				{#each answer as block, i (i)}
+					{#if typeof block === 'string'}
+						{@render message(block)}
+					{:else}
+						{@render photos(block.photos)}
+					{/if}
+				{/each}
+			</div>
+			{#if !quick}
+				<img class="me" src="{avatar}/w128" alt="" width="40" height="40" loading="lazy" />
+			{/if}
+		</div>
+	</div>
 {/snippet}
 
 <div class="wrap page">
-	<article class="card interview">
-		{#each questions as { id, question, answer } (id)}
-			<section class="qa" {id} aria-labelledby="{id}-q">
-				<div class="ask">
-					<img class="dino" src={asset('/dinos/hello.svg')} alt="" width="48" height="48" />
-					<h2 id="{id}-q">{question}</h2>
-				</div>
-				<div class="answer">
-					<img class="me" src={portrait.src} alt="" width="44" height="44" loading="lazy" />
-					<div class="said">
-						{#each answer as block, i (i)}
-							{#if typeof block === 'string'}
-								<p class:lead={i === 0 && leads(answer)}>{block}</p>
-							{:else if 'pull' in block}
-								<p class="pull">{block.pull}</p>
-							{:else if 'day' in block}
-								<div class="clock">
-									<blockquote class="morning">
-										{@render icon(sunIcon)}
-										<p>{block.day}</p>
-									</blockquote>
-									<blockquote class="evening">
-										{@render icon(moonIcon)}
-										<p>{block.night}</p>
-									</blockquote>
-								</div>
-							{:else if 'links' in block}
-								<ul role="list" class="next">
-									{#each block.links as link (link.href)}
-										<li><SmartLink class="chip" {...link} /></li>
-									{/each}
-								</ul>
-							{:else}
-								{@render list(block.show)}
-							{/if}
-						{/each}
-					</div>
-				</div>
-			</section>
-		{/each}
-	</article>
+	{#each topics as topic (topic.title)}
+		{@const id = slug(topic.title)}
+		<section class="topic" class:quick={topic.quick} aria-labelledby={id}>
+			<h2 {id}>{topic.title}</h2>
+			{#each topic.questions as question (question.id)}
+				{@render exchange(question, topic)}
+			{/each}
+		</section>
+	{/each}
+	{@render exchange(ending)}
 </div>
 
 <style>
-	.interview {
-		grid-column: 1 / -1;
+	.page {
+		max-inline-size: calc(44rem + 2 * var(--gutter));
+		gap: var(--space-3xl);
+	}
+
+	.topic {
+		display: grid;
+		gap: var(--space-2xl);
+	}
+
+	.quick {
+		gap: var(--space-md);
+
+		.qa {
+			gap: var(--space-2xs);
+		}
+
+		.asked,
+		.said {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.question {
+			font-size: var(--text-lg);
+		}
+	}
+
+	.topic > h2 {
+		justify-self: center;
+		border-radius: var(--radius-full);
+		padding: var(--space-xs) var(--space-lg);
+		background: light-dark(var(--ink-900), var(--ink-600));
+		box-shadow: var(--shadow-1);
+		color: var(--neutral-0);
+		font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+		font-weight: var(--weight-black);
+		font-stretch: var(--stretch-display);
+		text-align: center;
 	}
 
 	.qa {
 		display: grid;
-		gap: var(--space-lg);
-		padding: clamp(1.5rem, 1rem + 2.5vw, 3.25rem) clamp(1.25rem, 0.5rem + 3vw, 3.5rem);
-
-		& + & {
-			border-block-start: var(--border-thin) solid var(--color-border);
-		}
+		gap: var(--space-sm);
 	}
 
-	.ask {
+	.asked,
+	.said {
 		display: grid;
-		align-content: start;
+		align-items: end;
+		gap: var(--space-xs);
+	}
+
+	.pin {
+		position: sticky;
+		inset-block-start: calc(var(--bar-height) + var(--space-sm));
+		z-index: 1;
+		pointer-events: none;
+	}
+
+	.asked {
+		position: relative;
+		isolation: isolate;
+		grid-template-columns: 2.5rem minmax(0, 1fr);
 		justify-items: start;
-		gap: var(--space-md);
+		padding-inline-end: 15%;
 
-		h2 {
-			max-inline-size: 16ch;
-			font-size: var(--text-headline);
-			font-weight: var(--weight-black);
-			font-stretch: var(--stretch-display);
-			letter-spacing: var(--tracking-display);
-			line-height: 1;
+		> * {
+			pointer-events: auto;
+		}
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: calc(var(--space-sm) * -1) 0 calc(var(--space-lg) * -1);
+			z-index: -1;
+			background: linear-gradient(var(--color-bg) 70%, transparent);
+			opacity: 0;
+			transition: opacity var(--duration-base) var(--ease-out);
 		}
 	}
 
-	.dino {
-		inline-size: 3rem;
-		block-size: 3rem;
-		transform-origin: 50% 100%;
-	}
+	.stuck {
+		.asked::before {
+			opacity: 1;
+		}
 
-	.answer {
-		display: grid;
-		grid-template-columns: 2.75rem minmax(0, 1fr);
-		align-items: start;
-		gap: var(--space-md);
-	}
-
-	.me {
-		inline-size: 2.75rem;
-		aspect-ratio: 1;
-		border-radius: calc(2.75rem * 0.17);
-		background: var(--color-secondary-container);
-		object-fit: cover;
-		object-position: 50% 22%;
+		.question {
+			box-shadow: var(--shadow-2);
+		}
 	}
 
 	.said {
-		display: grid;
-		gap: var(--space-md);
-		max-inline-size: 62ch;
-		font-size: var(--text-lg);
+		grid-template-columns: minmax(0, 1fr) 2.5rem;
+		padding-inline-start: 10%;
+	}
+
+	.question {
+		border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm);
+		padding: var(--space-sm) var(--space-md);
+		background: var(--color-primary);
+		box-shadow: var(--shadow-1);
+		color: var(--color-on-primary);
+		transition: box-shadow var(--duration-base) var(--ease-out);
+		font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+		font-weight: var(--weight-semibold);
+		line-height: var(--leading-snug);
 		text-wrap: pretty;
+		overflow-wrap: anywhere;
 
-		> p {
-			color: var(--color-text-muted);
-		}
-
-		> .lead {
-			color: var(--color-text);
-			font-size: var(--text-intro);
-			font-weight: var(--weight-medium);
-			line-height: var(--leading-snug);
-		}
-
-		> .pull {
+		&::selection {
+			background: var(--color-surface);
 			color: var(--color-primary-text);
-			font-family: var(--font-display);
-			font-size: clamp(1.375rem, 1.1rem + 1.2vw, 2.25rem);
-			font-weight: var(--weight-heavy);
-			letter-spacing: var(--tracking-tight);
-			line-height: var(--leading-tight);
-			text-wrap: balance;
 		}
 	}
 
-	.made {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-xs);
-		margin-block-start: var(--space-2xs);
+	.run {
+		display: grid;
+		justify-items: end;
+		gap: var(--space-2xs);
+
+		> * {
+			border: var(--border-thin) solid light-dark(transparent, var(--color-border));
+			border-radius: var(--radius-lg) var(--radius-sm) var(--radius-sm) var(--radius-lg);
+			box-shadow: var(--shadow-1);
+		}
+
+		> :first-child {
+			border-start-end-radius: var(--radius-lg);
+		}
+
+		> p {
+			padding: var(--space-sm) var(--space-md);
+			background: var(--color-surface);
+			font-size: var(--text-lg);
+			text-wrap: pretty;
+		}
+
+		/* tabbing back to a link keeps it clear of the pinned question */
+		:global(a) {
+			scroll-margin-block-start: 8rem;
+		}
+	}
+
+	.photos {
+		display: grid;
+		inline-size: min(100%, 26rem);
+		overflow: clip;
 
 		a {
-			display: flex;
-			align-items: center;
-			gap: var(--space-xs);
-			border-radius: var(--radius-sm);
-			padding: var(--space-2xs) var(--space-sm) var(--space-2xs) var(--space-2xs);
-			background: var(--color-surface-sunken);
-			color: var(--color-text);
-			font-size: var(--text-sm);
-			font-weight: var(--weight-semibold);
-			text-decoration: none;
-			transition:
-				background-color var(--duration-fast) var(--ease-out),
-				var(--spring-back);
+			position: relative;
+			display: block;
+			overflow: clip;
 
-			@media (hover: hover) {
-				&:hover {
-					background: var(--state-hover);
-				}
+			&:focus-visible {
+				outline: none;
+			}
+
+			/* a two-tone ring, so it shows on dark photos and light ones */
+			&:focus-visible::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				border: var(--focus-ring) solid var(--color-focus);
+				box-shadow: inset 0 0 0 2px var(--neutral-0);
 			}
 		}
 
 		img {
-			inline-size: 1.75rem;
-			block-size: 1.75rem;
-			border-radius: var(--radius-xs);
+			inline-size: 100%;
+			transition: scale var(--duration-fast) var(--ease-out);
+		}
+
+		@media (hover: hover) {
+			a:hover img {
+				scale: var(--grow-scale);
+			}
 		}
 	}
 
-	.clock {
-		display: grid;
-		gap: var(--space-sm);
+	.album {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: var(--space-3xs);
+		inline-size: min(100%, 32rem);
+		background: var(--color-surface);
 
-		@media (width >= 40rem) {
-			grid-template-columns: 1fr 1fr;
-		}
-
-		blockquote {
-			display: grid;
-			align-content: start;
-			gap: var(--space-sm);
-			border-radius: var(--radius-md);
-			padding: var(--space-lg);
-			font-size: var(--text-md);
-			line-height: var(--leading-snug);
-		}
-
-		svg {
-			inline-size: 1.75rem;
-			block-size: 1.75rem;
-			fill: currentcolor;
+		img {
+			aspect-ratio: 1;
+			object-fit: cover;
 		}
 	}
 
-	.morning {
-		background: light-dark(
-			oklch(from var(--primary-300) l c h / 0.28),
-			oklch(from var(--primary-300) l c h / 0.12)
-		);
-		color: var(--color-text);
-
-		svg {
-			color: var(--color-primary);
-		}
+	.dino,
+	.me {
+		inline-size: 2.5rem;
+		block-size: 2.5rem;
 	}
 
-	.evening {
-		background: light-dark(var(--ink-900), var(--neutral-dark-900));
-		color: var(--neutral-dark-100);
-
-		svg {
-			color: var(--primary-300);
-		}
+	.dino {
+		transform-origin: 50% 100%;
+		filter: brightness(calc(1 - var(--dark) * 0.15));
 	}
 
-	.jobs {
-		display: grid;
-		gap: var(--space-md);
-
-		li {
-			display: grid;
-			grid-template-columns: 2.5rem minmax(0, 1fr);
-			column-gap: var(--space-md);
-		}
-
-		img,
-		.blank {
-			grid-row: span 2;
-			inline-size: 2.5rem;
-			block-size: 2.5rem;
-			border-radius: var(--radius-sm);
-			background: var(--neutral-0);
-			box-shadow: inset 0 0 0 1px var(--color-border);
-			object-fit: contain;
-		}
-
-		.blank {
-			display: grid;
-			place-items: center;
-			background: var(--color-secondary-container);
-			color: var(--color-on-secondary-container);
-			font-family: var(--font-display);
-			font-weight: var(--weight-heavy);
-		}
-
-		.role {
-			font-weight: var(--weight-semibold);
-			line-height: var(--leading-snug);
-		}
-
-		.span {
-			color: var(--color-text-muted);
-			font-size: var(--text-sm);
-			font-variant-numeric: tabular-nums;
-		}
-	}
-
-	.tally {
-		margin-inline: calc(var(--card-padding) * -1);
-		font-size: var(--text-md);
-	}
-
-	.likes {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-xs);
-
-		li {
-			border-radius: var(--radius-full);
-			padding: var(--space-2xs) var(--space-sm);
-			background: var(--color-secondary-container);
-			color: var(--color-on-secondary-container);
-			font-size: var(--text-sm);
-			font-weight: var(--weight-semibold);
-		}
-	}
-
-	.next {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-xs);
-
-		:global(.chip) {
-			--chip-bg: var(--color-secondary-container);
-			font-size: var(--text-md);
-		}
+	.me {
+		border: 2px solid var(--color-border);
+		border-radius: var(--radius-full);
+		background: var(--color-secondary-container);
 	}
 
 	@media (width < 40rem) {
-		.answer {
+		.asked {
+			grid-template-columns: 2rem minmax(0, 1fr);
+			padding-inline-end: 8%;
+		}
+
+		.said {
 			grid-template-columns: minmax(0, 1fr);
+			padding-inline-start: 8%;
+		}
+
+		.dino {
+			inline-size: 2rem;
+			block-size: 2rem;
 		}
 
 		.me {
@@ -395,20 +359,7 @@
 		}
 	}
 
-	@media (width >= 56rem) {
-		.qa {
-			grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-			column-gap: clamp(2rem, 5vw, 5rem);
-		}
-
-		.ask {
-			position: sticky;
-			inset-block-start: calc(var(--bar-height) + var(--space-lg));
-			align-self: start;
-		}
-	}
-
-	/* jumping to a question makes its dino hop, so you can see where you landed */
+	/* jumping to a question makes its dino hop, so you see where you landed */
 	@media (prefers-reduced-motion: no-preference) {
 		.qa:target .dino {
 			animation: hop 0.75s var(--ease-out) 0.35s both;

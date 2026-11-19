@@ -373,12 +373,3 @@ export const values = [
 
 export const offTheClock =
 	'Away from computers, I love astronomy and sport. I spent ten years in the Army Reserves, in signals and intelligence. I go to church, I like chilling at the pub with friends, and if you’re in London, you’ve probably bumped into me at a tech meetup.';
-
-export const interests = [
-	'astronomy',
-	'sport',
-	'church',
-	'tech meetups',
-	'homelab tinkering',
-	'the pub with friends'
-];
